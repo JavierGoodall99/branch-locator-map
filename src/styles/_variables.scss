@@ -1,0 +1,84 @@
+$brand-blue: #2f70ef;
+$blue-strong: #2259d0;
+$blue-deep: #0033a0;
+$blue-soft: #557fdb;
+$blue-tint: #cfdefb;
+$text-subtle: #5d737e;
+
+// Color
+$min-contrast-ratio: 4.4;
+$blue: $brand-blue;
+$primary: $brand-blue;
+$body-color: #3a3a3a;
+$body-secondary-color: #4e6066;
+$border-color: #ededed;
+$link-color: $brand-blue;
+$link-decoration: none;
+$link-hover-decoration: none;
+$link-hover-color: #565656;
+$component-active-bg: $brand-blue;
+
+// Typography
+$font-family-sans-serif: 'Nunito Sans Variable', 'Nunito Sans', Arial, Helvetica, sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.5;
+$headings-font-weight: 600;
+$headings-color: $body-color;
+$h1-font-size: 2.625rem;
+$h2-font-size: 2rem;
+$h3-font-size: 1.5rem;
+$h4-font-size: 1.125rem;
+$small-font-size: 0.75rem;
+
+// Shape: large, soft radius that grows with the size of the container
+$border-radius-sm: 0.5rem;
+$border-radius: 0.5rem;
+$border-radius-lg: 1rem;
+$border-radius-xl: 1.5rem;
+$border-radius-xxl: 2.5rem;
+$border-radius-pill: 1.875rem;
+
+// Buttons
+$btn-padding-y: 0.875rem;
+$btn-padding-x: 1.5rem;
+$btn-font-size: 1rem;
+$btn-font-weight: 600;
+$btn-line-height: 1;
+$btn-border-width: 1.5px;
+$btn-border-radius: $border-radius-xl;
+$btn-border-radius-sm: $border-radius-lg;
+$btn-border-radius-lg: $border-radius-xl;
+
+// Forms
+$input-padding-y: 0.75rem;
+$input-padding-x: 1rem;
+$input-border-radius: $border-radius-lg;
+$input-focus-border-color: $primary;
+$input-focus-box-shadow: 0 0 0 0.25rem rgba($primary, 0.25);
+$form-label-font-weight: 600;
+
+// Cards, modals, floating layers
+$card-border-radius: $border-radius-lg;
+$card-border-color: $border-color;
+$card-spacer-x: 1.5rem;
+$card-spacer-y: 1.5rem;
+$modal-content-border-radius: $border-radius-xxl;
+$box-shadow: 0 0 0 transparent;
+$box-shadow-lg: 40px 30px 30px 0 rgba(0, 0, 0, 0.1);
+$modal-content-box-shadow-sm-up: $box-shadow-lg;
+$dropdown-box-shadow: $box-shadow-lg;
+
+// Focus: visible on every interactive element
+$focus-ring-width: 0.1875rem;
+$focus-ring-opacity: 1;
+$focus-ring-color: rgba($primary, 0.5);
+
+// Layout
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1200px,
+  xxl: 1200px,
+);
+$container-padding-x: 20px;

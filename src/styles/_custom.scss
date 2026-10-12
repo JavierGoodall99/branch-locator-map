@@ -1,0 +1,48 @@
+:root {
+  --app-primary-strong: #{$blue-strong};
+  --app-primary-deep: #{$blue-deep};
+  --app-primary-soft: #{$blue-soft};
+  --app-primary-tint: #{$blue-tint};
+  --app-text-subtle: #{$text-subtle};
+}
+
+body {
+  font-variant-numeric: lining-nums;
+}
+
+
+h2,
+.h2 {
+  font-weight: 700;
+}
+
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 9rem;
+  min-height: 3rem;
+}
+
+
+.btn-primary {
+  --bs-btn-hover-bg: #{$blue-strong};
+  --bs-btn-hover-border-color: #{$blue-strong};
+  --bs-btn-active-bg: #{$blue-strong};
+  --bs-btn-active-border-color: #{$blue-strong};
+}
+
+
+.btn:focus-visible,
+a:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+  box-shadow: none;
+}
