@@ -28,3 +28,7 @@ data/raw/
 
 # Browser tooling output
 .playwright-mcp/
+
+# Playwright output
+test-results/
+playwright-report/
