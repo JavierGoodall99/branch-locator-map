@@ -1,4 +1,4 @@
-import { test as base, expect, type Page } from '@playwright/test'
+import { test as base, expect, type Page, type Route } from '@playwright/test'
 
 /**
  * A map style with nothing in it but a background. The real tiles come from a third party, so
@@ -25,9 +25,15 @@ export async function stubMap(page: Page) {
   })
 }
 
-/** Makes the map's style request fail, as if the tile server were down or the user were offline. */
-export async function breakMap(page: Page) {
-  await page.route(`${MAP_HOST.replace('/**', '')}/styles/**`, (route) => route.abort('connectionrefused'))
+/**
+ * Makes the map's style request fail, as if the tile server were down or the user were offline.
+ * Returns a function that lets requests through again, so a test can retry.
+ */
+export async function breakMap(page: Page): Promise<() => Promise<void>> {
+  const pattern = '**/tiles.openfreemap.org/styles/**'
+  const handler = (route: Route) => route.abort('connectionrefused')
+  await page.route(pattern, handler)
+  return () => page.unroute(pattern, handler)
 }
 
 export const test = base.extend({
