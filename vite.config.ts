@@ -11,6 +11,8 @@ export default defineConfig({
     css: false,
     // Starting one jsdom worker per core on a many-core machine can time out; a few is plenty.
     maxWorkers: 4,
+    // Threads start faster and more reliably than forked processes on Windows.
+    pool: 'threads',
   },
   css: {
     preprocessorOptions: {
