@@ -1,5 +1,5 @@
 import type { Branch } from '../types'
-import { getOpenStatus, minutesSinceMidnightInSouthAfrica } from './hours'
+import { formatOpeningHours, getOpenStatus, minutesSinceMidnightInSouthAfrica } from './hours'
 
 function branch(overrides: Partial<Branch> = {}): Branch {
   return {
@@ -83,5 +83,19 @@ describe('getOpenStatus', () => {
       kind: 'permanently-closed',
       label: 'Permanently closed',
     })
+  })
+})
+
+describe('formatOpeningHours', () => {
+  it('shows the open and close times', () => {
+    expect(formatOpeningHours(branch())).toBe('08:00 to 17:00')
+  })
+
+  it('says open 24 hours for around-the-clock sites', () => {
+    expect(formatOpeningHours(branch({ hours: { open: '00:00', close: '24:00' } }))).toBe('Open 24 hours')
+  })
+
+  it('says so when hours are not available', () => {
+    expect(formatOpeningHours(branch({ hours: null }))).toBe('Not available')
   })
 })

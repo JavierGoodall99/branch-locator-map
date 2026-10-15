@@ -71,3 +71,11 @@ export function getOpenStatus(branch: Branch, now: Date): OpenStatus {
   }
   return { kind: 'closed', label: `Closed, opens tomorrow at ${open}` }
 }
+
+/** Opening hours as plain text for the detail view, for example "08:00 to 17:00". */
+export function formatOpeningHours(branch: Branch): string {
+  if (!branch.hours) return 'Not available'
+  const { open, close } = branch.hours
+  if (toMinutes(open) === 0 && toMinutes(close) === MINUTES_PER_DAY) return 'Open 24 hours'
+  return `${open} to ${close}`
+}
