@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react'
-import type { Branch } from '../types'
+import type { Branch, Coordinates } from '../types'
 
 // The map library is large, so it loads on its own after the page is up. The results list works
 // without it.
@@ -8,6 +8,7 @@ const BranchMap = lazy(() => import('./BranchMap').then((module) => ({ default: 
 interface LazyBranchMapProps {
   branches: Branch[]
   selectedId: string | null
+  userLocation?: Coordinates | null
   onSelect: (id: string) => void
 }
 

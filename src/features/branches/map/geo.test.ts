@@ -1,5 +1,5 @@
 import type { Branch } from '../types'
-import { SOUTH_AFRICA_BOUNDS, boundsFor, idsKey, toFeatureCollection } from './geo'
+import { SOUTH_AFRICA_BOUNDS, boundsFor, boundsOfPoints, idsKey, toFeatureCollection, userLocationCollection } from './geo'
 
 function branch(id: string, lat: number, lng: number, overrides: Partial<Branch> = {}): Branch {
   return {
@@ -86,5 +86,36 @@ describe('SOUTH_AFRICA_BOUNDS', () => {
     expect(east).toBeGreaterThan(32)
     expect(south).toBeLessThan(-34)
     expect(north).toBeGreaterThan(-23)
+  })
+})
+
+describe('boundsOfPoints', () => {
+  it('returns null for no points', () => {
+    expect(boundsOfPoints([])).toBeNull()
+  })
+
+  it('wraps the points, as [[west, south], [east, north]]', () => {
+    expect(
+      boundsOfPoints([
+        { lat: -26.2, lng: 28.05 },
+        { lat: -33.9, lng: 18.4 },
+      ]),
+    ).toEqual([
+      [18.4, -33.9],
+      [28.05, -26.2],
+    ])
+  })
+})
+
+describe('userLocationCollection', () => {
+  it('is one point, longitude first, when the location is known', () => {
+    expect(userLocationCollection({ lat: -26.2, lng: 28.05 })).toEqual({
+      type: 'FeatureCollection',
+      features: [{ type: 'Feature', geometry: { type: 'Point', coordinates: [28.05, -26.2] }, properties: {} }],
+    })
+  })
+
+  it('is empty when there is no location, which removes the dot from the map', () => {
+    expect(userLocationCollection(null).features).toEqual([])
   })
 })

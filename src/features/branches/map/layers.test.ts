@@ -1,5 +1,5 @@
-import { LAYERS, SOURCE_ID } from './config'
-import { addBranchLayers, readMapColors, type MapColors } from './layers'
+import { LAYERS, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
+import { addBranchLayers, addUserLocationLayers, readMapColors, type MapColors } from './layers'
 
 const colors: MapColors = { primary: '#111111', strong: '#222222', deep: '#333333', ink: '#000000', white: '#ffffff' }
 const data = { type: 'FeatureCollection' as const, features: [] }
@@ -57,6 +57,42 @@ describe('addBranchLayers', () => {
     const { layers } = setup()
 
     expect(layers[LAYERS.selected].filter).toEqual(['==', ['get', 'id'], ''])
+  })
+})
+
+describe('addUserLocationLayers', () => {
+  function setupUser() {
+    const sources: Record<string, unknown> = {}
+    const layers: Record<string, Record<string, unknown>> = {}
+    const map = {
+      addSource: vi.fn((id: string, source: unknown) => {
+        sources[id] = source
+      }),
+      addLayer: vi.fn((layer: { id: string }) => {
+        layers[layer.id] = layer as Record<string, unknown>
+      }),
+    }
+    addUserLocationLayers(map as never, colors)
+    return { sources, layers }
+  }
+
+  it('adds an unclustered source that starts empty', () => {
+    const { sources } = setupUser()
+
+    expect(sources[USER_SOURCE_ID]).toMatchObject({ type: 'geojson', data: { features: [] } })
+    expect(sources[USER_SOURCE_ID]).not.toHaveProperty('cluster')
+  })
+
+  it('adds a halo and a dot', () => {
+    const { layers } = setupUser()
+
+    expect(Object.keys(layers)).toEqual(Object.values(USER_LAYERS))
+  })
+
+  it('draws the dot in the ink colour, so it is unlike any branch or ATM pin', () => {
+    const { layers } = setupUser()
+
+    expect(layers[USER_LAYERS.dot].paint).toMatchObject({ 'circle-color': colors.ink })
   })
 })
 

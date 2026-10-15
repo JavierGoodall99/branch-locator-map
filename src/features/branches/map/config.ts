@@ -16,3 +16,10 @@ export const CLUSTER_MAX_ZOOM = 13
 
 /** Zoom used when a branch is chosen, which is close enough that it is never inside a cluster. */
 export const SELECTED_ZOOM = 14
+
+/** The user's own position, drawn as a dot with a halo. */
+export const USER_SOURCE_ID = 'user-location'
+export const USER_LAYERS = { halo: 'user-halo', dot: 'user-dot' } as const
+
+/** When the user shares their location, the map frames them together with this many nearest branches. */
+export const NEAREST_TO_SHOW = 3

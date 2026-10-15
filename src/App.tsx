@@ -48,7 +48,7 @@ function App() {
           onClearFilters={() => changeFilters(clearFilters(filters))}
         />
       }
-      map={<LazyBranchMap branches={visible} selectedId={selectedId} onSelect={setSelectedId} />}
+      map={<LazyBranchMap branches={visible} selectedId={selectedId} userLocation={origin} onSelect={setSelectedId} />}
     />
   )
 }

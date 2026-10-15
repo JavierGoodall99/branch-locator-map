@@ -1,4 +1,4 @@
-import type { Branch, BranchType } from '../types'
+import type { Branch, BranchType, Coordinates } from '../types'
 
 /** [[west, south], [east, north]] in degrees, the order MapLibre expects. */
 export type Bounds = [[number, number], [number, number]]
@@ -32,24 +32,45 @@ export function toFeatureCollection(branches: Branch[]): BranchFeatureCollection
   }
 }
 
-/** The smallest box around the branches, or null if there are none. */
-export function boundsFor(branches: Branch[]): Bounds | null {
-  if (branches.length === 0) return null
+/** The smallest box around the points, or null if there are none. */
+export function boundsOfPoints(points: Coordinates[]): Bounds | null {
+  if (points.length === 0) return null
 
   let west = Infinity
   let south = Infinity
   let east = -Infinity
   let north = -Infinity
-  for (const { location } of branches) {
-    west = Math.min(west, location.lng)
-    east = Math.max(east, location.lng)
-    south = Math.min(south, location.lat)
-    north = Math.max(north, location.lat)
+  for (const { lat, lng } of points) {
+    west = Math.min(west, lng)
+    east = Math.max(east, lng)
+    south = Math.min(south, lat)
+    north = Math.max(north, lat)
   }
   return [
     [west, south],
     [east, north],
   ]
+}
+
+/** The smallest box around the branches, or null if there are none. */
+export function boundsFor(branches: Branch[]): Bounds | null {
+  return boundsOfPoints(branches.map((branch) => branch.location))
+}
+
+/** The user's position as GeoJSON: one point, or none, which removes their dot from the map. */
+export function userLocationCollection(location: Coordinates | null) {
+  return {
+    type: 'FeatureCollection' as const,
+    features: location
+      ? [
+          {
+            type: 'Feature' as const,
+            geometry: { type: 'Point' as const, coordinates: [location.lng, location.lat] as [number, number] },
+            properties: {},
+          },
+        ]
+      : [],
+  }
 }
 
 /**

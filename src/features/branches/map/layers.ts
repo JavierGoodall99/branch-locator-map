@@ -1,6 +1,6 @@
 import type { ExpressionSpecification, Map as MapLibreMap } from 'maplibre-gl'
-import { CLUSTER_MAX_ZOOM, LAYERS, SOURCE_ID } from './config'
-import type { BranchFeatureCollection } from './geo'
+import { CLUSTER_MAX_ZOOM, LAYERS, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
+import { userLocationCollection, type BranchFeatureCollection } from './geo'
 
 export interface MapColors {
   primary: string
@@ -117,6 +117,29 @@ export function addBranchLayers(
       'circle-radius': 15,
       'circle-stroke-width': 4,
       'circle-stroke-color': colors.ink,
+    },
+  })
+}
+
+/** Adds the user's own position: a dark dot with a pale halo, unlike any branch or ATM pin. */
+export function addUserLocationLayers(map: Pick<MapLibreMap, 'addSource' | 'addLayer'>, colors: MapColors): void {
+  map.addSource(USER_SOURCE_ID, { type: 'geojson', data: userLocationCollection(null) })
+
+  map.addLayer({
+    id: USER_LAYERS.halo,
+    type: 'circle',
+    source: USER_SOURCE_ID,
+    paint: { 'circle-radius': 20, 'circle-color': colors.ink, 'circle-opacity': 0.15 },
+  })
+  map.addLayer({
+    id: USER_LAYERS.dot,
+    type: 'circle',
+    source: USER_SOURCE_ID,
+    paint: {
+      'circle-radius': 7,
+      'circle-color': colors.ink,
+      'circle-stroke-width': 3,
+      'circle-stroke-color': colors.white,
     },
   })
 }
