@@ -38,6 +38,7 @@ Run `npm run lint` and `npm run build` before considering a change done.
 - Function components and hooks only; keep TypeScript strict, no `any`.
 - Theme through Sass variables in `_variables.scss` first, then `--bs-*` CSS variables, then `_custom.scss`. Never edit `node_modules` and avoid `!important`.
 - Use `react-bootstrap` components. Do not import Bootstrap's JavaScript bundle or use `window.bootstrap`.
+- For links that look like buttons, use a plain `<a className="btn ...">`, not react-bootstrap's `Button as="a"`, which sets `role="button"` on anchors.
 - When a new Bootstrap component is used, add its module to `main.scss`.
 - Use theme tokens, not hard-coded hex values. Format money with `Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' })` and the `tabular-nums` class.
 - Pin dependency changes deliberately; this is a production app, so avoid alpha/beta/`next` packages.
