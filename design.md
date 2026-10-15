@@ -135,7 +135,7 @@ The source declares 32 breakpoints, which is too many to maintain. Use Bootstrap
 | `xxl` | 1400px |
 
 - Mobile-first. Design at 360px wide first, since most banking traffic is on phones.
-- Container max width 1200px with 10px side padding (measured on capitecbank.co.za). Content columns: 12-column Bootstrap grid.
+- Container max width 1200px from 1400px up, 1140px between 1200px and 1399px (Bootstrap needs ascending widths), with 10px side padding (measured on capitecbank.co.za at 1440px). Content columns: 12-column Bootstrap grid.
 - Touch targets at least 44×44px.
 
 ## Data visualization
