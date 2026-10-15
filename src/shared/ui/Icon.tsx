@@ -11,6 +11,8 @@ const PATHS = {
   moon: 'M20 14a8 8 0 01-10-10 8 8 0 1010 10z',
   info: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 11v5M12 8v.01',
   alert: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7v6M12 16v.01',
+  search: 'M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4-4',
+  close: 'M6 6l12 12M18 6L6 18',
 } as const
 
 export type IconName = keyof typeof PATHS

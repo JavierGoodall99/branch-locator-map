@@ -1,0 +1,138 @@
+// Search, show switch and filters. Over the map on phones, flat in the side panel from md up.
+
+$control-hairline: #c9d3d8; // decorative edge, as in the locator design
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: $spacer * 0.75;
+  min-height: 52px;
+  padding: 0 $spacer;
+  background: $white;
+  border: 1px solid $control-hairline;
+  border-radius: $border-radius-pill;
+  color: $body-secondary-color;
+  box-shadow: $box-shadow-lg; // floats over the map
+
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-weight: 500;
+    color: #000;
+
+    &::placeholder {
+      color: $body-secondary-color;
+    }
+  }
+
+  &:hover {
+    border-color: $primary;
+  }
+
+  &:focus-within {
+    border-color: #000;
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+}
+
+.type-switch {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: $white;
+  border: 1px solid $control-hairline;
+  border-radius: $border-radius-pill;
+
+  button {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: $spacer * 0.5;
+    min-height: 44px;
+    padding: 0 $spacer * 0.75;
+    border: 0;
+    border-radius: $border-radius-pill;
+    background: transparent;
+    color: $body-color;
+    font-weight: 600;
+    line-height: 1.1;
+
+    &:hover:not([aria-pressed='true']) {
+      background: $blue-tint;
+    }
+
+    &[aria-pressed='true'] {
+      background: $blue-deep;
+      color: $white;
+    }
+  }
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: $spacer * 0.5;
+  overflow-x: auto;
+  padding-bottom: 4px;
+
+  &__province {
+    flex: 0 1 auto;
+    width: auto;
+    min-height: 44px;
+    border-radius: $border-radius-pill;
+    border-color: $control-hairline;
+    font-weight: 600;
+  }
+}
+
+.chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: $spacer * 0.5;
+  min-height: 44px;
+  padding: 0 $spacer;
+  border: 1px solid $control-hairline;
+  border-radius: $border-radius-pill;
+  background: $white;
+  color: #000;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+
+  &:hover {
+    background: $blue-tint;
+  }
+
+  // Applied: a heavier outline and tint, so state is not carried by colour alone.
+  &[aria-pressed='true'] {
+    padding: 0 calc(#{$spacer} - 1px); // the 2px border replaces the 1px one
+    border: 2px solid $blue-deep;
+    background: $blue-tint;
+    color: $blue-deep;
+  }
+}
+
+.type-switch button:focus-visible,
+.chip:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+@include media-breakpoint-up(md) {
+  // In the side panel nothing floats, so drop the shadow.
+  .search-box {
+    box-shadow: none;
+  }
+
+  .filter-bar {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
