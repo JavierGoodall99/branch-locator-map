@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Raw source data (large, not redistributed); see scripts/build-sample-data.mjs
+data/raw/
