@@ -1,11 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DEFAULT_FILTERS, type LocatorFilters } from '../model/filters'
+import type { UseLocationResult } from '../model/useLocation'
 import { LocatorControls } from './LocatorControls'
+
+const idleLocation: UseLocationResult = { status: 'idle', request: vi.fn(), clear: vi.fn() }
 
 function setup(filters: LocatorFilters = DEFAULT_FILTERS) {
   const onChange = vi.fn()
-  render(<LocatorControls filters={filters} onChange={onChange} />)
+  render(<LocatorControls filters={filters} onChange={onChange} location={idleLocation} />)
   return { onChange }
 }
 
@@ -77,7 +80,7 @@ describe('LocatorControls', () => {
 
   it('maps "All provinces" back to no province', async () => {
     const onChange = vi.fn()
-    render(<LocatorControls filters={{ ...DEFAULT_FILTERS, province: 'Gauteng' }} onChange={onChange} />)
+    render(<LocatorControls filters={{ ...DEFAULT_FILTERS, province: 'Gauteng' }} onChange={onChange} location={idleLocation} />)
 
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Province' }), 'All provinces')
 

@@ -11,11 +11,13 @@ import {
   type LocatorFilters,
 } from './features/branches/model/filters'
 import { useBranches } from './features/branches/model/useBranches'
+import { useLocation } from './features/branches/model/useLocation'
 import { useNow } from './shared/hooks/useNow'
 
 function App() {
   const branches = useBranches()
   const now = useNow()
+  const location = useLocation()
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
@@ -31,7 +33,7 @@ function App() {
 
   return (
     <LocatorLayout
-      controls={<LocatorControls filters={filters} onChange={changeFilters} />}
+      controls={<LocatorControls filters={filters} onChange={changeFilters} location={location} />}
       results={
         <ResultsPanel
           state={branches}

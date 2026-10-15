@@ -130,3 +130,19 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
     box-shadow: none;
   }
 }
+
+.location-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacer * 0.25 $spacer * 0.75;
+
+  &__note {
+    flex: 1 1 12rem;
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: $body-secondary-color;
+  }
+}

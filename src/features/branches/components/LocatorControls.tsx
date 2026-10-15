@@ -1,11 +1,14 @@
 import { Form } from 'react-bootstrap'
 import { Icon, type IconName } from '../../../shared/ui/Icon'
 import { clearFilters, hasActiveFilters, type LocatorFilters, type ShowMode } from '../model/filters'
+import type { UseLocationResult } from '../model/useLocation'
 import { PROVINCES, type Province } from '../types'
+import { LocationControl } from './LocationControl'
 
 interface LocatorControlsProps {
   filters: LocatorFilters
   onChange: (filters: LocatorFilters) => void
+  location: UseLocationResult
 }
 
 const SHOW_OPTIONS: { value: ShowMode; label: string; icon?: IconName }[] = [
@@ -14,8 +17,8 @@ const SHOW_OPTIONS: { value: ShowMode; label: string; icon?: IconName }[] = [
   { value: 'both', label: 'Both' },
 ]
 
-/** Brand, search, the show switch and the filters. Every change goes up through onChange. */
-export function LocatorControls({ filters, onChange }: LocatorControlsProps) {
+/** Brand, search, the show switch, the filters and Near me. Filter changes go up through onChange. */
+export function LocatorControls({ filters, onChange, location }: LocatorControlsProps) {
   const set = (change: Partial<LocatorFilters>) => onChange({ ...filters, ...change })
 
   return (
@@ -88,6 +91,8 @@ export function LocatorControls({ filters, onChange }: LocatorControlsProps) {
           </button>
         )}
       </div>
+
+      <LocationControl location={location} />
     </>
   )
 }
