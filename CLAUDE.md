@@ -41,3 +41,23 @@ Run `npm run lint` and `npm run build` before considering a change done.
 - When a new Bootstrap component is used, add its module to `main.scss`.
 - Use theme tokens, not hard-coded hex values. Format money with `Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' })` and the `tabular-nums` class.
 - Pin dependency changes deliberately; this is a production app, so avoid alpha/beta/`next` packages.
+
+## Assessment context
+
+This repo is a Capitec Frontend Engineer technical assessment. The commit history is part of what reviewers evaluate, so work and history must read like a real-world engineering team's.
+
+- Deliver one of the three briefs (Customer Spending Insights Dashboard, Loan Eligibility Simulator, Branch Locator Map) using mocked data.
+- Required: production-grade code, a runnable multi-stage Dockerfile, and a README explaining how to build, run and test.
+- The GitHub repo must be public and submitted by 26 October.
+- Be able to explain every decision in an interview. Only document what has been verified; do not claim things about Capitec's internal stack.
+
+## Git workflow
+
+- Commit regularly: one logical change per commit, never a large batch of unrelated work.
+- Every commit must leave the project working. Before committing, run `npm run lint` and `npm run build`, plus the tests once they exist.
+- Write tests in the same commit as the code they cover, or in the commit right after it.
+- Use Conventional Commit messages: `feat:`, `fix:`, `test:`, `docs:`, `chore:`, `refactor:`, `style:`, `build:`. Use an imperative summary under about 72 characters, and add a short body when the reason is not obvious.
+- Commit messages are a conventional subject plus an optional body. Do not append trailers.
+- Stage files explicitly by name. Never commit secrets, `node_modules`, `dist` or scratch files.
+- Commit locally only. Do not push, force-push or rewrite history unless the user asks.
+- Keep `README.md`, `design.md` and this file in step with the code in the same commit that changes behavior.
