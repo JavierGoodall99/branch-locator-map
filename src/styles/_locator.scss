@@ -1,0 +1,120 @@
+// Branch locator page layout. Mobile first: full-bleed map with floating controls and a
+// results sheet; from md up, a side panel beside the map.
+
+$panel-width-md: 360px;
+$panel-width-xl: 400px;
+$sheet-top: 50%;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+}
+
+.locator {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  background: $white;
+}
+
+.locator__map {
+  position: absolute;
+  inset: 0;
+  background: #e8ecef; // quiet neutral behind the map tiles
+}
+
+.locator__controls {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: $spacer * 0.5;
+  padding: $spacer $spacer 0;
+  pointer-events: none; // let the map take drags between controls
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.locator__results {
+  position: absolute;
+  inset: $sheet-top 0 0;
+  z-index: 12;
+  overflow-y: auto;
+  background: $white;
+  border-radius: $border-radius-xl $border-radius-xl 0 0;
+  box-shadow: 0 -8px 24px rgba($black, 0.12);
+  padding: $spacer;
+
+  &:focus {
+    outline: none; // focus lands here only via the skip link
+  }
+}
+
+.locator__skip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  padding: $spacer * 0.75;
+  background: $white;
+  color: #000;
+  transform: translateY(-100%);
+
+  &:focus {
+    transform: none;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .locator {
+    display: grid;
+    grid-template-columns: $panel-width-md 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .locator__map {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1 / -1;
+  }
+
+  .locator__controls {
+    position: static;
+    grid-column: 1;
+    grid-row: 1;
+    padding: $spacer * 1.25 $spacer * 1.5 $spacer;
+    border-right: 1px solid $border-color;
+    background: $white;
+    pointer-events: auto;
+  }
+
+  .locator__results {
+    position: static;
+    grid-column: 1;
+    grid-row: 2;
+    border-radius: 0;
+    border-right: 1px solid $border-color;
+    box-shadow: none;
+    padding: $spacer $spacer * 1.5;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  .locator {
+    grid-template-columns: $panel-width-xl 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .locator__skip {
+    transition: transform 0.15s ease-out;
+  }
+}

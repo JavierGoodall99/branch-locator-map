@@ -1,15 +1,12 @@
-import { useState } from 'react'
-import { Button, Container } from 'react-bootstrap'
+import { LocatorLayout } from './features/branches/components/LocatorLayout'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <Container as="main" className="py-5">
-      <h1 className="mb-3">React + TypeScript + Vite + Bootstrap</h1>
-      <p className="text-body-secondary">Your app is ready.</p>
-      <Button onClick={() => setCount((c) => c + 1)}>Count is {count}</Button>
-    </Container>
+    <LocatorLayout
+      controls={<p className="small text-body-secondary m-0">Search and filters</p>}
+      results={<h1 className="h4">Branches and ATMs</h1>}
+      map={null}
+    />
   )
 }
 
