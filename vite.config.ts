@@ -12,6 +12,8 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    // Unit tests only. The end-to-end specs in e2e/ are run by Playwright, not Vitest.
+    include: ['src/**/*.test.{ts,tsx}'],
     setupFiles: ['./src/test/setup.ts'],
     css: false,
     // Starting one jsdom worker per core on a many-core machine can time out; a few is plenty.
