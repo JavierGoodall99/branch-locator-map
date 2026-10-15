@@ -44,6 +44,10 @@ $btn-padding-x: 1.5rem;
 $btn-font-size: 1rem;
 $btn-font-weight: 600;
 $btn-line-height: 1;
+// Small buttons: 44px tall, 16px text, per the locator design.
+$btn-padding-y-sm: 0;
+$btn-padding-x-sm: 1rem;
+$btn-font-size-sm: 1rem;
 $btn-border-width: 1.5px;
 $btn-border-radius: $border-radius-xl;
 $btn-border-radius-sm: $border-radius-lg;

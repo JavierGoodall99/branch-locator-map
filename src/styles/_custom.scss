@@ -29,7 +29,15 @@ h2,
   min-height: 3rem;
 }
 
+// Small buttons keep the 44px minimum touch target but not the full-size minimum width,
+// so Directions and Call can share a row on a phone.
+.btn-sm {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+}
 
+// Capitec's measured hover: #2259d0 background and border, white text.
+// Pressed keeps the hover colour (the source defines no separate pressed style).
 .btn-primary {
   --bs-btn-hover-bg: #{$blue-strong};
   --bs-btn-hover-border-color: #{$blue-strong};
