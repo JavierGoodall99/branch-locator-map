@@ -9,6 +9,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    // Starting one jsdom worker per core on a many-core machine can time out; a few is plenty.
+    maxWorkers: 4,
   },
   css: {
     preprocessorOptions: {
