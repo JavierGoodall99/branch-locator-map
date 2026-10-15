@@ -1,12 +1,15 @@
 import { Button } from 'react-bootstrap'
 import { filterBranches } from '../lib/filter'
+import { hasActiveFilters, toBranchFilters, type LocatorFilters } from '../model/filters'
 import type { UseBranchesResult } from '../model/useBranches'
 import type { Branch } from '../types'
 import { BranchCard } from './BranchCard'
 
 interface BranchResultsProps {
   state: UseBranchesResult
+  filters: LocatorFilters
   now: Date
+  onClearFilters: () => void
 }
 
 const byName = (a: Branch, b: Branch) => a.name.localeCompare(b.name)
@@ -35,9 +38,11 @@ function SkeletonList() {
 }
 
 /** The results heading and list, covering loading, error, empty and loaded states. */
-export function BranchResults({ state, now }: BranchResultsProps) {
+export function BranchResults({ state, filters, now, onClearFilters }: BranchResultsProps) {
   const branches =
-    state.status === 'success' ? filterBranches(state.branches, {}, now).sort(byName) : []
+    state.status === 'success'
+      ? filterBranches(state.branches, toBranchFilters(filters), now).sort(byName)
+      : []
 
   return (
     <>
@@ -63,8 +68,18 @@ export function BranchResults({ state, now }: BranchResultsProps) {
 
       {state.status === 'success' && branches.length === 0 && (
         <div className="results-message">
-          <h2 className="h4">No branches to show</h2>
-          <p>There are no open branches or ATMs in the data right now.</p>
+          {hasActiveFilters(filters) ? (
+            <>
+              <h2 className="h4">No matches found</h2>
+              <p>Try a different search, or clear your filters to see everything.</p>
+              <Button onClick={onClearFilters}>Clear filters</Button>
+            </>
+          ) : (
+            <>
+              <h2 className="h4">No branches to show</h2>
+              <p>There is nothing of this kind in the data right now. Try Both to see branches and ATMs.</p>
+            </>
+          )}
         </div>
       )}
 
