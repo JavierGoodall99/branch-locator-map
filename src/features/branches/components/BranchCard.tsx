@@ -1,16 +1,9 @@
-import { Icon, type IconName } from '../../../shared/ui/Icon'
+import { Icon } from '../../../shared/ui/Icon'
 import { getOpenStatus } from '../lib/hours'
 import { directionsUrl, telUrl } from '../lib/links'
 import type { Branch } from '../types'
+import { ServiceList } from './ServiceList'
 import { StatusChip } from './StatusChip'
-
-const SERVICE_ICONS: Record<string, IconName> = {
-  Branch: 'bank',
-  ATM: 'cash',
-  'Cash Accepting ATM': 'deposit',
-  'SmartID Services': 'idCard',
-  'Business Banking Centre': 'briefcase',
-}
 
 interface BranchCardProps {
   branch: Branch
@@ -32,14 +25,7 @@ export function BranchCard({ branch, now }: BranchCardProps) {
       <div className="mt-2">
         <StatusChip status={status} />
       </div>
-      <ul className="branch-card__services">
-        {branch.services.map((service) => (
-          <li key={service}>
-            <Icon name={SERVICE_ICONS[service] ?? 'info'} size={16} />
-            {service}
-          </li>
-        ))}
-      </ul>
+      <ServiceList services={branch.services} />
       <div className="branch-card__actions">
         <a
           className="btn btn-primary btn-sm flex-grow-1"
