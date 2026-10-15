@@ -1,0 +1,44 @@
+// The map and its status messages.
+
+.branch-map {
+  position: absolute;
+  inset: 0;
+
+  // MapLibre's stylesheet sets position: relative on this element after ours loads, so sizing
+  // by inset would collapse it to zero height. Give it an explicit size instead.
+  &__canvas {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.map-status {
+  position: absolute;
+  top: 36%;
+  left: 50%;
+  z-index: 1;
+  width: max-content;
+  max-width: calc(100% - #{$spacer * 2});
+  margin: 0;
+  padding: $spacer * 0.75 $spacer;
+  transform: translate(-50%, -50%);
+  border-radius: $border-radius-lg;
+  background: $white;
+  box-shadow: $box-shadow-lg;
+  color: $body-color;
+  text-align: center;
+}
+
+// On a phone the results sheet covers the bottom half of the map, so lift the zoom buttons
+// and the attribution above it. The attribution has to stay visible.
+@include media-breakpoint-down(md) {
+  .branch-map .maplibregl-ctrl-bottom-left,
+  .branch-map .maplibregl-ctrl-bottom-right {
+    bottom: 50%;
+  }
+}
+
+.branch-map .maplibregl-ctrl-group button {
+  width: 44px;
+  height: 44px;
+}

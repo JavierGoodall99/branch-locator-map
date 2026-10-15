@@ -4,6 +4,11 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    // MapLibre is about 1 MB (280 KB gzipped) and is loaded on its own after the page, so the
+    // default 500 KB warning does not apply to it.
+    chunkSizeWarningLimit: 1100,
+  },
   test: {
     environment: 'jsdom',
     globals: true,

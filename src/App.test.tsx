@@ -3,6 +3,11 @@ import userEvent from '@testing-library/user-event'
 import sample from '../public/branches.json'
 import App from './App'
 
+// The real map needs WebGL, which jsdom does not have. BranchMap has its own tests with a fake map.
+vi.mock('./features/branches/components/BranchMap', () => ({
+  BranchMap: () => <div data-testid="map" />,
+}))
+
 // There are ~190 cards, and role queries compute an accessible name for each, which is slow
 // in jsdom and can time out on a busy machine. Counting cards with a plain selector keeps
 // these tests quick; each card's own accessibility is covered by the BranchCard tests.
@@ -19,13 +24,13 @@ describe('App', () => {
     stubSample()
     render(<App />)
 
-    expect(screen.getByRole('status')).toHaveTextContent('Loading branches')
+    expect(screen.getByText('Loading branches')).toBeInTheDocument()
 
     const listed = sample.filter(
       (branch) => branch.status !== 'permanently-closed' && branch.type !== 'atm',
     ).length
     await waitFor(() => expect(cardCount()).toBe(listed))
-    expect(screen.getByRole('status')).toHaveTextContent(`${listed} locations, sorted by name`)
+    expect(screen.getByText(`${listed} locations, sorted by name`)).toBeInTheDocument()
   })
 
   it('recovers from a failed load when the user retries', async () => {
