@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop default split view</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="locator.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="lc" style="width:1440px;height:900px">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+<symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/></symbol>
+<symbol id="i-cash" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-deposit" viewBox="0 0 24 24"><path d="M12 4v10M8 10l4 4 4-4M5 20h14"/></symbol>
+<symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M3 13h18"/></symbol>
+<symbol id="i-24h" viewBox="0 0 24 24"><path d="M20 12a8 8 0 01-14 5M4 12a8 8 0 0114-5M18 3v4h-4M6 21v-4h4"/></symbol>
+<symbol id="i-wheel" viewBox="0 0 24 24"><circle cx="10" cy="4.5" r="1.5"/><path d="M10 8v6h5l3 5M7 12a5 5 0 105 7"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M5 16v-4l2-5h10l2 5v4M3 16h18M7 19v-3M17 19v-3"/></symbol>
+<symbol id="i-nav" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></symbol>
+<symbol id="i-bm" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14a8 8 0 01-10-10 8 8 0 1010 10z"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-3-6M20 4v5h-5"/></symbol>
+<symbol id="i-lang" viewBox="0 0 24 24"><path d="M4 5h9M8.5 3v2M6 5c0 4 3 7 7 8M11 5c0 4-3 7-7 8M13 21l4.5-10L22 21M14.5 18h6"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+</defs></svg>
+
+<div class="map" style="left:400px" aria-hidden="true">
+  <div class="water" style="left:-80px;top:560px;width:380px;height:420px"></div>
+  <div class="park" style="left:520px;top:300px;width:240px;height:170px"></div>
+  <div class="park" style="left:200px;top:120px;width:150px;height:100px"></div>
+  <span class="lbl" style="left:140px;top:260px">CLAREMONT</span><span class="lbl" style="left:640px;top:520px">NEWLANDS</span><span class="lbl" style="left:420px;top:100px">RONDEBOSCH</span>
+  <div class="me" style="left:380px;top:420px"></div>
+  <div class="pin pin-b" style="left:260px;top:360px"><svg class="i s"><use href="#i-bank"/></svg></div>
+  <div class="pin pin-b" style="left:560px;top:250px"><svg class="i s"><use href="#i-bank"/></svg></div>
+  <div class="pin pin-b" style="left:760px;top:620px"><svg class="i s"><use href="#i-bank"/></svg></div>
+  <div class="pin pin-a" style="left:330px;top:540px"><svg class="i s"><use href="#i-cash"/></svg></div>
+  <div class="pin pin-a" style="left:640px;top:430px"><svg class="i s"><use href="#i-cash"/></svg></div>
+  <div class="pin pin-a" style="left:880px;top:300px"><svg class="i s"><use href="#i-cash"/></svg></div>
+  <div class="pin pin-c" style="left:130px;top:620px">12</div>
+  <div class="pin pin-c" style="left:900px;top:560px">8</div>
+  <div class="pin pin-c" style="left:200px;top:210px">5</div>
+</div>
+<button type="button" class="btn btn-o" style="position:absolute;left:660px;top:24px;box-shadow:var(--app-shadow-floating);border-color:transparent;z-index:8"><svg class="i s" aria-hidden="true"><use href="#i-refresh"/></svg>Search this area</button>
+<div style="position:absolute;right:24px;bottom:32px;display:flex;flex-direction:column;gap:8px;z-index:8">
+  <button type="button" class="ib float" aria-label="Zoom in"><svg class="i"><use href="#i-plus"/></svg></button>
+  <button type="button" class="ib float" aria-label="Zoom out"><svg class="i"><use href="#i-minus"/></svg></button>
+  <button type="button" class="ib float" aria-label="Use my location"><svg class="i"><use href="#i-locate"/></svg></button>
+</div>
+<div style="position:absolute;left:424px;bottom:24px;background:#fff;border-radius:var(--app-radius-md);padding:8px 16px;display:flex;gap:16px;font-size:14px;font-weight:600;z-index:8;border:1px solid var(--lc-hairline)" role="group" aria-label="Map key">
+  <span style="display:flex;gap:8px;align-items:center"><span class="pin-b" style="position:static;width:24px;height:24px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:var(--app-primary);color:#fff"><svg class="i xs"><use href="#i-bank"/></svg></span>Branch</span>
+  <span style="display:flex;gap:8px;align-items:center"><span style="width:24px;height:24px;border-radius:50%;border:3px solid var(--app-primary-deep);display:inline-flex;align-items:center;justify-content:center;color:var(--app-primary-deep)"><svg class="i xs"><use href="#i-cash"/></svg></span>ATM</span>
+  <span style="display:flex;gap:8px;align-items:center"><span style="min-width:24px;height:24px;border-radius:12px;background:var(--app-primary-deep);color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px">12</span>Group</span>
+</div>
+
+<aside style="position:absolute;left:0;top:0;bottom:0;width:400px;background:#fff;border-right:1px solid var(--app-border);z-index:10;display:flex;flex-direction:column">
+  <header style="padding:20px 24px 16px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div><p class="h4" style="margin:0;color:var(--app-primary-deep)">Capitec</p><p class="cap">Find a branch or ATM</p></div>
+      <div style="display:flex;gap:4px"><button type="button" class="btn btn-t btn-sm" style="padding:0 12px" aria-label="Language: English. Change language"><svg class="i s" aria-hidden="true"><use href="#i-lang"/></svg>EN</button><button type="button" class="ib" style="border:0" aria-label="Saved branches"><svg class="i"><use href="#i-bm"/></svg></button></div></div>
+    <form role="search" class="inp"><svg class="i s" aria-hidden="true"><use href="#i-search"/></svg><label for="q" style="position:absolute;left:-999px">Search for a place, suburb, town or postcode</label><input id="q" type="search" placeholder="Suburb, town or postcode"><button type="button" class="ib" style="border:0;color:var(--app-primary-strong)" aria-label="Use my location"><svg class="i s"><use href="#i-locate"/></svg></button></form>
+    <div class="seg" role="group" aria-label="Show"><button type="button" aria-pressed="true"><svg class="i s" aria-hidden="true"><use href="#i-bank"/></svg>Branches</button><button type="button" aria-pressed="false"><svg class="i s" aria-hidden="true"><use href="#i-cash"/></svg>ATMs</button><button type="button" aria-pressed="false">Both</button></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="chip"><svg class="i s" aria-hidden="true"><use href="#i-filter"/></svg>Filters</button><button type="button" class="chip on" aria-pressed="true">Open now<svg class="i xs" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+  </header>
+  <div class="divider"></div>
+  <main style="flex:1;overflow:hidden">
+    <div style="padding:16px 24px 8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div><h1 class="h4" style="margin:0">Open branches near you</h1><p class="cap num">7 results · nearest first</p></div><span class="sample">Sample data</span></div>
+    <ul style="padding:0 24px 16px;display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{cards}}" as="c" hint-placeholder-count="3">
+      <li><article class="card" tabindex="0" aria-label="{{c.name}}">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><h2 class="h4" style="margin:0">{{c.name}}</h2><span class="body-s num" style="color:var(--app-ink);white-space:nowrap">{{c.km}}</span></div>
+        <p class="cap" style="font-size:14px;margin-top:2px">{{c.sub}}</p>
+        <div style="margin-top:8px"><span class="st {{c.stCls}}"><svg class="i xs" aria-hidden="true"><use href="{{c.stIcon}}"/></svg>{{c.stText}}</span></div>
+        <ul class="svc" style="margin-top:12px"><sc-for list="{{c.svc}}" as="s" hint-placeholder-count="3"><li><svg class="i xs" aria-hidden="true"><use href="{{s.icon}}"/></svg>{{s.label}}</li></sc-for></ul>
+        <div style="display:flex;gap:8px;margin-top:16px;align-items:center"><a href="#" class="btn btn-sm" style="flex:1"><svg class="i s" aria-hidden="true"><use href="#i-nav"/></svg>Directions</a><button type="button" class="btn btn-t btn-sm"><svg class="i s" aria-hidden="true"><use href="#i-phone"/></svg>Call</button><button type="button" class="btn btn-t btn-sm"><svg class="i s" aria-hidden="true"><use href="#i-bm"/></svg>Save</button></div>
+      </article></li>
+      </sc-for>
+    </ul>
+  </main>
+</aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const I = { dep:['#i-deposit','Cash deposits'], biz:['#i-brief','Business banking'], h24:['#i-24h','24h ATM'], wheel:['#i-wheel','Wheelchair access'], park:['#i-car','Parking'] };
+    const S = { open:['st-open','#i-check'], soon:['st-soon','#i-clock'], closed:['st-closed','#i-moon'] };
+    const mk = (name, sub, km, st, stText, svc) => ({ name, sub, km, stCls:S[st][0], stIcon:S[st][1], stText, svc: svc.map(k => ({ icon:I[k][0], label:I[k][1] })) });
+    return { cards: [
+      mk('Capitec Cavendish Square','Claremont, Cape Town','0.4 km','soon','Closing soon · closes 17:00',['dep','biz','wheel','park']),
+      mk('Capitec ATM · Claremont Station','Claremont, Cape Town','0.9 km','open','Open · 24 hours',['dep','h24']),
+      mk('Capitec Kenilworth Centre','Kenilworth, Cape Town','2.1 km','closed','Closed · opens 08:00 tomorrow',['wheel','park'])
+    ] };
+  }
+}
+</script>
+</body>
+</html>

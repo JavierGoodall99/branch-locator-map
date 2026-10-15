@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mobile branch detail</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="locator.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}.sec{padding:24px 16px 0;display:flex;flex-direction:column;gap:8px}.hr{display:flex;justify-content:space-between;padding:8px 12px;border-radius:8px;font-size:16px;min-height:40px;align-items:center}.hr.today{background:var(--app-primary-tint);color:var(--app-primary-deep);font-weight:700;outline:2px solid var(--app-primary-deep);outline-offset:-2px}.ck{display:flex;gap:16px;align-items:center;min-height:48px;cursor:pointer}.ck input{width:24px;height:24px;accent-color:var(--app-primary-deep);margin:0}</style>
+</helmet>
+<div class="lc" style="width:375px;height:1180px">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/></symbol>
+<symbol id="i-nav" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></symbol>
+<symbol id="i-bm" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+<symbol id="i-chev-l" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+<symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h13l-2 4 2 4H5"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-deposit" viewBox="0 0 24 24"><path d="M12 4v10M8 10l4 4 4-4M5 20h14"/></symbol>
+<symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M3 13h18"/></symbol>
+<symbol id="i-wheel" viewBox="0 0 24 24"><circle cx="10" cy="4.5" r="1.5"/><path d="M10 8v6h5l3 5M7 12a5 5 0 105 7"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M5 16v-4l2-5h10l2 5v4M3 16h18M7 19v-3M17 19v-3"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4L10 14M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></symbol>
+</defs></svg>
+
+<div class="map" style="height:104px;bottom:auto" aria-hidden="true">
+  <div class="pin pin-sel" style="left:187px;top:60px"><svg class="i"><use href="#i-bank"/></svg></div>
+</div>
+
+<main class="sheet" style="top:80px;bottom:0;position:absolute;overflow:hidden">
+  <div class="grab"><i></i></div>
+  <nav aria-label="Result navigation" style="display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 4px">
+    <button type="button" class="btn btn-t"><svg class="i s" aria-hidden="true"><use href="#i-chev-l"/></svg>Results</button>
+    <div style="display:flex;align-items:center;gap:4px">
+      <button type="button" class="ib" style="border:0" aria-label="Previous result: Capitec ATM Claremont Station"><svg class="i"><use href="#i-chev-l"/></svg></button>
+      <span class="cap num" style="color:var(--app-ink);font-weight:700">1 of 7</span>
+      <button type="button" class="ib" style="border:0" aria-label="Next result: Capitec Kenilworth Centre"><svg class="i"><use href="#i-chev-r"/></svg></button>
+    </div>
+  </nav>
+
+  <div style="padding:8px 16px 0">
+    <span class="sample">Sample data</span>
+    <h1 class="h3" style="margin:4px 0 4px">Capitec Cavendish Square</h1>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="st st-soon"><svg class="i xs" aria-hidden="true"><use href="#i-clock"/></svg>Closing soon · closes 17:00</span><span class="body-s num" style="color:var(--app-ink)">0.4 km</span></div>
+    <a href="#" class="btn" style="width:100%;margin-top:16px;min-height:52px"><svg class="i" aria-hidden="true"><use href="#i-nav"/></svg>Directions</a>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button type="button" class="btn btn-o btn-sm" style="flex:1"><svg class="i s" aria-hidden="true"><use href="#i-phone"/></svg>Call</button>
+      <button type="button" class="btn btn-o btn-sm" style="flex:1"><svg class="i s" aria-hidden="true"><use href="#i-bm"/></svg>Save</button>
+      <button type="button" class="btn btn-o btn-sm" style="flex:1"><svg class="i s" aria-hidden="true"><use href="#i-share"/></svg>Share</button>
+    </div>
+  </div>
+
+  <section class="sec">
+    <h2 class="h4">Address and phone</h2>
+    <div style="display:flex;gap:12px;align-items:flex-start;justify-content:space-between">
+      <address style="font-style:normal;color:var(--app-text)">Cavendish Square, Dreyer Street<br>Claremont, Cape Town, 7708</address>
+      <button type="button" class="btn btn-o btn-sm"><svg class="i s" aria-hidden="true"><use href="#i-copy"/></svg>Copy</button>
+    </div>
+    <a href="tel:0000000000" class="num" style="color:var(--app-primary-strong);font-weight:600;min-height:44px;display:flex;align-items:center">[Branch phone from feed]</a>
+  </section>
+
+  <section class="sec">
+    <h2 class="h4">Opening hours</h2>
+    <div role="table" aria-label="Weekly opening hours" class="num">
+      <div class="hr"><span>Monday</span><span>09:00 – 17:00</span></div>
+      <div class="hr"><span>Tuesday</span><span>09:00 – 17:00</span></div>
+      <div class="hr"><span>Wednesday</span><span>09:00 – 17:00</span></div>
+      <div class="hr today" aria-current="date"><span>Thursday · Today</span><span>09:00 – 17:00</span></div>
+      <div class="hr"><span>Friday</span><span>09:00 – 17:00</span></div>
+      <div class="hr"><span>Saturday</span><span>08:30 – 13:00</span></div>
+      <div class="hr"><span>Sunday</span><span>Closed</span></div>
+    </div>
+    <p class="cap" style="font-size:14px">Public holidays: usually closed. Hours can change, so check before you travel.</p>
+  </section>
+
+  <section class="sec">
+    <h2 class="h4">Services</h2>
+    <ul class="svc" style="gap:8px 16px">
+      <li style="font-size:16px"><svg class="i s" aria-hidden="true"><use href="#i-deposit"/></svg>Cash deposits</li>
+      <li style="font-size:16px"><svg class="i s" aria-hidden="true"><use href="#i-brief"/></svg>Business banking</li>
+      <li style="font-size:16px"><svg class="i s" aria-hidden="true"><use href="#i-wheel"/></svg>Wheelchair access</li>
+      <li style="font-size:16px"><svg class="i s" aria-hidden="true"><use href="#i-car"/></svg>Parking</li>
+    </ul>
+    <p class="muted" style="font-size:14px">Step-free entrance from the mall concourse. Lift to the parking levels.</p>
+  </section>
+
+  <section class="sec">
+    <h2 class="h4">What to bring</h2>
+    <label class="ck"><input type="checkbox"><span>Your ID</span></label>
+    <label class="ck"><input type="checkbox"><span>Proof of address, if you are changing your details</span></label>
+  </section>
+
+  <section class="sec">
+    <h2 class="h4">Open in</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="#" class="btn btn-o btn-sm">Google Maps</a><a href="#" class="btn btn-o btn-sm">Apple Maps</a><a href="#" class="btn btn-o btn-sm">Waze</a>
+    </div>
+    <button type="button" class="btn btn-t" style="justify-content:flex-start;padding:0;margin-top:8px;text-decoration:underline"><svg class="i s" aria-hidden="true"><use href="#i-flag"/></svg>Report incorrect info</button>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":375,"height":1180}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

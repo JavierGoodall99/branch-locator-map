@@ -1,0 +1,52 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-10-15T09:55:00Z" },
+  "title": "Capitec Branch Map Locator",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 375, "h": 812, "title": "M1 · Default, map + half sheet" },
+    "m-search.dc.html": { "x": 455, "y": 0, "w": 375, "h": 812, "title": "M2 · Search + autosuggest" },
+    "m-filters.dc.html": { "x": 910, "y": 0, "w": 375, "h": 812, "title": "M3 · Filter sheet" },
+    "m-detail.dc.html": { "x": 1365, "y": 0, "w": 375, "h": 1180, "title": "M4 · Branch detail (full sheet)" },
+    "m-saved.dc.html": { "x": 1820, "y": 0, "w": 375, "h": 812, "title": "M5 · Saved + home branch" },
+    "m-language.dc.html": { "x": 2275, "y": 0, "w": 375, "h": 812, "title": "M6 · Language switcher (AF, long strings)" },
+    "t-default.dc.html": { "x": 0, "y": 1480, "w": 834, "h": 1112, "title": "T1 · Tablet default, side panel" },
+    "t-detail.dc.html": { "x": 914, "y": 1480, "w": 834, "h": 1112, "title": "T2 · Tablet branch detail" },
+    "t-overlays.dc.html": { "x": 1828, "y": 1480, "w": 834, "h": 1112, "title": "T3 · Tablet filters, saved, language" },
+    "d-default.dc.html": { "x": 0, "y": 2892, "w": 1440, "h": 900, "title": "D1 · Desktop default, split view" },
+    "d-detail.dc.html": { "x": 1520, "y": 2892, "w": 1440, "h": 900, "title": "D2 · Desktop branch detail" },
+    "d-overlays.dc.html": { "x": 3040, "y": 2892, "w": 1440, "h": 900, "title": "D3 · Desktop search, filters, saved, language" },
+    "s-states-a.dc.html": { "x": 0, "y": 4092, "w": 1260, "h": 900, "title": "S1 · Loading, no results, location denied" },
+    "s-states-b.dc.html": { "x": 1340, "y": 4092, "w": 1260, "h": 900, "title": "S2 · Offline, map failed, error" },
+    "components.dc.html": { "x": 0, "y": 5292, "w": 1440, "h": 2650, "title": "C · Component sheet" },
+    "prototype.dc.html": { "x": 1520, "y": 5292, "w": 375, "h": 812, "title": "P · Clickable prototype (main flow)", "is_interactive": true },
+    "rationale.dc.html": { "x": 0, "y": 8300, "w": 1000, "h": 1700, "title": "R · Design rationale" },
+    "motion-a11y.dc.html": { "x": 1080, "y": 8300, "w": 1000, "h": 2150, "title": "A · Motion + accessibility spec" },
+    "handoff.dc.html": { "x": 2160, "y": 8300, "w": 1000, "h": 2200, "title": "H · Handoff notes" }
+  },
+  "order": [
+    "Main.dc.html", "m-search.dc.html", "m-filters.dc.html", "m-detail.dc.html", "m-saved.dc.html", "m-language.dc.html",
+    "t-default.dc.html", "t-detail.dc.html", "t-overlays.dc.html",
+    "d-default.dc.html", "d-detail.dc.html", "d-overlays.dc.html",
+    "s-states-a.dc.html", "s-states-b.dc.html", "components.dc.html", "prototype.dc.html",
+    "rationale.dc.html", "motion-a11y.dc.html", "handoff.dc.html"
+  ],
+  "notes": {
+    "n-m": { "x": 0, "y": -300, "text": "Mobile · 375px · sample content", "kind": "title1", "maxW": 2650 },
+    "n-t": { "x": 0, "y": 1220, "text": "Tablet · 834px", "kind": "title1", "maxW": 2662 },
+    "n-d": { "x": 0, "y": 2640, "text": "Desktop · 1440px", "kind": "title1", "maxW": 4480 },
+    "n-s": { "x": 0, "y": 3830, "text": "States · mobile", "kind": "title1", "maxW": 2600 },
+    "n-c": { "x": 0, "y": 5030, "text": "Components + prototype", "kind": "title1", "maxW": 1895 },
+    "n-r": { "x": 0, "y": 8000, "text": "Rationale, motion + accessibility, handoff", "kind": "title1", "maxW": 3160 }
+  },
+  "designSystems": [
+    {
+      "title": "App Design System",
+      "namespace": "app-design-system",
+      "artifact": "https://claude.ai/code/artifact/2aaa3826-ce02-425a-a075-efec2f523d9f",
+      "version": "1792053793-640d",
+      "copiedAt": "2026-10-15T09:55:00Z"
+    }
+  ]
+}

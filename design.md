@@ -167,3 +167,19 @@ Components come from `react-bootstrap`; Bootstrap's own JavaScript is not loaded
 
 - Dark mode: skipped for now (Bootstrap's `data-bs-theme` can be added later).
 - Which of the three assessment projects this system is applied to.
+## Branch locator: scope and decisions
+
+Source design: `design/branch-locator/` (exported from Claude Design; view the `.dc.html` files there for layouts at 375, 834 and 1440px). It is a reference for layout and behavior. Where it differs from this file, this file wins.
+
+| Topic | Decision |
+| --- | --- |
+| Button color | Our theme: `#2f70ef` default, `#2259d0` hover and pressed, white label. The design's `#2259d0` default is not used. |
+| Services | Only what the sample data has: Branch, ATM, SmartID Services, Cash Accepting ATM, Business Banking Centre. No wheelchair, parking or forex until the data has them. |
+| Hours | One daily open and close time per site, computed in South African time. No weekly schedules or holiday overrides yet. |
+| Cut from scope | Saved and home branch, language switcher, offline caching, "report incorrect info". |
+| Kept | Map with list, search, filters, nearest-first sorting, open-now status, branch detail, location permission with a fallback, loading, empty and error states. |
+| Map | MapLibre GL with OpenFreeMap tiles. |
+| Open status | Open, Closing soon (under 60 minutes) and Closed, each shown with an icon and a word, never color alone. |
+| Layout | Below 768px: full-bleed map with a bottom sheet. From 768px: side panel (360px, 400px from 1200px) beside the map. |
+
+Everything cut or deferred can be added later without reworking the data layer.

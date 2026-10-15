@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop search, filters, saved and language</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="locator.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body{margin:0}.cell{position:absolute;width:720px;height:450px;overflow:hidden;border:1px solid var(--app-border)}.tag{position:absolute;right:16px;bottom:16px;z-index:30;background:var(--app-ink);color:#fff;font:700 12px var(--font-sans);padding:4px 12px;border-radius:30px}.fr{display:flex;align-items:center;gap:12px;min-height:48px;border-bottom:1px solid var(--app-border);cursor:pointer}.fr input{width:24px;height:24px;accent-color:var(--app-primary-deep);margin:0;flex:none}.fr span{flex:1;font-weight:500;color:var(--app-ink)}.lg{display:flex;align-items:center;gap:16px;min-height:56px;padding:4px 16px;cursor:pointer;border-bottom:1px solid var(--app-border)}.lg input{width:24px;height:24px;accent-color:var(--app-primary-deep);margin:0}.lg.on{background:var(--app-primary-tint)}.home{display:inline-flex;align-items:center;gap:6px;font:700 14px/1.3 var(--font-sans);color:var(--app-primary-deep);background:var(--app-primary-tint);padding:2px 12px 2px 8px;border-radius:30px}</style>
+</helmet>
+<div class="lc" style="width:1440px;height:900px;background:#fff">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+<symbol id="i-cash" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v10h12V10"/></symbol>
+<symbol id="i-lang" viewBox="0 0 24 24"><path d="M4 5h9M8.5 3v2M6 5c0 4 3 7 7 8M11 5c0 4-3 7-7 8M13 21l4.5-10L22 21M14.5 18h6"/></symbol>
+</defs></svg>
+
+<!-- A: search with autosuggest -->
+<div class="cell" style="left:0;top:0">
+  <div class="map" aria-hidden="true"></div>
+  <aside style="position:absolute;left:0;top:0;bottom:0;width:400px;background:#fff;border-right:1px solid var(--app-border);padding:20px 24px;z-index:5">
+    <form role="search" class="inp" style="outline:2px solid var(--app-ink);outline-offset:2px"><svg class="i s" aria-hidden="true"><use href="#i-search"/></svg><label for="q" style="position:absolute;left:-999px">Search for a place, suburb, town or postcode</label><input id="q" type="search" role="combobox" aria-expanded="true" aria-controls="sug" value="Clar"><button type="button" class="ib" style="border:0" aria-label="Clear search"><svg class="i s"><use href="#i-x"/></svg></button></form>
+    <div id="sug" role="listbox" aria-label="Suggestions" style="margin-top:8px;border:1px solid var(--lc-hairline);border-radius:var(--app-radius-md);box-shadow:var(--app-shadow-floating);overflow:hidden;background:#fff">
+      <button type="button" class="row" style="background:var(--app-primary-tint)"><svg class="i s" aria-hidden="true"><use href="#i-locate"/></svg><span class="body-s" style="color:var(--app-ink)">Use my location</span></button>
+      <button type="button" class="row"><svg class="i s" aria-hidden="true"><use href="#i-pin"/></svg><span><b style="color:var(--app-ink)">Clar</b>emont, Cape Town<br><span class="cap">Suburb · 7708</span></span></button>
+      <button type="button" class="row"><svg class="i s" aria-hidden="true"><use href="#i-cash"/></svg><span><b style="color:var(--app-ink)">Clar</b>emont Station ATM<br><span class="cap">ATM · Cape Town</span></span></button>
+      <button type="button" class="row"><svg class="i s" aria-hidden="true"><use href="#i-clock"/></svg><span style="flex:1">Sandton City <span class="cap">· recent</span></span></button>
+    </div>
+  </aside>
+  <span class="tag">Search · focus + autosuggest</span>
+</div>
+
+<!-- B: filters -->
+<div class="cell" style="left:720px;top:0">
+  <div class="map" aria-hidden="true"></div><div style="position:absolute;inset:0;background:var(--lc-scrim)"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="ft" style="position:absolute;left:110px;top:24px;width:500px;background:#fff;border-radius:var(--app-radius-md);box-shadow:var(--app-shadow-floating);padding:8px 24px 20px;z-index:10">
+    <div style="display:flex;align-items:center;justify-content:space-between"><h1 id="ft" class="h4" style="margin:0">Filters</h1><button type="button" class="ib" style="border:0" aria-label="Close filters"><svg class="i"><use href="#i-x"/></svg></button></div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px">
+      <label class="fr"><input type="checkbox" checked><span>Open now</span></label><label class="fr"><input type="checkbox"><span>ATM with deposits</span></label>
+      <label class="fr"><input type="checkbox"><span>Open Saturday</span></label><label class="fr"><input type="checkbox"><span>24-hour access</span></label>
+      <label class="fr"><input type="checkbox"><span>Open Sunday / holidays</span></label><label class="fr"><input type="checkbox"><span>Wheelchair accessible</span></label>
+      <label class="fr"><input type="checkbox"><span>Business banking</span></label>
+    </div>
+    <div class="seg" style="margin-top:16px"><button type="button" aria-pressed="true">Sort: Distance</button><button type="button" aria-pressed="false">Sort: Name A–Z</button></div>
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end"><button type="button" class="btn btn-t">Clear all</button><button type="button" class="btn">Show 3 results</button></div>
+  </section>
+  <span class="tag">Filters · modal dialog</span>
+</div>
+
+<!-- C: saved -->
+<div class="cell" style="left:0;top:450px">
+  <div class="map" style="left:400px" aria-hidden="true"></div>
+  <aside style="position:absolute;left:0;top:0;bottom:0;width:400px;background:#fff;border-right:1px solid var(--app-border);padding:20px 24px;z-index:5">
+    <h1 class="h4" style="margin:0">Saved branches</h1>
+    <article class="card sel" style="margin-top:12px"><span class="home"><svg class="i xs" aria-hidden="true"><use href="#i-home"/></svg>Home branch</span>
+      <div style="display:flex;justify-content:space-between;gap:8px;margin-top:4px"><h2 class="h4" style="margin:0">Capitec Stellenbosch Eikestad</h2><span class="body-s num" style="color:var(--app-ink)">41 km</span></div>
+      <div style="margin-top:4px"><span class="st st-open"><svg class="i xs" aria-hidden="true"><use href="#i-check"/></svg>Open · closes 17:00</span></div></article>
+    <article class="card" style="margin-top:8px"><div style="display:flex;justify-content:space-between;gap:8px"><h2 class="h4" style="margin:0">Capitec Sandton City</h2><span class="body-s num" style="color:var(--app-ink)">1 402 km</span></div>
+      <div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn btn-o btn-sm"><svg class="i s" aria-hidden="true"><use href="#i-home"/></svg>Set as home</button><button type="button" class="btn btn-t btn-sm">Remove</button></div></article>
+  </aside>
+  <span class="tag">Saved · panel view</span>
+</div>
+
+<!-- D: language -->
+<div class="cell" style="left:720px;top:450px">
+  <div class="map" style="left:400px" aria-hidden="true"></div>
+  <aside style="position:absolute;left:0;top:0;bottom:0;width:400px;background:#fff;border-right:1px solid var(--app-border);padding:20px 24px;z-index:5"><div style="display:flex;justify-content:flex-end"><button type="button" class="btn btn-t btn-sm focus" style="padding:0 12px" aria-haspopup="menu" aria-expanded="true"><svg class="i s" aria-hidden="true"><use href="#i-lang"/></svg>EN</button></div></aside>
+  <section role="dialog" aria-label="Language" style="position:absolute;left:160px;top:68px;width:240px;background:#fff;border-radius:var(--app-radius-md);box-shadow:var(--app-shadow-floating);overflow:hidden;z-index:10">
+    <label class="lg on"><input type="radio" name="l" checked><b style="color:var(--app-ink)">English</b></label>
+    <label class="lg"><input type="radio" name="l"><b style="color:var(--app-ink)">Afrikaans</b></label>
+    <label class="lg" style="border:0"><input type="radio" name="l"><b style="color:var(--app-ink)">isiZulu</b></label>
+  </section>
+  <span class="tag">Language · menu popover</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>
