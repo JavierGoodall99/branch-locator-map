@@ -10,12 +10,12 @@ export const WIDE_LAYOUT_QUERY = '(min-width: 768px)'
 
 /**
  * Space to keep clear when moving the map. On a phone the controls cover the top and the
- * results sheet covers the bottom half, so the visible map is a band in between; on wider
+ * results sheet covers the bottom 45%, so the visible map is a band in between; on wider
  * screens the panel sits beside the map and only a small margin is needed.
  */
 export function viewPadding(isWide: boolean, height: number): Padding {
   if (isWide) return { top: 48, right: 48, bottom: 48, left: 48 }
-  return { top: Math.round(height * 0.3), right: 24, bottom: Math.round(height * 0.5), left: 24 }
+  return { top: Math.round(height * 0.34), right: 24, bottom: Math.round(height * 0.45), left: 24 }
 }
 
 /** Whether the browser is in the wide layout. Safe where matchMedia does not exist. */

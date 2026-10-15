@@ -5,8 +5,8 @@ describe('viewPadding', () => {
     expect(viewPadding(true, 900)).toEqual({ top: 48, right: 48, bottom: 48, left: 48 })
   })
 
-  it('keeps the top controls and the bottom half sheet clear on a phone', () => {
-    expect(viewPadding(false, 800)).toEqual({ top: 240, right: 24, bottom: 400, left: 24 })
+  it('keeps the top controls and the results sheet clear on a phone', () => {
+    expect(viewPadding(false, 800)).toEqual({ top: 272, right: 24, bottom: 360, left: 24 })
   })
 })
 
