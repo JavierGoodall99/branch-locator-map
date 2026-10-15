@@ -73,3 +73,75 @@
     margin-top: $spacer;
   }
 }
+
+// Results panel
+.results-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacer * 0.5;
+  margin-bottom: $spacer * 0.75;
+
+  &__count {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: $body-secondary-color;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.sample-badge {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: $border-radius-sm;
+  background: $blue-tint;
+  color: $blue-deep;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacer * 0.75;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.results-message {
+  padding: $spacer;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+
+  p {
+    color: $body-secondary-color;
+  }
+}
+
+.brand {
+  color: $blue-deep;
+}
+
+// Placeholder shape while branches load. Static when the viewer prefers less motion.
+.skeleton {
+  border-radius: $border-radius-sm;
+  background: linear-gradient(90deg, #eef1f3 0, #e2e8ec 50%, #eef1f3 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
