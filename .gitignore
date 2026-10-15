@@ -25,3 +25,6 @@ dist-ssr
 
 # Raw source data (large, not redistributed); see scripts/build-sample-data.mjs
 data/raw/
+
+# Browser tooling output
+.playwright-mcp/
