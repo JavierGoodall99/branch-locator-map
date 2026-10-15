@@ -2,16 +2,19 @@ export type BranchType = 'branch' | 'atm' | 'business-centre'
 
 export type TradingStatus = 'open' | 'temporarily-closed' | 'permanently-closed'
 
-export type Province =
-  | 'Eastern Cape'
-  | 'Free State'
-  | 'Gauteng'
-  | 'KwaZulu-Natal'
-  | 'Limpopo'
-  | 'Mpumalanga'
-  | 'North West'
-  | 'Northern Cape'
-  | 'Western Cape'
+export const PROVINCES = [
+  'Eastern Cape',
+  'Free State',
+  'Gauteng',
+  'KwaZulu-Natal',
+  'Limpopo',
+  'Mpumalanga',
+  'North West',
+  'Northern Cape',
+  'Western Cape',
+] as const
+
+export type Province = (typeof PROVINCES)[number]
 
 export interface Coordinates {
   lat: number

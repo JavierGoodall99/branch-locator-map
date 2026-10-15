@@ -1,18 +1,7 @@
-import type { Branch, BranchType, Province, TradingStatus } from '../types'
+import { PROVINCES, type Branch, type BranchType, type TradingStatus } from '../types'
 
 const BRANCH_TYPES: readonly BranchType[] = ['branch', 'atm', 'business-centre']
 const STATUSES: readonly TradingStatus[] = ['open', 'temporarily-closed', 'permanently-closed']
-const PROVINCES: readonly Province[] = [
-  'Eastern Cape',
-  'Free State',
-  'Gauteng',
-  'KwaZulu-Natal',
-  'Limpopo',
-  'Mpumalanga',
-  'North West',
-  'Northern Cape',
-  'Western Cape',
-]
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$|^24:00$/
 
 export class BranchesApiError extends Error {
