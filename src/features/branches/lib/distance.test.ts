@@ -1,5 +1,5 @@
 import type { Branch } from '../types'
-import { haversineKm, withDistanceFrom } from './distance'
+import { formatDistance, haversineKm, withDistanceFrom } from './distance'
 
 const johannesburg = { lat: -26.2041, lng: 28.0473 }
 const capeTown = { lat: -33.9249, lng: 18.4241 }
@@ -62,5 +62,21 @@ describe('withDistanceFrom', () => {
     const input = [branch('x', -26.2, 28.05)]
     withDistanceFrom(input, johannesburg)
     expect(input[0]).not.toHaveProperty('distanceKm')
+  })
+})
+
+describe('formatDistance', () => {
+  it.each([
+    [0.4, '400 m'],
+    [0.437, '440 m'],
+    [0.05, '50 m'],
+    [0.996, '1,0 km'],
+    [1, '1,0 km'],
+    [2.34, '2,3 km'],
+    [9.96, '10 km'],
+    [47.4, '47 km'],
+    [47.6, '48 km'],
+  ])('shows %s km as %s', (km, expected) => {
+    expect(formatDistance(km)).toBe(expected)
   })
 })

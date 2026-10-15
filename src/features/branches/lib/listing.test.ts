@@ -49,3 +49,35 @@ describe('listBranches', () => {
     expect(input.map((item) => item.id)).toEqual(['b', 'a'])
   })
 })
+
+describe('listBranches with a location', () => {
+  const johannesburg = { lat: -26.2041, lng: 28.0473 }
+  const near = branch('near', 'Zulu Near', { location: { lat: -26.21, lng: 28.05 } })
+  const far = branch('far', 'Alpha Far', { location: { lat: -33.9, lng: 18.4 } })
+
+  it('sorts nearest first instead of by name', () => {
+    const result = listBranches([far, near], {}, now, johannesburg)
+
+    expect(result.map((item) => item.id)).toEqual(['near', 'far'])
+  })
+
+  it('adds the distance in kilometres', () => {
+    const [first, second] = listBranches([far, near], {}, now, johannesburg)
+
+    expect(first.distanceKm).toBeLessThan(2)
+    expect(second.distanceKm).toBeGreaterThan(1000)
+  })
+
+  it('still applies the filters', () => {
+    const result = listBranches([far, near], { query: 'alpha' }, now, johannesburg)
+
+    expect(result.map((item) => item.id)).toEqual(['far'])
+  })
+
+  it('has no distance, and sorts by name, without a location', () => {
+    const result = listBranches([near, far], {}, now, null)
+
+    expect(result.map((item) => item.id)).toEqual(['far', 'near'])
+    expect(result[0].distanceKm).toBeUndefined()
+  })
+})

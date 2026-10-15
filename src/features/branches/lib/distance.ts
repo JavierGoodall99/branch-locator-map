@@ -20,3 +20,19 @@ export function withDistanceFrom(branches: Branch[], origin: Coordinates): Branc
     .map((branch) => ({ ...branch, distanceKm: haversineKm(origin, branch.location) }))
     .sort((a, b) => a.distanceKm - b.distanceKm || a.name.localeCompare(b.name))
 }
+
+const oneDecimal = new Intl.NumberFormat('en-ZA', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+const wholeNumber = new Intl.NumberFormat('en-ZA', { maximumFractionDigits: 0 })
+
+/**
+ * A distance for people: metres to the nearest 10 under a kilometre, one decimal up to 10 km,
+ * then whole kilometres. South African formatting, so the decimal separator is a comma.
+ */
+export function formatDistance(km: number): string {
+  const metres = Math.round(km * 100) * 10
+  if (metres < 1000) return `${metres} m`
+
+  const rounded = Math.round(km * 10) / 10
+  if (rounded < 10) return `${oneDecimal.format(rounded)} km`
+  return `${wholeNumber.format(km)} km`
+}
