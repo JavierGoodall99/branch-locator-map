@@ -76,10 +76,9 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
 
 .filter-bar {
   display: flex;
+  flex-wrap: wrap; // wrap rather than scroll, so Clear filters is never cut off on a phone
   align-items: center;
   gap: $spacer * 0.5;
-  overflow-x: auto;
-  padding-bottom: 4px;
 
   &__province {
     flex: 0 1 auto;
@@ -129,10 +128,5 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
   // In the side panel nothing floats, so drop the shadow.
   .search-box {
     box-shadow: none;
-  }
-
-  .filter-bar {
-    flex-wrap: wrap;
-    overflow-x: visible;
   }
 }
