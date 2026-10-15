@@ -8,11 +8,12 @@ import { StatusChip } from './StatusChip'
 interface BranchCardProps {
   branch: Branch
   now: Date
+  onSelect: (id: string) => void
 }
 
 // Links are plain anchors with Bootstrap's button classes: react-bootstrap's Button gives
 // anchors role="button", which is wrong for navigation.
-export function BranchCard({ branch, now }: BranchCardProps) {
+export function BranchCard({ branch, now, onSelect }: BranchCardProps) {
   const headingId = `branch-${branch.id}`
   const status = getOpenStatus(branch, now)
 
@@ -37,6 +38,15 @@ export function BranchCard({ branch, now }: BranchCardProps) {
           Directions{' '}
           <span className="visually-hidden">to {branch.name} (opens in a new tab)</span>
         </a>
+        <button
+          type="button"
+          id={`details-${branch.id}`}
+          className="btn btn-link btn-sm"
+          onClick={() => onSelect(branch.id)}
+        >
+          Details{' '}
+          <span className="visually-hidden">for {branch.name}</span>
+        </button>
         {branch.phone && (
           <a className="btn btn-link btn-sm" href={telUrl(branch.phone)}>
             <Icon name="phone" />

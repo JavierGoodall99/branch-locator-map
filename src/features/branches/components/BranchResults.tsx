@@ -1,8 +1,7 @@
 import { Button } from 'react-bootstrap'
-import { filterBranches } from '../lib/filter'
+import { listBranches } from '../lib/listing'
 import { hasActiveFilters, toBranchFilters, type LocatorFilters } from '../model/filters'
 import type { UseBranchesResult } from '../model/useBranches'
-import type { Branch } from '../types'
 import { BranchCard } from './BranchCard'
 
 interface BranchResultsProps {
@@ -10,9 +9,8 @@ interface BranchResultsProps {
   filters: LocatorFilters
   now: Date
   onClearFilters: () => void
+  onSelect: (id: string) => void
 }
-
-const byName = (a: Branch, b: Branch) => a.name.localeCompare(b.name)
 
 function countLabel(state: UseBranchesResult, shown: number): string {
   if (state.status === 'loading') return 'Loading branches'
@@ -38,10 +36,10 @@ function SkeletonList() {
 }
 
 /** The results heading and list, covering loading, error, empty and loaded states. */
-export function BranchResults({ state, filters, now, onClearFilters }: BranchResultsProps) {
+export function BranchResults({ state, filters, now, onClearFilters, onSelect }: BranchResultsProps) {
   const branches =
     state.status === 'success'
-      ? filterBranches(state.branches, toBranchFilters(filters), now).sort(byName)
+      ? listBranches(state.branches, toBranchFilters(filters), now)
       : []
 
   return (
@@ -87,7 +85,7 @@ export function BranchResults({ state, filters, now, onClearFilters }: BranchRes
         <ul className="results-list">
           {branches.map((branch) => (
             <li key={branch.id}>
-              <BranchCard branch={branch} now={now} />
+              <BranchCard branch={branch} now={now} onSelect={onSelect} />
             </li>
           ))}
         </ul>

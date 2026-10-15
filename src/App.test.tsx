@@ -6,7 +6,8 @@ import App from './App'
 // There are ~190 cards, and role queries compute an accessible name for each, which is slow
 // in jsdom and can time out on a busy machine. Counting cards with a plain selector keeps
 // these tests quick; each card's own accessibility is covered by the BranchCard tests.
-const cardCount = () => document.querySelectorAll('article').length
+const cardCount = () => document.querySelectorAll('article.branch-card').length
+const firstDetailsButton = () => document.querySelector<HTMLButtonElement>('[id^="details-"]')!
 
 const stubSample = () =>
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(sample))))
@@ -70,5 +71,57 @@ describe('App', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Both' }))
 
     expect(cardCount()).toBeGreaterThan(branchesOnly)
+  })
+
+  describe('branch details', () => {
+    async function openFirstBranch() {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      const button = firstDetailsButton()
+      const id = button.id
+      await userEvent.click(button)
+      return id
+    }
+
+    it('opens a branch from the list and focuses its heading', async () => {
+      await openFirstBranch()
+
+      const heading = screen.getByRole('heading', { level: 1 })
+      expect(heading).toHaveFocus()
+      expect(heading).not.toHaveTextContent('Branches and ATMs')
+      expect(cardCount()).toBe(0)
+    })
+
+    it('goes back to the list and returns focus to that branch', async () => {
+      const buttonId = await openFirstBranch()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Back to results' }))
+
+      expect(cardCount()).toBeGreaterThan(0)
+      expect(document.getElementById(buttonId)).toHaveFocus()
+    })
+
+    it('moves to the next and previous branch', async () => {
+      await openFirstBranch()
+      const first = screen.getByRole('heading', { level: 1 }).textContent
+
+      await userEvent.click(screen.getByRole('button', { name: 'Next branch' }))
+      const second = screen.getByRole('heading', { level: 1 }).textContent
+      expect(second).not.toBe(first)
+      expect(screen.getByText(/^2 of \d+$/)).toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Previous branch' }))
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(first!)
+    })
+
+    it('returns to the list when the search changes', async () => {
+      await openFirstBranch()
+
+      await userEvent.type(screen.getByRole('searchbox'), 'a')
+
+      expect(cardCount()).toBeGreaterThan(0)
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Branches and ATMs')
+    })
   })
 })

@@ -1,4 +1,5 @@
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import type { Branch } from '../types'
 import { BranchCard } from './BranchCard'
 
@@ -21,14 +22,14 @@ const morning = new Date('2026-10-14T08:00:00Z')
 
 describe('BranchCard', () => {
   it('names the card by its heading', () => {
-    render(<BranchCard branch={branch} now={morning} />)
+    render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
 
     expect(screen.getByRole('article', { name: 'Capitec Bank Sandton City' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 2, name: 'Capitec Bank Sandton City' })).toBeInTheDocument()
   })
 
   it('shows the address, open status and services', () => {
-    render(<BranchCard branch={branch} now={morning} />)
+    render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
     const card = screen.getByRole('article')
 
     expect(within(card).getByText(/Rivonia Road/)).toBeInTheDocument()
@@ -38,7 +39,7 @@ describe('BranchCard', () => {
   })
 
   it('links to directions in a new tab, and says so', () => {
-    render(<BranchCard branch={branch} now={morning} />)
+    render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
     const link = screen.getByRole('link', { name: /Directions to Capitec Bank Sandton City/ })
 
     expect(link).toHaveAttribute('href', 'https://www.google.com/maps/dir/?api=1&destination=-26.1076,28.0567')
@@ -48,7 +49,7 @@ describe('BranchCard', () => {
   })
 
   it('offers a call link that names the branch', () => {
-    render(<BranchCard branch={branch} now={morning} />)
+    render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
 
     expect(screen.getByRole('link', { name: 'Call Capitec Bank Sandton City' })).toHaveAttribute(
       'href',
@@ -57,14 +58,23 @@ describe('BranchCard', () => {
   })
 
   it('leaves out the call link when there is no phone number', () => {
-    render(<BranchCard branch={{ ...branch, phone: null }} now={morning} />)
+    render(<BranchCard branch={{ ...branch, phone: null }} now={morning} onSelect={vi.fn()} />)
 
     expect(screen.queryByRole('link', { name: /^Call/ })).not.toBeInTheDocument()
   })
 
   it('shows closed sites as closed', () => {
-    render(<BranchCard branch={{ ...branch, status: 'temporarily-closed' }} now={morning} />)
+    render(<BranchCard branch={{ ...branch, status: 'temporarily-closed' }} now={morning} onSelect={vi.fn()} />)
 
     expect(screen.getByText('Temporarily closed')).toBeInTheDocument()
+  })
+
+  it('opens the details when Details is pressed', async () => {
+    const onSelect = vi.fn()
+    render(<BranchCard branch={branch} now={morning} onSelect={onSelect} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Details for Capitec Bank Sandton City' }))
+
+    expect(onSelect).toHaveBeenCalledWith('sandton')
   })
 })

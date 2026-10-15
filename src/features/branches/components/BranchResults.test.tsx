@@ -27,10 +27,11 @@ const now = new Date('2026-10-14T08:00:00Z')
 const retry = vi.fn()
 
 const clear = vi.fn()
+const select = vi.fn()
 
 /** BranchResults with sensible defaults, so each test only states what it cares about. */
 function Results(props: Partial<ComponentProps<typeof BranchResults>> & Pick<ComponentProps<typeof BranchResults>, 'state'>) {
-  return <BranchResults filters={DEFAULT_FILTERS} now={now} onClearFilters={clear} {...props} />
+  return <BranchResults filters={DEFAULT_FILTERS} now={now} onClearFilters={clear} onSelect={select} {...props} />
 }
 
 const success = (branches: Branch[]): UseBranchesResult => ({ status: 'success', branches, retry })
@@ -39,6 +40,7 @@ describe('BranchResults', () => {
   beforeEach(() => {
     retry.mockReset()
     clear.mockReset()
+    select.mockReset()
   })
 
   it('shows a single h1 and labels the data as sample data', () => {
@@ -155,5 +157,13 @@ describe('BranchResults', () => {
     render(<Results state={success([])} />)
 
     expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument()
+  })
+
+  it('reports which branch was chosen', async () => {
+    render(<Results state={success([branch('a', 'Capitec Bank Paarl')])} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Details for Capitec Bank Paarl' }))
+
+    expect(select).toHaveBeenCalledWith('a')
   })
 })

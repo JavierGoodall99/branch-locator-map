@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { BranchResults } from './features/branches/components/BranchResults'
 import { LocatorControls } from './features/branches/components/LocatorControls'
 import { LocatorLayout } from './features/branches/components/LocatorLayout'
-import { DEFAULT_FILTERS, clearFilters } from './features/branches/model/filters'
+import { ResultsPanel } from './features/branches/components/ResultsPanel'
+import { DEFAULT_FILTERS, clearFilters, type LocatorFilters } from './features/branches/model/filters'
 import { useBranches } from './features/branches/model/useBranches'
 import { useNow } from './shared/hooks/useNow'
 
@@ -10,16 +10,25 @@ function App() {
   const branches = useBranches()
   const now = useNow()
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+
+  // Changing the search or filters means the user wants a list again, so leave the detail view.
+  const changeFilters = (next: LocatorFilters) => {
+    setFilters(next)
+    setSelectedId(null)
+  }
 
   return (
     <LocatorLayout
-      controls={<LocatorControls filters={filters} onChange={setFilters} />}
+      controls={<LocatorControls filters={filters} onChange={changeFilters} />}
       results={
-        <BranchResults
+        <ResultsPanel
           state={branches}
           filters={filters}
           now={now}
-          onClearFilters={() => setFilters(clearFilters(filters))}
+          selectedId={selectedId}
+          onSelect={setSelectedId}
+          onClearFilters={() => changeFilters(clearFilters(filters))}
         />
       }
       map={null}
