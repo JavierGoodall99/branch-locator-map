@@ -1,0 +1,80 @@
+// Branch detail view, shown in the results panel in place of the list.
+
+.branch-detail {
+  &__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacer * 0.5;
+    margin-bottom: $spacer * 0.75;
+  }
+
+  &__pager {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__position {
+    min-width: 4.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__section {
+    margin-top: $spacer * 1.5;
+    padding-top: $spacer;
+    border-top: 1px solid $border-color;
+
+    h2 {
+      margin-bottom: $spacer * 0.5;
+    }
+
+    p {
+      margin-bottom: $spacer * 0.5;
+    }
+  }
+
+  &__note {
+    font-size: 0.875rem;
+    color: $body-secondary-color;
+  }
+
+  // The heading takes focus when the view opens; a ring would only add noise.
+  h1:focus {
+    outline: none;
+  }
+}
+
+// Round 44px icon button, for Previous and Next.
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #c9d3d8;
+  border-radius: 50%;
+  background: $white;
+  color: #000;
+
+  &:hover:not(:disabled) {
+    background: $blue-tint;
+    color: $blue-deep;
+  }
+
+  &:disabled {
+    background: $border-color;
+    border-color: $border-color;
+    color: $text-subtle;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+}
