@@ -107,4 +107,14 @@ describe('BranchDetail', () => {
     expect(screen.getByRole('button', { name: 'Previous branch' })).toBeEnabled()
     expect(screen.getByRole('button', { name: 'Next branch' })).toBeDisabled()
   })
+
+  it('shows the distance when it is known, and nothing when it is not', () => {
+    setup({ distanceKm: 12.6 })
+    expect(screen.getByText('13 km away')).toBeInTheDocument()
+  })
+
+  it('shows no distance without a location', () => {
+    setup()
+    expect(screen.queryByText(/ away$/)).not.toBeInTheDocument()
+  })
 })

@@ -129,4 +129,62 @@ describe('App', () => {
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Branches and ATMs')
     })
   })
+
+  describe('near me', () => {
+    const capeTown = { coords: { latitude: -33.9249, longitude: 18.4241 } }
+
+    function stubGeolocation(result: 'granted' | 'denied') {
+      const getCurrentPosition = vi.fn((success: (position: unknown) => void, failure: (error: unknown) => void) => {
+        if (result === 'granted') success(capeTown)
+        else failure({ code: 1 })
+      })
+      Object.defineProperty(navigator, 'geolocation', { value: { getCurrentPosition }, configurable: true })
+      return getCurrentPosition
+    }
+
+    afterEach(() => Object.defineProperty(navigator, 'geolocation', { value: undefined, configurable: true }))
+
+    it('does not ask for the location until Near me is pressed', async () => {
+      stubSample()
+      const getCurrentPosition = stubGeolocation('granted')
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+
+      expect(getCurrentPosition).not.toHaveBeenCalled()
+    })
+
+    it('sorts nearest first with distances once the location is shared, and turns off again', async () => {
+      stubSample()
+      stubGeolocation('granted')
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      const byName = document.querySelector('article.branch-card')!.textContent
+
+      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
+
+      const nearest = document.querySelector('article.branch-card')!
+      expect(nearest.textContent).toContain('Western Cape')
+      expect(nearest.textContent).not.toBe(byName)
+      expect(nearest.querySelector('.branch-card__distance')).not.toBeNull()
+      expect(screen.getByText(/nearest first$/)).toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
+      expect(document.querySelector('article.branch-card')!.textContent).toBe(byName)
+      expect(document.querySelector('.branch-card__distance')).toBeNull()
+    })
+
+    it('keeps the default list and explains how to carry on when location is refused', async () => {
+      stubSample()
+      stubGeolocation('denied')
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      const before = cardCount()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
+
+      expect(screen.getByText(/turned off for this site/)).toBeInTheDocument()
+      expect(cardCount()).toBe(before)
+      expect(document.querySelector('.branch-card__distance')).toBeNull()
+    })
+  })
 })

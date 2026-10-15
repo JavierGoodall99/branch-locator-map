@@ -27,9 +27,12 @@ function App() {
     setSelectedId(null)
   }
 
+  // The user's position, once they have shared it.
+  const origin = location.status === 'located' ? location.position : null
+
   // The same list the results panel shows, so the map and the list never disagree.
   const visible =
-    branches.status === 'success' ? listBranches(branches.branches, toBranchFilters(filters), now) : []
+    branches.status === 'success' ? listBranches(branches.branches, toBranchFilters(filters), now, origin) : []
 
   return (
     <LocatorLayout
@@ -39,6 +42,7 @@ function App() {
           state={branches}
           filters={filters}
           now={now}
+          origin={origin}
           selectedId={selectedId}
           onSelect={setSelectedId}
           onClearFilters={() => changeFilters(clearFilters(filters))}

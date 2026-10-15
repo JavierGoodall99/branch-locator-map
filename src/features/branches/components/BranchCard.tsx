@@ -1,4 +1,5 @@
 import { Icon } from '../../../shared/ui/Icon'
+import { formatDistance } from '../lib/distance'
 import { getOpenStatus } from '../lib/hours'
 import { directionsUrl, telUrl } from '../lib/links'
 import type { Branch } from '../types'
@@ -8,20 +9,30 @@ import { StatusChip } from './StatusChip'
 interface BranchCardProps {
   branch: Branch
   now: Date
+  /** Distance from the user, when their location is known. */
+  distanceKm?: number
   onSelect: (id: string) => void
 }
 
 // Links are plain anchors with Bootstrap's button classes: react-bootstrap's Button gives
 // anchors role="button", which is wrong for navigation.
-export function BranchCard({ branch, now, onSelect }: BranchCardProps) {
+export function BranchCard({ branch, now, distanceKm, onSelect }: BranchCardProps) {
   const headingId = `branch-${branch.id}`
   const status = getOpenStatus(branch, now)
 
   return (
     <article className="branch-card" aria-labelledby={headingId}>
-      <h2 className="h4 m-0" id={headingId}>
-        {branch.name}
-      </h2>
+      <div className="branch-card__title">
+        <h2 className="h4 m-0" id={headingId}>
+          {branch.name}
+        </h2>
+        {distanceKm !== undefined && (
+          <span className="branch-card__distance">
+            {formatDistance(distanceKm)}
+            <span className="visually-hidden"> away</span>
+          </span>
+        )}
+      </div>
       <p className="branch-card__address">{branch.address}</p>
       <div className="mt-2">
         <StatusChip status={status} />

@@ -145,3 +145,23 @@
     background-position: -200% 0;
   }
 }
+
+// Name and distance on one line; the distance stays beside the name even when the name wraps.
+.branch-card__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $spacer * 0.75;
+}
+
+.branch-card__distance {
+  flex: none;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #000;
+}
+
+// Directions takes the spare room but can shrink, so Details and Call fit beside it on a phone.
+.branch-card__actions .btn-primary {
+  flex: 1 1 7rem;
+}

@@ -77,4 +77,17 @@ describe('BranchCard', () => {
 
     expect(onSelect).toHaveBeenCalledWith('sandton')
   })
+
+  it('shows how far away it is when the distance is known', () => {
+    render(<BranchCard branch={branch} now={morning} distanceKm={2.34} onSelect={vi.fn()} />)
+
+    expect(screen.getByText('2,3 km')).toBeInTheDocument()
+    expect(screen.getByRole('article')).toHaveTextContent('2,3 km away')
+  })
+
+  it('shows no distance when the location is unknown', () => {
+    render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
+
+    expect(screen.getByRole('article')).not.toHaveTextContent('away')
+  })
 })

@@ -166,4 +166,29 @@ describe('BranchResults', () => {
 
     expect(select).toHaveBeenCalledWith('a')
   })
+
+  describe('with the user’s location', () => {
+    const johannesburg = { lat: -26.2041, lng: 28.0473 }
+    const state = success([
+      branch('far', 'Alpha Cape Town', { location: { lat: -33.9, lng: 18.4 } }),
+      branch('near', 'Zulu Johannesburg', { location: { lat: -26.21, lng: 28.05 } }),
+    ])
+
+    it('lists the nearest first, with distances, and says so', () => {
+      render(<Results state={state} origin={johannesburg} />)
+
+      const names = screen.getAllByRole('article').map((card) => within(card).getByRole('heading').textContent)
+      expect(names).toEqual(['Zulu Johannesburg', 'Alpha Cape Town'])
+      expect(screen.getByRole('status')).toHaveTextContent('2 locations, nearest first')
+      expect(screen.getAllByText(/ km$/).length).toBeGreaterThan(0)
+    })
+
+    it('lists by name, without distances, when there is no location', () => {
+      render(<Results state={state} origin={null} />)
+
+      const names = screen.getAllByRole('article').map((card) => within(card).getByRole('heading').textContent)
+      expect(names).toEqual(['Alpha Cape Town', 'Zulu Johannesburg'])
+      expect(screen.getByRole('status')).toHaveTextContent('sorted by name')
+    })
+  })
 })

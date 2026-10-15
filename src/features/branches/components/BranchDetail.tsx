@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Icon } from '../../../shared/ui/Icon'
+import { formatDistance } from '../lib/distance'
 import { formatOpeningHours, getOpenStatus } from '../lib/hours'
 import { directionsUrl, telUrl } from '../lib/links'
 import type { Branch } from '../types'
@@ -12,13 +13,15 @@ interface BranchDetailProps {
   position: number
   total: number
   now: Date
+  /** Distance from the user, when their location is known. */
+  distanceKm?: number
   onBack: () => void
   onPrevious: () => void
   onNext: () => void
 }
 
 /** Everything we know about one branch, with a way back and Previous and Next. */
-export function BranchDetail({ branch, position, total, now, onBack, onPrevious, onNext }: BranchDetailProps) {
+export function BranchDetail({ branch, position, total, now, distanceKm, onBack, onPrevious, onNext }: BranchDetailProps) {
   const headingRef = useRef<HTMLHeadingElement>(null)
 
   // Opening the detail view moves focus to its heading, so keyboard and screen reader users
@@ -70,6 +73,9 @@ export function BranchDetail({ branch, position, total, now, onBack, onPrevious,
 
       <div className="d-flex flex-wrap align-items-center gap-2 mt-2">
         <StatusChip status={getOpenStatus(branch, now)} />
+        {distanceKm !== undefined && (
+          <span className="branch-detail__distance">{formatDistance(distanceKm)} away</span>
+        )}
         <span className="sample-badge">Sample data</span>
       </div>
 

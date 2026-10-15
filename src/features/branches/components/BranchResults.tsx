@@ -2,20 +2,23 @@ import { Button } from 'react-bootstrap'
 import { listBranches } from '../lib/listing'
 import { hasActiveFilters, toBranchFilters, type LocatorFilters } from '../model/filters'
 import type { UseBranchesResult } from '../model/useBranches'
+import type { Coordinates } from '../types'
 import { BranchCard } from './BranchCard'
 
 interface BranchResultsProps {
   state: UseBranchesResult
   filters: LocatorFilters
   now: Date
+  /** The user's location, if known: the list is then nearest first, with distances. */
+  origin?: Coordinates | null
   onClearFilters: () => void
   onSelect: (id: string) => void
 }
 
-function countLabel(state: UseBranchesResult, shown: number): string {
+function countLabel(state: UseBranchesResult, shown: number, nearestFirst: boolean): string {
   if (state.status === 'loading') return 'Loading branches'
   if (state.status === 'error') return ''
-  return `${shown} ${shown === 1 ? 'location' : 'locations'}, sorted by name`
+  return `${shown} ${shown === 1 ? 'location' : 'locations'}, ${nearestFirst ? 'nearest first' : 'sorted by name'}`
 }
 
 function SkeletonList() {
@@ -36,10 +39,10 @@ function SkeletonList() {
 }
 
 /** The results heading and list, covering loading, error, empty and loaded states. */
-export function BranchResults({ state, filters, now, onClearFilters, onSelect }: BranchResultsProps) {
+export function BranchResults({ state, filters, now, origin, onClearFilters, onSelect }: BranchResultsProps) {
   const branches =
     state.status === 'success'
-      ? listBranches(state.branches, toBranchFilters(filters), now)
+      ? listBranches(state.branches, toBranchFilters(filters), now, origin)
       : []
 
   return (
@@ -48,7 +51,7 @@ export function BranchResults({ state, filters, now, onClearFilters, onSelect }:
         <div>
           <h1 className="h4 m-0">Branches and ATMs</h1>
           <p className="results-header__count" role="status">
-            {countLabel(state, branches.length)}
+            {countLabel(state, branches.length, Boolean(origin))}
           </p>
         </div>
         <span className="sample-badge">Sample data</span>
@@ -85,7 +88,7 @@ export function BranchResults({ state, filters, now, onClearFilters, onSelect }:
         <ul className="results-list">
           {branches.map((branch) => (
             <li key={branch.id}>
-              <BranchCard branch={branch} now={now} onSelect={onSelect} />
+              <BranchCard branch={branch} now={now} distanceKm={branch.distanceKm} onSelect={onSelect} />
             </li>
           ))}
         </ul>

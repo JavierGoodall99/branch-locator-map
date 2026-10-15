@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { listBranches } from '../lib/listing'
+import type { Coordinates } from '../types'
 import { toBranchFilters, type LocatorFilters } from '../model/filters'
 import type { UseBranchesResult } from '../model/useBranches'
 import { BranchDetail } from './BranchDetail'
@@ -9,6 +10,8 @@ interface ResultsPanelProps {
   state: UseBranchesResult
   filters: LocatorFilters
   now: Date
+  /** The user's location, if known. */
+  origin: Coordinates | null
   /** The branch being viewed in detail, or null for the list. */
   selectedId: string | null
   onSelect: (id: string | null) => void
@@ -16,11 +19,11 @@ interface ResultsPanelProps {
 }
 
 /** Shows the results list, or one branch in detail, and keeps keyboard focus sensible between them. */
-export function ResultsPanel({ state, filters, now, selectedId, onSelect, onClearFilters }: ResultsPanelProps) {
+export function ResultsPanel({ state, filters, now, origin, selectedId, onSelect, onClearFilters }: ResultsPanelProps) {
   // The list is only worked out here while a branch is open, so Previous and Next walk the
   // same list the user came from. In list mode BranchResults does that work itself.
   const visible =
-    selectedId && state.status === 'success' ? listBranches(state.branches, toBranchFilters(filters), now) : []
+    selectedId && state.status === 'success' ? listBranches(state.branches, toBranchFilters(filters), now, origin) : []
   const index = selectedId ? visible.findIndex((branch) => branch.id === selectedId) : -1
   const selected = index >= 0 ? visible[index] : null
 
@@ -43,6 +46,7 @@ export function ResultsPanel({ state, filters, now, selectedId, onSelect, onClea
         position={index + 1}
         total={visible.length}
         now={now}
+        distanceKm={selected.distanceKm}
         onBack={() => onSelect(null)}
         onPrevious={() => onSelect(visible[index - 1].id)}
         onNext={() => onSelect(visible[index + 1].id)}
@@ -51,6 +55,13 @@ export function ResultsPanel({ state, filters, now, selectedId, onSelect, onClea
   }
 
   return (
-    <BranchResults state={state} filters={filters} now={now} onClearFilters={onClearFilters} onSelect={onSelect} />
+    <BranchResults
+      state={state}
+      filters={filters}
+      now={now}
+      origin={origin}
+      onClearFilters={onClearFilters}
+      onSelect={onSelect}
+    />
   )
 }
