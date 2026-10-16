@@ -48,7 +48,18 @@
   }
 }
 
-.branch-map .maplibregl-ctrl-group button {
-  width: 44px;
-  height: 44px;
+// Zoom buttons: a white rounded group with a soft shadow, the way people expect map controls.
+.branch-map .maplibregl-ctrl-group {
+  overflow: hidden;
+  border-radius: $border-radius-sm;
+  box-shadow: 0 1px 4px rgba($black, 0.3);
+
+  button {
+    width: 44px;
+    height: 44px;
+
+    &:hover:not(:disabled) {
+      background-color: #f1f3f4;
+    }
+  }
 }
