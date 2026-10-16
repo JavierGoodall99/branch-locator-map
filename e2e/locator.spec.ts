@@ -80,7 +80,7 @@ test.describe('branch details', () => {
     await expect(heading).toHaveText(name!)
     await expect(heading).toBeFocused()
     await expect(page.getByRole('heading', { level: 2, name: 'Opening hours' })).toBeVisible()
-    await expect(page.getByRole('link', { name: /Directions/ })).toHaveAttribute('href', /google\.com\/maps\/dir/)
+    await expect(page.getByRole('link', { name: /Get directions/ })).toHaveAttribute('href', /google\.com\/maps\/dir/)
 
     await page.getByRole('button', { name: 'Next branch' }).click()
     await expect(heading).not.toHaveText(name!)
@@ -109,8 +109,7 @@ test.describe('opening a card', () => {
     await page.mouse.click(badge.x + badge.width / 2, badge.y + badge.height / 2)
 
     await expect(page.getByRole('heading', { level: 1, name: name! })).toBeVisible()
-    await expect(page.getByRole('heading', { level: 2, name: 'Address' })).toBeVisible()
-    await expect(page.getByText(/\b\d{4}$/).first()).toBeVisible()
+    await expect(page.locator('.branch-detail__address')).toHaveText(/\d{4}$/)
   })
 
   test('has no separate Details button', async ({ page }) => {

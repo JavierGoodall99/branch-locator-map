@@ -29,7 +29,7 @@ test.describe('near me when the browser allows it', () => {
     await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'true')
 
     await openButton(page.getByRole('article').first()).click()
-    await expect(page.getByText(/\d+ (m|km) away$/)).toBeVisible()
+    await expect(page.locator('.branch-detail__distance')).toHaveText(/\d+ (m|km) away$/)
     await page.getByRole('button', { name: 'Back to results' }).click()
 
     await page.getByRole('button', { name: 'Near me' }).click()

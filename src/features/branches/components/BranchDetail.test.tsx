@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { ComponentProps } from 'react'
 import type { Branch } from '../types'
@@ -35,16 +35,50 @@ describe('BranchDetail', () => {
     expect(heading).toHaveFocus()
   })
 
-  it('shows status, address, hours and services under their own headings', () => {
+  it('leads with a summary of the kind of site, its full address and its status', () => {
+    setup()
+    const summary = document.querySelector('.branch-detail__summary') as HTMLElement
+
+    expect(within(summary).getByText('Sandton City, Rivonia Road, Sandton, Gauteng, 2196')).toBeInTheDocument()
+    expect(within(summary).getByText('Branch')).toBeInTheDocument()
+    expect(within(summary).getByText('Open until 17:00')).toBeInTheDocument()
+    expect(summary.querySelector('.type-badge--branch')).toHaveAttribute('aria-hidden', 'true')
+  })
+
+  it('calls an ATM an ATM, with the ATM badge', () => {
+    setup({ branch: { ...branch, type: 'atm' } })
+    const summary = document.querySelector('.branch-detail__summary') as HTMLElement
+
+    expect(within(summary).getByText('ATM')).toBeInTheDocument()
+    expect(summary.querySelector('.type-badge--atm')).not.toBeNull()
+  })
+
+  it('has a photo that is decoration, with sources in modern formats and a size to reserve space', () => {
+    setup()
+    const image = document.querySelector('.detail-hero img') as HTMLImageElement
+
+    expect(image).toHaveAttribute('alt', '')
+    expect(image).toHaveAttribute('width')
+    expect(image).toHaveAttribute('height')
+    expect(image).toHaveAttribute('decoding', 'async')
+    expect(document.querySelectorAll('.detail-hero source').length).toBeGreaterThan(0)
+  })
+
+  it('puts the way back first, so it is the first stop for the keyboard', () => {
     setup()
 
-    expect(screen.getByText('Open until 17:00')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 2, name: 'Address' })).toBeInTheDocument()
-    expect(screen.getByText(/Rivonia Road/)).toBeInTheDocument()
+    const [first] = screen.getAllByRole('button')
+    expect(first).toHaveAccessibleName('Back to results')
+  })
+
+  it('shows hours, services and contact under their own headings', () => {
+    setup()
+
     expect(screen.getByRole('heading', { level: 2, name: 'Opening hours' })).toBeInTheDocument()
     expect(screen.getByText('08:00 to 17:00')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 2, name: 'Services' })).toBeInTheDocument()
     expect(screen.getByText('SmartID Services')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Contact' })).toBeInTheDocument()
   })
 
   it('shows around-the-clock and missing hours in words', () => {
@@ -55,7 +89,7 @@ describe('BranchDetail', () => {
   it('links to directions in a new tab and to the phone number', () => {
     setup()
 
-    const directions = screen.getByRole('link', { name: /Directions/ })
+    const directions = screen.getByRole('link', { name: /Get directions/ })
     expect(directions).toHaveAttribute('href', 'https://www.google.com/maps/dir/?api=1&destination=-26.1076,28.0567')
     expect(directions).toHaveAttribute('target', '_blank')
     expect(screen.getAllByRole('link', { name: /\+27 86 010 2043|Call/ })[0]).toHaveAttribute(
@@ -110,11 +144,12 @@ describe('BranchDetail', () => {
 
   it('shows the distance when it is known, and nothing when it is not', () => {
     setup({ distanceKm: 12.6 })
-    expect(screen.getByText('13 km away')).toBeInTheDocument()
+    expect(screen.getByText('13 km', { exact: false })).toBeInTheDocument()
+    expect(screen.getByText('away', { exact: false })).toHaveClass('visually-hidden')
   })
 
   it('shows no distance without a location', () => {
     setup()
-    expect(screen.queryByText(/ away$/)).not.toBeInTheDocument()
+    expect(document.querySelector('.branch-detail__distance')).toBeNull()
   })
 })

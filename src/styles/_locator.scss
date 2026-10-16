@@ -125,6 +125,11 @@ body {
   }
 }
 
+// The details run edge to edge, with the photo at the top.
+.locator--detail .locator__results {
+  padding: 0;
+}
+
 @include media-breakpoint-up(xl) {
   .locator {
     grid-template-columns: $panel-width-xl 1fr;

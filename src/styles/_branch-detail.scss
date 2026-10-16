@@ -1,26 +1,64 @@
 // Branch detail view, shown in the results panel in place of the list.
 
 .branch-detail {
-  &__nav {
+  // The photo runs to the edges of the sidebar, so the panel gives up its own padding while the
+  // details are open; the summary and the sections below it bring theirs.
+  &__summary {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: $spacer * 0.5;
-    margin-bottom: $spacer * 0.75;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacer * 0.75;
+    padding: $spacer * 1.25 $spacer * 1.25 $spacer * 1.5;
+    background: $body-tertiary-bg;
   }
 
-  &__pager {
+  &__identity {
     display: flex;
-    align-items: center;
-    gap: 4px;
+    align-items: flex-start;
+    gap: $spacer * 0.75;
+    width: 100%;
   }
 
-  &__position {
-    min-width: 4.5rem;
-    text-align: center;
+  &__title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__address {
+    margin: $spacer * 0.25 0 0;
+    color: $body-secondary-color;
+    font-size: 0.875rem;
+  }
+
+  &__kind {
+    margin: $spacer * 0.5 0 0;
+    font-weight: 700;
+  }
+
+  &__distance {
+    flex: none;
+    margin: 0;
     font-size: 0.875rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacer * 0.5;
+    width: 100%;
+  }
+
+  &__body {
+    padding: 0 $spacer * 1.25 $spacer * 1.5;
+
+    // The summary panel already sets the first section apart.
+    > :first-child {
+      margin-top: $spacer * 1.25;
+      padding-top: 0;
+      border-top: 0;
+    }
   }
 
   &__section {
@@ -79,8 +117,62 @@
   }
 }
 
-.branch-detail__distance {
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+// The photo at the top of the details, with round white controls over its corners.
+.detail-hero {
+  position: relative;
+  line-height: 0; // no gap under the image
+
+  &__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 2; // short on a phone, where the sheet is only about half the screen
+    object-fit: cover;
+    // Keeps the machine and the people in frame when the photo is cropped.
+    object-position: center 40%;
+    background: $blue-tint; // shown while the photo loads
+  }
+
+  &__back,
+  &__pager {
+    position: absolute;
+    top: $spacer * 0.75;
+    box-shadow: 0 2px 8px rgba($black, 0.25);
+  }
+
+  &__back {
+    left: $spacer * 0.75;
+  }
+
+  &__pager {
+    right: $spacer * 0.75;
+    display: flex;
+    align-items: center;
+    border-radius: 22px;
+    background: $white;
+
+    .icon-button {
+      border-color: transparent;
+
+      &:disabled {
+        background: transparent;
+        border-color: transparent;
+      }
+    }
+  }
+
+  &__position {
+    min-width: 3.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .branch-detail .detail-hero__image {
+    aspect-ratio: 16 / 9;
+  }
 }

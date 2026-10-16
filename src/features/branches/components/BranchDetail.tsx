@@ -2,10 +2,13 @@ import { useEffect, useRef } from 'react'
 import { Icon } from '../../../shared/ui/Icon'
 import { formatDistance } from '../lib/distance'
 import { formatOpeningHours, getOpenStatus } from '../lib/hours'
+import { typeLabel } from '../lib/labels'
 import { directionsUrl, telUrl } from '../lib/links'
 import type { Branch } from '../types'
+import { DetailHero } from './DetailHero'
 import { ServiceList } from './ServiceList'
 import { StatusChip } from './StatusChip'
+import { TypeBadge } from './TypeBadge'
 
 interface BranchDetailProps {
   branch: Branch
@@ -32,97 +35,81 @@ export function BranchDetail({ branch, position, total, now, distanceKm, onBack,
 
   return (
     <article className="branch-detail">
-      <div className="branch-detail__nav">
-        <button type="button" className="btn btn-link btn-sm ps-0" onClick={onBack}>
-          <Icon name="chevronLeft" />
-          Back to results
-        </button>
-        <div className="branch-detail__pager">
-          <button
-            type="button"
-            className="icon-button"
-            aria-label="Previous branch"
-            disabled={position <= 1}
-            onClick={onPrevious}
-          >
-            <Icon name="chevronLeft" />
-          </button>
-          <span className="branch-detail__position" aria-hidden="true">
-            {position} of {total}
-          </span>
-          <button
-            type="button"
-            className="icon-button"
-            aria-label="Next branch"
-            disabled={position >= total}
-            onClick={onNext}
-          >
-            <Icon name="chevronRight" />
-          </button>
-        </div>
-      </div>
+      <DetailHero position={position} total={total} onBack={onBack} onPrevious={onPrevious} onNext={onNext} />
 
       {/* Announces the new branch when Previous or Next is pressed. */}
       <p className="visually-hidden" role="status">
         {branch.name}, {position} of {total}
       </p>
 
-      <h1 className="h3 m-0" ref={headingRef} tabIndex={-1}>
-        {branch.name}
-      </h1>
+      <div className="branch-detail__summary">
+        <div className="branch-detail__identity">
+          <TypeBadge type={branch.type} />
+          <div className="branch-detail__title">
+            <h1 className="h4 m-0" ref={headingRef} tabIndex={-1}>
+              {branch.name}
+            </h1>
+            <p className="branch-detail__address">{branch.address}</p>
+            <p className="branch-detail__kind">{typeLabel(branch.type)}</p>
+          </div>
+          {distanceKm !== undefined && (
+            <p className="branch-detail__distance">
+              {formatDistance(distanceKm)}
+              <span className="visually-hidden"> away</span>
+            </p>
+          )}
+        </div>
 
-      <div className="d-flex flex-wrap align-items-center gap-2 mt-2">
         <StatusChip status={getOpenStatus(branch, now)} />
-        {distanceKm !== undefined && (
-          <span className="branch-detail__distance">{formatDistance(distanceKm)} away</span>
-        )}
-      </div>
 
-      <div className="branch-card__actions">
-        <a
-          className="btn btn-primary btn-sm flex-grow-1"
-          href={directionsUrl(branch.location)}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon name="navigation" />
-          Directions{' '}
-          <span className="visually-hidden">(opens in a new tab)</span>
-        </a>
-        {branch.phone && (
-          <a className="btn btn-link btn-sm" href={telUrl(branch.phone)}>
-            <Icon name="phone" />
-            Call
+        <div className="branch-detail__actions">
+          <a
+            className="btn btn-primary flex-grow-1"
+            href={directionsUrl(branch.location)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name="navigation" />
+            Get directions{' '}
+            <span className="visually-hidden">(opens in a new tab)</span>
           </a>
-        )}
+          {branch.phone && (
+            <a className="btn btn-outline-dark" href={telUrl(branch.phone)}>
+              <Icon name="phone" />
+              Call
+              <span className="visually-hidden"> {branch.name}</span>
+            </a>
+          )}
+        </div>
       </div>
 
-      <section className="branch-detail__section" aria-labelledby="detail-address">
-        <h2 className="h4" id="detail-address">
-          Address
-        </h2>
-        <p>{branch.address}</p>
+      <div className="branch-detail__body">
+        <section className="branch-detail__section" aria-labelledby="detail-hours">
+          <h2 className="h5" id="detail-hours">
+            Opening hours
+          </h2>
+          <p className="tabular-nums">{formatOpeningHours(branch)}</p>
+          <p className="branch-detail__note">Hours can differ on public holidays, so check before you travel.</p>
+        </section>
+
+        <section className="branch-detail__section" aria-labelledby="detail-services">
+          <h2 className="h5" id="detail-services">
+            Services
+          </h2>
+          <ServiceList services={branch.services} />
+        </section>
+
         {branch.phone && (
-          <p>
-            <a href={telUrl(branch.phone)}>{branch.phone}</a>
-          </p>
+          <section className="branch-detail__section" aria-labelledby="detail-contact">
+            <h2 className="h5" id="detail-contact">
+              Contact
+            </h2>
+            <p>
+              <a href={telUrl(branch.phone)}>{branch.phone}</a>
+            </p>
+          </section>
         )}
-      </section>
-
-      <section className="branch-detail__section" aria-labelledby="detail-hours">
-        <h2 className="h4" id="detail-hours">
-          Opening hours
-        </h2>
-        <p className="tabular-nums">{formatOpeningHours(branch)}</p>
-        <p className="branch-detail__note">Hours can differ on public holidays, so check before you travel.</p>
-      </section>
-
-      <section className="branch-detail__section" aria-labelledby="detail-services">
-        <h2 className="h4" id="detail-services">
-          Services
-        </h2>
-        <ServiceList services={branch.services} />
-      </section>
+      </div>
     </article>
   )
 }
