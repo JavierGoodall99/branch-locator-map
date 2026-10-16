@@ -11,7 +11,7 @@ export interface BranchFilters {
 }
 
 /** Lower-cases, strips accents and trims, so "Café" matches "cafe". */
-function normalise(text: string): string {
+export function normalise(text: string): string {
   return text
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
