@@ -220,12 +220,12 @@ describe('App', () => {
       const nearest = document.querySelector('article.branch-card')!
       expect(nearest.textContent).toContain('Western Cape')
       expect(nearest.textContent).not.toBe(byName)
-      expect(nearest.querySelector('.branch-card__distance')).not.toBeNull()
+      expect(nearest.querySelector('.branch-card__meta')!.textContent).toContain(' away')
       expect(screen.getByText(/nearest first$/)).toBeInTheDocument()
 
       await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
       expect(document.querySelector('article.branch-card')!.textContent).toBe(byName)
-      expect(document.querySelector('.branch-card__distance')).toBeNull()
+      expect(document.querySelector('.branch-card__meta')!.textContent).not.toContain(' away')
     })
 
     it('keeps the default list and explains how to carry on when location is refused', async () => {
@@ -239,7 +239,7 @@ describe('App', () => {
 
       expect(screen.getByText(/turned off for this site/)).toBeInTheDocument()
       expect(cardCount()).toBe(before)
-      expect(document.querySelector('.branch-card__distance')).toBeNull()
+      expect(document.querySelector('.branch-card__meta')!.textContent).not.toContain(' away')
     })
   })
 })

@@ -116,19 +116,46 @@
   }
 }
 
-// Name and distance on one line; the distance stays beside the name even when the name wraps.
-.branch-card__title {
+// The kind of site as a badge: a blue square with a building for a branch, a white circle with a
+// ring and a card for an ATM.
+.type-badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+
+  &--branch {
+    border-radius: $border-radius-sm;
+    background: $blue-strong;
+    color: $white;
+  }
+
+  &--atm {
+    border-radius: 50%;
+    border: 3px solid $blue-deep;
+    background: $white;
+    color: $blue-deep;
+  }
+}
+
+.branch-card__header {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
   gap: $spacer * 0.75;
 }
 
-.branch-card__distance {
-  flex: none;
-  font-weight: 600;
+.branch-card__heading {
+  min-width: 0;
+}
+
+// For example "Branch · 3,0 km away · Wynberg".
+.branch-card__meta {
+  margin: 2px 0 0;
+  font-size: 0.875rem;
+  color: $body-secondary-color;
   font-variant-numeric: tabular-nums;
-  color: #000;
 }
 
 // Directions takes the spare room but can shrink, so Details and Call fit beside it on a phone.

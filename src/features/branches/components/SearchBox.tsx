@@ -1,7 +1,8 @@
 import { useId, useMemo, useRef, useState, type FocusEvent, type KeyboardEvent, type ReactNode } from 'react'
 import { Icon } from '../../../shared/ui/Icon'
 import { buildPlaceIndex, suggest, type BranchSuggestion, type PlaceEntry } from '../lib/suggestions'
-import type { Branch, BranchType } from '../types'
+import { typeLabel } from '../lib/labels'
+import type { Branch } from '../types'
 
 interface SearchBoxProps {
   /** The search that is applied to the list and the map. What is being typed is kept separately. */
@@ -19,12 +20,6 @@ interface SearchBoxProps {
 type Option =
   | { kind: 'place'; place: PlaceEntry }
   | { kind: 'branch'; branch: BranchSuggestion }
-
-const TYPE_LABEL: Record<BranchType, string> = {
-  branch: 'Branch',
-  atm: 'ATM',
-  'business-centre': 'Business centre',
-}
 
 const count = (n: number) => `${n} ${n === 1 ? 'location' : 'locations'}`
 
@@ -142,7 +137,7 @@ export function SearchBox({ value, onSearch, branches, onPickBranch, trailing }:
         <span className="search-suggestions__text">
           <span className="search-suggestions__name">{isPlace ? option.place.label : option.branch.name}</span>
           <span className="search-suggestions__detail">
-            {isPlace ? placeDetail(option.place) : `${TYPE_LABEL[option.branch.type]}, ${option.branch.place}`}
+            {isPlace ? placeDetail(option.place) : `${typeLabel(option.branch.type)}, ${option.branch.place}`}
           </span>
         </span>
       </div>
@@ -165,7 +160,7 @@ export function SearchBox({ value, onSearch, branches, onPickBranch, trailing }:
         }}
       >
         <button type="submit" className="search-box__action" aria-label="Search">
-          <Icon name="search" />
+          <Icon name="search" size={18} />
         </button>
         <label htmlFor={inputId} className="visually-hidden">
           Search by name, suburb, town or postcode
@@ -206,7 +201,7 @@ export function SearchBox({ value, onSearch, branches, onPickBranch, trailing }:
               inputRef.current?.focus()
             }}
           >
-            <Icon name="close" />
+            <Icon name="close" size={18} />
           </button>
         )}
         {trailing && (

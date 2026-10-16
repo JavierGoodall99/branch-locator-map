@@ -1,10 +1,14 @@
+import { Fragment } from 'react'
 import { Icon } from '../../../shared/ui/Icon'
 import { formatDistance } from '../lib/distance'
 import { getOpenStatus } from '../lib/hours'
+import { typeLabel } from '../lib/labels'
 import { directionsUrl, telUrl } from '../lib/links'
+import { localityOf } from '../lib/place'
 import type { Branch } from '../types'
 import { ServiceList } from './ServiceList'
 import { StatusChip } from './StatusChip'
+import { TypeBadge } from './TypeBadge'
 
 interface BranchCardProps {
   branch: Branch
@@ -19,19 +23,32 @@ interface BranchCardProps {
 export function BranchCard({ branch, now, distanceKm, onSelect }: BranchCardProps) {
   const headingId = `branch-${branch.id}`
   const status = getOpenStatus(branch, now)
+  // For example "Branch · 3,0 km away · Wynberg". The distance is only there once the location is known.
+  const meta = [
+    typeLabel(branch.type),
+    ...(distanceKm !== undefined ? [`${formatDistance(distanceKm)} away`] : []),
+    localityOf(branch),
+  ]
 
   return (
     <article className="branch-card" aria-labelledby={headingId}>
-      <div className="branch-card__title">
-        <h2 className="h4 m-0" id={headingId}>
-          {branch.name}
-        </h2>
-        {distanceKm !== undefined && (
-          <span className="branch-card__distance">
-            {formatDistance(distanceKm)}
-            <span className="visually-hidden"> away</span>
-          </span>
-        )}
+      <div className="branch-card__header">
+        <TypeBadge type={branch.type} />
+        <div className="branch-card__heading">
+          <h2 className="h4 m-0" id={headingId}>
+            {branch.name}
+          </h2>
+          <p className="branch-card__meta">
+            {meta.map((part, index) => (
+              <Fragment key={part}>
+                {/* The dot is for the eye; screen readers hear a comma instead. */}
+                {index > 0 && <span aria-hidden="true"> · </span>}
+                {index > 0 && <span className="visually-hidden">, </span>}
+                <span>{part}</span>
+              </Fragment>
+            ))}
+          </p>
+        </div>
       </div>
       <p className="branch-card__address">{branch.address}</p>
       <div className="mt-2">

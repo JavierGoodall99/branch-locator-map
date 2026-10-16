@@ -34,8 +34,9 @@ describe('BranchCard', () => {
 
     expect(within(card).getByText(/Rivonia Road/)).toBeInTheDocument()
     expect(within(card).getByText('Open until 17:00')).toBeInTheDocument()
-    expect(within(card).getByText('Branch')).toBeInTheDocument()
-    expect(within(card).getByText('SmartID Services')).toBeInTheDocument()
+    const services = within(within(card).getByRole('list'))
+    expect(services.getByText('Branch')).toBeInTheDocument()
+    expect(services.getByText('SmartID Services')).toBeInTheDocument()
   })
 
   it('links to directions in a new tab, and says so', () => {
@@ -81,13 +82,71 @@ describe('BranchCard', () => {
   it('shows how far away it is when the distance is known', () => {
     render(<BranchCard branch={branch} now={morning} distanceKm={2.34} onSelect={vi.fn()} />)
 
-    expect(screen.getByText('2,3 km')).toBeInTheDocument()
-    expect(screen.getByRole('article')).toHaveTextContent('2,3 km away')
+    expect(screen.getByText('2,3 km away')).toBeInTheDocument()
   })
 
   it('shows no distance when the location is unknown', () => {
     render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
 
     expect(screen.getByRole('article')).not.toHaveTextContent('away')
+  })
+
+  describe('the line under the name', () => {
+    const line = () => document.querySelector('.branch-card__meta')!
+    /** What a sighted user reads: the text without the parts that are only for screen readers. */
+    const visibleText = (element: Element) => {
+      const copy = element.cloneNode(true) as Element
+      copy.querySelectorAll('.visually-hidden').forEach((node) => node.remove())
+      return copy.textContent?.replace(/\s+/g, ' ').trim()
+    }
+
+    it('says what kind of site it is and where, with the distance in between once it is known', () => {
+      render(<BranchCard branch={branch} now={morning} distanceKm={3.04} onSelect={vi.fn()} />)
+
+      expect(visibleText(line())).toBe('Branch · 3,0 km away · Sandton')
+    })
+
+    it('leaves the distance out without a location', () => {
+      render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
+
+      expect(visibleText(line())).toBe('Branch · Sandton')
+    })
+
+    it('uses the suburb when the address has one', () => {
+      render(
+        <BranchCard
+          branch={{ ...branch, address: 'Yarona Mall, Watt Avenue, Wynberg, Sandton, Gauteng, 2090' }}
+          now={morning}
+          onSelect={vi.fn()}
+        />,
+      )
+
+      expect(visibleText(line())).toBe('Branch · Wynberg')
+    })
+
+    it('calls an ATM an ATM, and a business centre a business centre', () => {
+      const { rerender } = render(<BranchCard branch={{ ...branch, type: 'atm' }} now={morning} onSelect={vi.fn()} />)
+      expect(line()).toHaveTextContent(/^ATM/)
+
+      rerender(<BranchCard branch={{ ...branch, type: 'business-centre' }} now={morning} onSelect={vi.fn()} />)
+      expect(line()).toHaveTextContent(/^Business centre/)
+    })
+
+    it('reads with commas, not dots, for a screen reader', () => {
+      render(<BranchCard branch={branch} now={morning} distanceKm={3.04} onSelect={vi.fn()} />)
+
+      const dots = [...line().querySelectorAll('[aria-hidden="true"]')]
+      expect(dots.length).toBeGreaterThan(0)
+      expect(dots.every((dot) => dot.textContent?.trim() === '·')).toBe(true)
+      expect(line().querySelectorAll('.visually-hidden')).toHaveLength(dots.length)
+    })
+  })
+
+  it('shows a badge for the kind of site, hidden from assistive technology', () => {
+    const { container, rerender } = render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
+    expect(container.querySelector('.type-badge--branch')).toHaveAttribute('aria-hidden', 'true')
+
+    rerender(<BranchCard branch={{ ...branch, type: 'atm' }} now={morning} onSelect={vi.fn()} />)
+    expect(container.querySelector('.type-badge--atm')).not.toBeNull()
   })
 })

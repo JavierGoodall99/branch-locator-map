@@ -179,7 +179,7 @@ describe('BranchResults', () => {
       const names = screen.getAllByRole('article').map((card) => within(card).getByRole('heading').textContent)
       expect(names).toEqual(['Zulu Johannesburg', 'Alpha Cape Town'])
       expect(screen.getByRole('status')).toHaveTextContent('2 locations, nearest first')
-      expect(screen.getAllByText(/ km$/).length).toBeGreaterThan(0)
+      expect(screen.getAllByText(/ km away$/).length).toBeGreaterThan(0)
     })
 
     it('lists by name, without distances, when there is no location', () => {
