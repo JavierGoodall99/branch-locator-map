@@ -2,23 +2,18 @@ import hero from '../../../assets/capitec-atm.jpg?w=480;800;1200&format=avif;web
 import { Icon } from '../../../shared/ui/Icon'
 
 interface DetailHeroProps {
-  /** 1-based position in the list the user came from. */
-  position: number
-  total: number
   onBack: () => void
-  onPrevious: () => void
-  onNext: () => void
 }
 
 // The sidebar is at most 400px wide, and the full width of a phone below that.
 const SIZES = '(min-width: 768px) 400px, 100vw'
 
 /**
- * The photo at the top of the details, with the way back over its top left and Previous and Next over
- * its top right. The photo is decoration, so it has no description; the controls are the content.
- * The back button comes first in the page, so it is the first stop for the keyboard.
+ * The photo at the top of the details, with the way back over its top left. The photo is decoration,
+ * so it has no description; the button is the content. It comes first in the page, so it is the
+ * first stop for the keyboard.
  */
-export function DetailHero({ position, total, onBack, onPrevious, onNext }: DetailHeroProps) {
+export function DetailHero({ onBack }: DetailHeroProps) {
   return (
     <div className="detail-hero">
       <picture>
@@ -39,18 +34,6 @@ export function DetailHero({ position, total, onBack, onPrevious, onNext }: Deta
       <button type="button" className="icon-button detail-hero__back" aria-label="Back to results" onClick={onBack}>
         <Icon name="arrowLeft" />
       </button>
-
-      <div className="detail-hero__pager">
-        <button type="button" className="icon-button" aria-label="Previous branch" disabled={position <= 1} onClick={onPrevious}>
-          <Icon name="chevronLeft" />
-        </button>
-        <span className="detail-hero__position" aria-hidden="true">
-          {position} of {total}
-        </span>
-        <button type="button" className="icon-button" aria-label="Next branch" disabled={position >= total} onClick={onNext}>
-          <Icon name="chevronRight" />
-        </button>
-      </div>
     </div>
   )
 }

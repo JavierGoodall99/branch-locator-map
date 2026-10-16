@@ -68,7 +68,7 @@ test.describe('finding a branch', () => {
 })
 
 test.describe('branch details', () => {
-  test('opens a branch, steps through the list and goes back to where the user was', async ({ page }) => {
+  test('opens a branch and goes back to where the user was', async ({ page }) => {
     await page.goto('/')
     const firstCard = page.getByRole('article').first()
     await expect(firstCard).toBeVisible()
@@ -81,11 +81,6 @@ test.describe('branch details', () => {
     await expect(heading).toBeFocused()
     await expect(page.getByRole('heading', { level: 2, name: 'Opening hours' })).toBeVisible()
     await expect(page.getByRole('link', { name: /Get directions/ })).toHaveAttribute('href', /google\.com\/maps\/dir/)
-
-    await page.getByRole('button', { name: 'Next branch' }).click()
-    await expect(heading).not.toHaveText(name!)
-    await page.getByRole('button', { name: 'Previous branch' }).click()
-    await expect(heading).toHaveText(name!)
 
     await page.getByRole('button', { name: 'Back to results' }).click()
     await expect(page.getByRole('heading', { level: 1, name: 'Branches and ATMs' })).toBeVisible()

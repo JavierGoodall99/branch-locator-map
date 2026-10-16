@@ -22,8 +22,8 @@ const branch: Branch = {
 const morning = new Date('2026-10-14T08:00:00Z')
 
 function setup(props: Partial<ComponentProps<typeof BranchDetail>> = {}) {
-  const handlers = { onBack: vi.fn(), onPrevious: vi.fn(), onNext: vi.fn() }
-  render(<BranchDetail branch={branch} position={2} total={5} now={morning} {...handlers} {...props} />)
+  const handlers = { onBack: vi.fn() }
+  render(<BranchDetail branch={branch} now={morning} {...handlers} {...props} />)
   return handlers
 }
 
@@ -35,21 +35,20 @@ describe('BranchDetail', () => {
     expect(heading).toHaveFocus()
   })
 
-  it('leads with a summary of the kind of site, its full address and its status', () => {
+  it('leads with a summary of the badge, the full address and the status', () => {
     setup()
     const summary = document.querySelector('.branch-detail__summary') as HTMLElement
 
     expect(within(summary).getByText('Sandton City, Rivonia Road, Sandton, Gauteng, 2196')).toBeInTheDocument()
-    expect(within(summary).getByText('Branch')).toBeInTheDocument()
+    expect(within(summary).queryByText('Branch')).not.toBeInTheDocument()
     expect(within(summary).getByText('Open until 17:00')).toBeInTheDocument()
     expect(summary.querySelector('.type-badge--branch')).toHaveAttribute('aria-hidden', 'true')
   })
 
-  it('calls an ATM an ATM, with the ATM badge', () => {
+  it('shows the ATM badge for an ATM', () => {
     setup({ branch: { ...branch, type: 'atm' } })
     const summary = document.querySelector('.branch-detail__summary') as HTMLElement
 
-    expect(within(summary).getByText('ATM')).toBeInTheDocument()
     expect(summary.querySelector('.type-badge--atm')).not.toBeNull()
   })
 
@@ -71,14 +70,14 @@ describe('BranchDetail', () => {
     expect(first).toHaveAccessibleName('Back to results')
   })
 
-  it('shows hours, services and contact under their own headings', () => {
+  it('shows hours and services under their own headings', () => {
     setup()
 
     expect(screen.getByRole('heading', { level: 2, name: 'Opening hours' })).toBeInTheDocument()
     expect(screen.getByText('08:00 to 17:00')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 2, name: 'Services' })).toBeInTheDocument()
     expect(screen.getByText('SmartID Services')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 2, name: 'Contact' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Contact' })).not.toBeInTheDocument()
   })
 
   it('shows around-the-clock and missing hours in words', () => {
@@ -112,34 +111,11 @@ describe('BranchDetail', () => {
     expect(onBack).toHaveBeenCalledTimes(1)
   })
 
-  it('moves to the previous and next branch', async () => {
-    const { onPrevious, onNext } = setup()
-
-    await userEvent.click(screen.getByRole('button', { name: 'Previous branch' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Next branch' }))
-
-    expect(onPrevious).toHaveBeenCalledTimes(1)
-    expect(onNext).toHaveBeenCalledTimes(1)
-  })
-
-  it('announces the position so a screen reader hears each change', () => {
+  it('has no Previous or Next, and no status announcer', () => {
     setup()
 
-    expect(screen.getByRole('status')).toHaveTextContent('Capitec Bank Sandton City, 2 of 5')
-  })
-
-  it('disables Previous on the first branch and Next on the last', () => {
-    const { rerender } = render(
-      <BranchDetail branch={branch} position={1} total={3} now={morning} onBack={vi.fn()} onPrevious={vi.fn()} onNext={vi.fn()} />,
-    )
-    expect(screen.getByRole('button', { name: 'Previous branch' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Next branch' })).toBeEnabled()
-
-    rerender(
-      <BranchDetail branch={branch} position={3} total={3} now={morning} onBack={vi.fn()} onPrevious={vi.fn()} onNext={vi.fn()} />,
-    )
-    expect(screen.getByRole('button', { name: 'Previous branch' })).toBeEnabled()
-    expect(screen.getByRole('button', { name: 'Next branch' })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: /Previous|Next/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
   it('shows the distance when it is known, and nothing when it is not', () => {

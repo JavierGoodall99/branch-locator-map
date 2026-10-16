@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react'
 import { Icon } from '../../../shared/ui/Icon'
 import { formatDistance } from '../lib/distance'
 import { formatOpeningHours, getOpenStatus } from '../lib/hours'
-import { typeLabel } from '../lib/labels'
 import { directionsUrl, telUrl } from '../lib/links'
 import type { Branch } from '../types'
 import { DetailHero } from './DetailHero'
@@ -12,19 +11,14 @@ import { TypeBadge } from './TypeBadge'
 
 interface BranchDetailProps {
   branch: Branch
-  /** 1-based position in the list the user came from. */
-  position: number
-  total: number
   now: Date
   /** Distance from the user, when their location is known. */
   distanceKm?: number
   onBack: () => void
-  onPrevious: () => void
-  onNext: () => void
 }
 
-/** Everything we know about one branch, with a way back and Previous and Next. */
-export function BranchDetail({ branch, position, total, now, distanceKm, onBack, onPrevious, onNext }: BranchDetailProps) {
+/** Everything we know about one branch, with a way back to the list. */
+export function BranchDetail({ branch, now, distanceKm, onBack }: BranchDetailProps) {
   const headingRef = useRef<HTMLHeadingElement>(null)
 
   // Opening the detail view moves focus to its heading, so keyboard and screen reader users
@@ -35,12 +29,7 @@ export function BranchDetail({ branch, position, total, now, distanceKm, onBack,
 
   return (
     <article className="branch-detail">
-      <DetailHero position={position} total={total} onBack={onBack} onPrevious={onPrevious} onNext={onNext} />
-
-      {/* Announces the new branch when Previous or Next is pressed. */}
-      <p className="visually-hidden" role="status">
-        {branch.name}, {position} of {total}
-      </p>
+      <DetailHero onBack={onBack} />
 
       <div className="branch-detail__summary">
         <div className="branch-detail__identity">
@@ -50,7 +39,6 @@ export function BranchDetail({ branch, position, total, now, distanceKm, onBack,
               {branch.name}
             </h1>
             <p className="branch-detail__address">{branch.address}</p>
-            <p className="branch-detail__kind">{typeLabel(branch.type)}</p>
           </div>
           {distanceKm !== undefined && (
             <p className="branch-detail__distance">
@@ -98,17 +86,6 @@ export function BranchDetail({ branch, position, total, now, distanceKm, onBack,
           </h2>
           <ServiceList services={branch.services} />
         </section>
-
-        {branch.phone && (
-          <section className="branch-detail__section" aria-labelledby="detail-contact">
-            <h2 className="h5" id="detail-contact">
-              Contact
-            </h2>
-            <p>
-              <a href={telUrl(branch.phone)}>{branch.phone}</a>
-            </p>
-          </section>
-        )}
       </div>
     </article>
   )

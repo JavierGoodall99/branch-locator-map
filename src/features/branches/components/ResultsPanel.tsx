@@ -20,12 +20,11 @@ interface ResultsPanelProps {
 
 /** Shows the results list, or one branch in detail, and keeps keyboard focus sensible between them. */
 export function ResultsPanel({ state, filters, now, origin, selectedId, onSelect, onClearFilters }: ResultsPanelProps) {
-  // The list is only worked out here while a branch is open, so Previous and Next walk the
-  // same list the user came from. In list mode BranchResults does that work itself.
+  // The list is only worked out here while a branch is open, to find it. In list mode BranchResults
+  // does that work itself.
   const visible =
     selectedId && state.status === 'success' ? listBranches(state.branches, toBranchFilters(filters), now, origin) : []
-  const index = selectedId ? visible.findIndex((branch) => branch.id === selectedId) : -1
-  const selected = index >= 0 ? visible[index] : null
+  const selected = selectedId ? (visible.find((branch) => branch.id === selectedId) ?? null) : null
 
   // When the user goes back, return focus to the Details button of the branch they were last
   // viewing, so they are not dropped at the top of the page.
@@ -43,13 +42,9 @@ export function ResultsPanel({ state, filters, now, origin, selectedId, onSelect
     return (
       <BranchDetail
         branch={selected}
-        position={index + 1}
-        total={visible.length}
         now={now}
         distanceKm={selected.distanceKm}
         onBack={() => onSelect(null)}
-        onPrevious={() => onSelect(visible[index - 1].id)}
-        onNext={() => onSelect(visible[index + 1].id)}
       />
     )
   }

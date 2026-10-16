@@ -112,19 +112,6 @@ describe('App', () => {
       expect(document.getElementById(buttonId)).toHaveFocus()
     })
 
-    it('moves to the next and previous branch', async () => {
-      await openFirstBranch()
-      const first = screen.getByRole('heading', { level: 1 }).textContent
-
-      await userEvent.click(screen.getByRole('button', { name: 'Next branch' }))
-      const second = screen.getByRole('heading', { level: 1 }).textContent
-      expect(second).not.toBe(first)
-      expect(screen.getByText(/^2 of \d+$/)).toBeInTheDocument()
-
-      await userEvent.click(screen.getByRole('button', { name: 'Previous branch' }))
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(first!)
-    })
-
     it('gives the details the whole sidebar, and gives it back on return', async () => {
       await openFirstBranch()
       expect(document.querySelector('.locator')).toHaveClass('locator--detail')

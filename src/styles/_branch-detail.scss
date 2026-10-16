@@ -30,11 +30,6 @@
     font-size: 0.875rem;
   }
 
-  &__kind {
-    margin: $spacer * 0.5 0 0;
-    font-weight: 700;
-  }
-
   &__distance {
     flex: none;
     margin: 0;
@@ -86,7 +81,7 @@
   }
 }
 
-// Round 44px icon button, for Previous and Next.
+// Round 44px icon button, for the back arrow.
 .icon-button {
   display: inline-flex;
   align-items: center;
@@ -99,16 +94,9 @@
   background: $white;
   color: #000;
 
-  &:hover:not(:disabled) {
+  &:hover {
     background: $blue-tint;
     color: $blue-deep;
-  }
-
-  &:disabled {
-    background: $border-color;
-    border-color: $border-color;
-    color: $text-subtle;
-    cursor: not-allowed;
   }
 
   &:focus-visible {
@@ -126,53 +114,23 @@
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 5 / 2; // short on a phone, where the sheet is only about half the screen
+    aspect-ratio: 16 / 9;
     object-fit: cover;
     // Keeps the machine and the people in frame when the photo is cropped.
     object-position: center 40%;
     background: $blue-tint; // shown while the photo loads
   }
 
-  &__back,
-  &__pager {
+  &__back {
     position: absolute;
     top: $spacer * 0.75;
-    box-shadow: 0 2px 8px rgba($black, 0.25);
-  }
-
-  &__back {
     left: $spacer * 0.75;
-  }
-
-  &__pager {
-    right: $spacer * 0.75;
-    display: flex;
-    align-items: center;
-    border-radius: 22px;
-    background: $white;
-
-    .icon-button {
-      border-color: transparent;
-
-      &:disabled {
-        background: transparent;
-        border-color: transparent;
-      }
-    }
-  }
-
-  &__position {
-    min-width: 3.5rem;
-    text-align: center;
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1.5;
-    font-variant-numeric: tabular-nums;
+    box-shadow: 0 2px 8px rgba($black, 0.25);
   }
 }
 
 @include media-breakpoint-up(md) {
   .branch-detail .detail-hero__image {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 4 / 3;
   }
 }
