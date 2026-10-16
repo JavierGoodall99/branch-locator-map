@@ -5,8 +5,8 @@ interface DetailHeroProps {
   onBack: () => void
 }
 
-// The sidebar is at most 400px wide, and the full width of a phone below that.
-const SIZES = '(min-width: 768px) 400px, 100vw'
+// The sidebar is at most 440px wide, and the full width of a phone below that.
+const SIZES = '(min-width: 768px) 440px, 100vw'
 
 /**
  * The photo at the top of the details, with the way back over its top left. The photo is decoration,

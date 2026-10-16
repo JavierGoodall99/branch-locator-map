@@ -1,8 +1,8 @@
 // Branch locator page layout. Mobile first: full-bleed map with floating controls and a
 // results sheet; from md up, a side panel beside the map.
 
-$panel-width-md: 360px;
-$panel-width-xl: 400px;
+$panel-width-md: 400px;
+$panel-width-xl: 440px;
 // The results sheet covers the bottom 45% of the screen on a phone, leaving the most room for
 // the map that still shows a couple of cards. view.ts and _branch-map.scss use the same 45%.
 $sheet-top: 55%;
