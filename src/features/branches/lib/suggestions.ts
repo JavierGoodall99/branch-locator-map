@@ -1,5 +1,6 @@
 import type { Branch, BranchType } from '../types'
 import { normalise } from './filter'
+import { placeNamesOf, townOf } from './place'
 
 /** Suggestions start once the user has typed this much. One letter would match nearly everything. */
 export const MIN_QUERY_LENGTH = 2
@@ -36,17 +37,7 @@ export interface SuggestionLimits {
 
 const DEFAULT_LIMITS: SuggestionLimits = { places: 3, branches: 5 }
 
-// Addresses mix streets and shopping centres in with the suburb and town. This keeps the places
-// people would actually search for: nothing with a number in it, and nothing that names a road or
-// a centre.
-const NOT_A_PLACE =
-  /\b(street|road|avenue|drive|centre|center|mall|plaza|square|crossing|shop|lane|boulevard|building|station|walk|junction|market|cnr|corner)\b/i
-
 const POSTCODE = /^\d{4}$/
-
-function isPlaceName(text: string | undefined): text is string {
-  return Boolean(text) && !/\d/.test(text!) && !NOT_A_PLACE.test(text!)
-}
 
 /**
  * The towns, suburbs, provinces and postcodes found in the branches' addresses, each with how many
@@ -67,11 +58,7 @@ export function buildPlaceIndex(branches: Branch[]): PlaceEntry[] {
   for (const branch of branches) {
     if (branch.status === 'permanently-closed') continue
 
-    const parts = branch.address.split(',').map((part) => part.trim())
-    const provinceAt = parts.lastIndexOf(branch.province)
-    for (const at of [provinceAt - 1, provinceAt - 2]) {
-      if (provinceAt > 0 && at >= 0 && isPlaceName(parts[at])) add('place', parts[at])
-    }
+    for (const place of placeNamesOf(branch)) add('place', place)
 
     add('province', branch.province)
     if (POSTCODE.test(branch.postalCode)) add('postcode', branch.postalCode)
@@ -93,12 +80,6 @@ function nameRank(name: string, words: string[]): number | null {
   if (!words.every((word) => name.includes(word))) return null
   const nameWords = name.split(' ')
   return words.every((word) => nameWords.some((nameWord) => nameWord.startsWith(word))) ? 1 : 2
-}
-
-function townOf(branch: Branch): string {
-  const parts = branch.address.split(',').map((part) => part.trim())
-  const provinceAt = parts.lastIndexOf(branch.province)
-  return (provinceAt > 0 ? parts[provinceAt - 1] : undefined) ?? branch.province
 }
 
 /** Places and branches that match what the user has typed, best first. */

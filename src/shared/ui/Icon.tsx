@@ -1,6 +1,9 @@
+import { ATM_ICON, BRANCH_ICON } from './typeIcons'
+
 const PATHS = {
-  bank: 'M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18',
-  cash: 'M3 8a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2zM12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z',
+  // The building and the card come from the provided icon files, so they match everywhere.
+  bank: BRANCH_ICON.path,
+  cash: ATM_ICON.path,
   deposit: 'M12 4v10M8 10l4 4 4-4M5 20h14',
   briefcase: 'M3 9a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2zM9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M3 13h18',
   idCard: 'M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2zM8 11a1.5 1.5 0 100 .01M6 16c.5-1.5 3.5-1.5 4 0M14 10h4M14 14h4',
@@ -21,10 +24,16 @@ const PATHS = {
 
 export type IconName = keyof typeof PATHS
 
+/** Line weight where an icon has its own. The building and the card come with the weight they were drawn at. */
+const STROKE_WIDTH: Partial<Record<IconName, number>> = {
+  bank: BRANCH_ICON.strokeWidth,
+  cash: ATM_ICON.strokeWidth,
+}
+
 interface IconProps {
   name: IconName
-  /** Pixel size; the design uses 16, 20 and 24. */
-  size?: 16 | 20 | 24
+  /** Pixel size; the design uses 16, 18, 20 and 24. */
+  size?: 16 | 18 | 20 | 24
 }
 
 /** Decorative line icon. It is hidden from assistive tech, so always pair it with text. */
@@ -37,7 +46,7 @@ export function Icon({ name, size = 20 }: IconProps) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth={STROKE_WIDTH[name] ?? 1.75}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
