@@ -76,22 +76,6 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
   }
 }
 
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap; // wrap rather than scroll, so Clear filters is never cut off on a phone
-  align-items: center;
-  gap: $spacer * 0.5;
-
-  &__province {
-    flex: 0 1 auto;
-    width: auto;
-    min-height: 44px;
-    border-radius: $border-radius-pill;
-    border-color: $control-hairline;
-    font-weight: 600;
-  }
-}
-
 .chip {
   display: inline-flex;
   flex: none;

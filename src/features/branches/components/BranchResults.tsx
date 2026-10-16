@@ -72,8 +72,8 @@ export function BranchResults({ state, filters, now, origin, onClearFilters, onS
           {hasActiveFilters(filters) ? (
             <>
               <h2 className="h4">No matches found</h2>
-              <p>Try a different search, or clear your filters to see everything.</p>
-              <Button onClick={onClearFilters}>Clear filters</Button>
+              <p>Try a different search, or clear it to see everything.</p>
+              <Button onClick={onClearFilters}>Clear search</Button>
             </>
           ) : (
             <>

@@ -1,8 +1,8 @@
 import { DEFAULT_FILTERS, clearFilters, hasActiveFilters, toBranchFilters } from './filters'
 
 describe('DEFAULT_FILTERS', () => {
-  it('starts on branches with nothing else applied', () => {
-    expect(DEFAULT_FILTERS).toEqual({ query: '', show: 'branches', openNow: false, province: null })
+  it('starts on branches with no search', () => {
+    expect(DEFAULT_FILTERS).toEqual({ query: '', show: 'branches' })
   })
 })
 
@@ -19,14 +19,8 @@ describe('toBranchFilters', () => {
     expect(toBranchFilters({ ...DEFAULT_FILTERS, show: 'both' }).types).toEqual([])
   })
 
-  it('passes the query, open-now flag and province through', () => {
-    expect(
-      toBranchFilters({ query: 'sandton', show: 'both', openNow: true, province: 'Gauteng' }),
-    ).toEqual({ query: 'sandton', types: [], openNow: true, province: 'Gauteng' })
-  })
-
-  it('leaves the province unset when none is chosen', () => {
-    expect(toBranchFilters(DEFAULT_FILTERS).province).toBeUndefined()
+  it('passes the query through', () => {
+    expect(toBranchFilters({ query: 'sandton', show: 'both' })).toEqual({ query: 'sandton', types: [] })
   })
 })
 
@@ -43,19 +37,13 @@ describe('hasActiveFilters', () => {
     expect(hasActiveFilters({ ...DEFAULT_FILTERS, query: '   ' })).toBe(false)
   })
 
-  it.each([
-    ['a query', { query: 'paarl' }],
-    ['open now', { openNow: true }],
-    ['a province', { province: 'Western Cape' as const }],
-  ])('is true with %s', (_label, change) => {
-    expect(hasActiveFilters({ ...DEFAULT_FILTERS, ...change })).toBe(true)
+  it('is true with a query', () => {
+    expect(hasActiveFilters({ ...DEFAULT_FILTERS, query: 'paarl' })).toBe(true)
   })
 })
 
 describe('clearFilters', () => {
-  it('resets the search and filters but keeps what is being shown', () => {
-    const active = { query: 'paarl', show: 'atms' as const, openNow: true, province: 'Western Cape' as const }
-
-    expect(clearFilters(active)).toEqual({ ...DEFAULT_FILTERS, show: 'atms' })
+  it('clears the search but keeps what is being shown', () => {
+    expect(clearFilters({ query: 'paarl', show: 'atms' })).toEqual({ query: '', show: 'atms' })
   })
 })

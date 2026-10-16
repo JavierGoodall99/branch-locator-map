@@ -62,7 +62,7 @@ describe('App', () => {
     expect(cardCount()).toBeGreaterThan(0)
     expect(cardCount()).toBeLessThan(before)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Clear search' }))
     expect(cardCount()).toBe(before)
     expect(screen.getByRole('searchbox')).toHaveValue('')
   })

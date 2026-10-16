@@ -20,7 +20,7 @@ test.describe('finding a branch', () => {
     expect(await resultCount(page)).toBeGreaterThan(0)
     await expect(page.getByRole('article').first()).toContainText('Sandton')
 
-    await page.getByRole('button', { name: 'Clear filters' }).click()
+    await page.getByRole('button', { name: 'Clear search' }).first().click()
     await expect(page.getByRole('searchbox')).toHaveValue('')
     await expect.poll(() => resultCount(page)).toBe(all)
   })
@@ -31,7 +31,7 @@ test.describe('finding a branch', () => {
     await page.getByRole('searchbox').fill('zzzz nowhere')
 
     await expect(page.getByRole('heading', { name: 'No matches found' })).toBeVisible()
-    await page.getByRole('button', { name: 'Clear filters' }).first().click()
+    await page.getByRole('button', { name: 'Clear search' }).first().click()
     await expect(page.getByRole('article').first()).toBeVisible()
   })
 
@@ -49,27 +49,6 @@ test.describe('finding a branch', () => {
     await expect(page.getByRole('button', { name: 'ATMs' })).toHaveAttribute('aria-pressed', 'true')
   })
 
-  test('shows only branches that are open now when asked', async ({ page }) => {
-    await page.goto('/')
-    await expect(page.getByRole('article').first()).toBeVisible()
-    const before = await resultCount(page)
-
-    await page.getByRole('button', { name: 'Open now' }).click()
-
-    await expect(page.getByRole('button', { name: 'Open now' })).toHaveAttribute('aria-pressed', 'true')
-    await expect.poll(() => resultCount(page)).toBeLessThanOrEqual(before)
-  })
-
-  test('filters by province', async ({ page }) => {
-    await page.goto('/')
-    await expect(page.getByRole('article').first()).toBeVisible()
-    const all = await resultCount(page)
-
-    await page.getByRole('combobox', { name: 'Province' }).selectOption('Northern Cape')
-
-    await expect.poll(() => resultCount(page)).toBeLessThan(all)
-    await expect(page.getByRole('article').first()).toContainText('Northern Cape')
-  })
 })
 
 test.describe('branch details', () => {

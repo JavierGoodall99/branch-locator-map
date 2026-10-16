@@ -52,51 +52,16 @@ describe('LocatorControls', () => {
     expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, show: 'both' })
   })
 
-  it('turns open now on', async () => {
-    const { onChange } = setup()
-
-    await userEvent.click(screen.getByRole('button', { name: 'Open now' }))
-
-    expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, openNow: true })
-  })
-
-  it('turns open now off when it is already on', async () => {
-    const { onChange } = setup({ ...DEFAULT_FILTERS, openNow: true })
-
-    const toggle = screen.getByRole('button', { name: 'Open now' })
-    expect(toggle).toHaveAttribute('aria-pressed', 'true')
-    await userEvent.click(toggle)
-
-    expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, openNow: false })
-  })
-
-  it('filters by province and can return to all provinces', async () => {
-    const { onChange } = setup()
-
-    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Province' }), 'Gauteng')
-
-    expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, province: 'Gauteng' })
-  })
-
-  it('maps "All provinces" back to no province', async () => {
-    const onChange = vi.fn()
-    render(<LocatorControls filters={{ ...DEFAULT_FILTERS, province: 'Gauteng' }} onChange={onChange} location={idleLocation} />)
-
-    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Province' }), 'All provinces')
-
-    expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, province: null })
-  })
-
-  it('only offers to clear filters when some are applied', () => {
+  it('only offers to clear the search when there is one', () => {
     setup()
 
-    expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Clear search' })).not.toBeInTheDocument()
   })
 
-  it('clears the filters but keeps the show switch', async () => {
-    const { onChange } = setup({ query: 'paarl', show: 'atms', openNow: true, province: 'Western Cape' })
+  it('clears the search but keeps the show switch', async () => {
+    const { onChange } = setup({ query: 'paarl', show: 'atms' })
 
-    await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Clear search' }))
 
     expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, show: 'atms' })
   })

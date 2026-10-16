@@ -140,7 +140,7 @@ describe('BranchResults', () => {
     expect(screen.queryByRole('article', { name: 'Capitec Bank Paarl' })).not.toBeInTheDocument()
   })
 
-  it('explains when filters match nothing and offers to clear them', async () => {
+  it('explains when the search matches nothing and offers to clear it', async () => {
     render(
       <Results
         state={success([branch('a', 'Capitec Bank Paarl')])}
@@ -149,14 +149,14 @@ describe('BranchResults', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'No matches found' })).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Clear search' }))
     expect(clear).toHaveBeenCalledTimes(1)
   })
 
-  it('does not offer to clear filters when none are applied', () => {
+  it('does not offer to clear the search when there is none', () => {
     render(<Results state={success([])} />)
 
-    expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Clear search' })).not.toBeInTheDocument()
   })
 
   it('reports which branch was chosen', async () => {

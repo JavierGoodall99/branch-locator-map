@@ -1,8 +1,6 @@
-import { Form } from 'react-bootstrap'
 import { Icon, type IconName } from '../../../shared/ui/Icon'
 import { clearFilters, hasActiveFilters, type LocatorFilters, type ShowMode } from '../model/filters'
 import type { UseLocationResult } from '../model/useLocation'
-import { PROVINCES, type Province } from '../types'
 import { LocationControl } from './LocationControl'
 
 interface LocatorControlsProps {
@@ -17,7 +15,7 @@ const SHOW_OPTIONS: { value: ShowMode; label: string; icon?: IconName }[] = [
   { value: 'both', label: 'Both' },
 ]
 
-/** Brand, search, the show switch, the filters and Near me. Filter changes go up through onChange. */
+/** Brand, search, the show switch and Near me. Changes go up through onChange. */
 export function LocatorControls({ filters, onChange, location }: LocatorControlsProps) {
   const set = (change: Partial<LocatorFilters>) => onChange({ ...filters, ...change })
 
@@ -57,40 +55,11 @@ export function LocatorControls({ filters, onChange, location }: LocatorControls
         ))}
       </div>
 
-      <div className="filter-bar">
-        <button
-          type="button"
-          className="chip"
-          aria-pressed={filters.openNow}
-          onClick={() => set({ openNow: !filters.openNow })}
-        >
-          Open now
-          {filters.openNow && <Icon name="close" size={16} />}
+      {hasActiveFilters(filters) && (
+        <button type="button" className="btn btn-link btn-sm align-self-start" onClick={() => onChange(clearFilters(filters))}>
+          Clear search
         </button>
-
-        <Form.Label htmlFor="province-filter" visuallyHidden>
-          Province
-        </Form.Label>
-        <Form.Select
-          id="province-filter"
-          className="filter-bar__province"
-          value={filters.province ?? ''}
-          onChange={(event) => set({ province: (event.target.value || null) as Province | null })}
-        >
-          <option value="">All provinces</option>
-          {PROVINCES.map((province) => (
-            <option key={province} value={province}>
-              {province}
-            </option>
-          ))}
-        </Form.Select>
-
-        {hasActiveFilters(filters) && (
-          <button type="button" className="btn btn-link btn-sm" onClick={() => onChange(clearFilters(filters))}>
-            Clear filters
-          </button>
-        )}
-      </div>
+      )}
 
       <LocationControl location={location} />
     </>
