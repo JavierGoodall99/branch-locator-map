@@ -33,10 +33,12 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
     border-color: $primary;
   }
 
+  // One clean ring in the brand blue (4.5:1 on white): the 1px border turns blue and a 1px outline
+  // sits just outside it. Not a border plus a separate offset outline, which looked like a double frame.
   &:focus-within {
-    border-color: #000;
-    outline: 2px solid #000;
-    outline-offset: 2px;
+    border-color: $primary;
+    outline: 1px solid $primary;
+    outline-offset: 0;
   }
 }
 

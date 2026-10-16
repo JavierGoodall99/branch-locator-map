@@ -103,7 +103,7 @@ Button labels use sentence case and say what happens ("Check eligibility", not "
 
 The extraction found no styled inputs, so this is **decided**:
 - Height 48px minimum, radius 16px, 1px `#ededed` border, white background, `#3a3a3a` text.
-- Focus: 2px `#2f70ef` border plus a 2px black outline offset; never remove the outline.
+- Focus: one clear indicator in the brand blue, never a stack of rings. Selects and text fields get Bootstrap's blue border and soft glow; the search box gets a single 2px blue ring. Never remove the indicator. (Buttons and links keep the black 2px keyboard-focus outline measured on capitecbank.co.za.)
 - Visible label above every field. Placeholder text is a hint, not a label.
 - Errors: message below the field in the danger color with an icon, linked via `aria-describedby`.
 

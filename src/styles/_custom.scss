@@ -46,10 +46,11 @@ h2,
 }
 
 
+// Buttons and links get a black keyboard-focus outline, as on capitecbank.co.za. Form fields keep
+// Bootstrap's own focus (a blue border and soft glow), because stacking a black outline on top of
+// that looked like a double frame.
 .btn:focus-visible,
-a:focus-visible,
-.form-control:focus-visible,
-.form-select:focus-visible {
+a:focus-visible {
   outline: 2px solid #000;
   outline-offset: 2px;
   box-shadow: none;
