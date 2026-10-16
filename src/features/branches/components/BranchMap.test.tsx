@@ -2,6 +2,7 @@ import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { LAYERS, MAP_STYLE_URL, NEAREST_TO_SHOW, SELECTED_ZOOM, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from '../map/config'
 import { applyBasemapLook } from '../map/basemap'
+import { selectedFilters } from '../map/layers'
 import { addPinImages } from '../map/pins'
 import { isWebGLAvailable } from '../map/webgl'
 import type { Branch, Coordinates } from '../types'
@@ -267,7 +268,8 @@ describe('BranchMap', () => {
 
     update({ selectedId: 'a' })
 
-    expect(currentMap().setFilter).toHaveBeenLastCalledWith(LAYERS.selected, ['==', ['get', 'id'], 'a'])
+    expect(currentMap().setFilter).toHaveBeenCalledWith(LAYERS.selected, selectedFilters('a').branch)
+    expect(currentMap().setFilter).toHaveBeenCalledWith(LAYERS.selectedAtm, selectedFilters('a').atm)
     expect(currentMap().easeTo).toHaveBeenCalledWith(
       expect.objectContaining({ center: [28.05, -26.2], zoom: SELECTED_ZOOM, padding: expect.any(Object) }),
     )
@@ -279,7 +281,8 @@ describe('BranchMap', () => {
 
     update({ selectedId: null })
 
-    expect(currentMap().setFilter).toHaveBeenLastCalledWith(LAYERS.selected, ['==', ['get', 'id'], ''])
+    expect(currentMap().setFilter).toHaveBeenCalledWith(LAYERS.selected, selectedFilters('').branch)
+    expect(currentMap().setFilter).toHaveBeenLastCalledWith(LAYERS.selectedAtm, selectedFilters('').atm)
   })
 
   it('tells the user when the map cannot load, and builds a new map on retry', async () => {

@@ -1,5 +1,5 @@
 import { LAYERS, PIN_IMAGES, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
-import { addBranchLayers, addUserLocationLayers, readMapColors, type MapColors } from './layers'
+import { addBranchLayers, addUserLocationLayers, readMapColors, selectedFilters, type MapColors } from './layers'
 
 const colors: MapColors = {
   primary: '#111111',
@@ -7,6 +7,7 @@ const colors: MapColors = {
   deep: '#333333',
   ink: '#000000',
   white: '#ffffff',
+  tint: '#555555',
   location: '#444444',
 }
 const data = { type: 'FeatureCollection' as const, features: [] }
@@ -33,7 +34,7 @@ describe('addBranchLayers', () => {
     expect(sources[SOURCE_ID]).toMatchObject({ type: 'geojson', cluster: true, data })
   })
 
-  it('adds a layer each for clusters, counts, branches, ATMs and the selection', () => {
+  it('adds a layer each for clusters, counts, branches, ATMs and the chosen branch and ATM', () => {
     const { layers } = setup()
 
     expect(Object.keys(layers)).toEqual(Object.values(LAYERS))
@@ -57,20 +58,25 @@ describe('addBranchLayers', () => {
     expect(layers[LAYERS.branches]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.branch } })
     expect(layers[LAYERS.atms]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.atm } })
     expect(layers[LAYERS.selected]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.selected } })
+    expect(layers[LAYERS.selectedAtm]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.selectedAtm } })
   })
 
-  it('anchors each pin by its tip, so the tip sits on the branch', () => {
+  it('holds a branch pin by the tip of its tail and an ATM pin by its centre, so each sits exactly on its branch', () => {
     const { layers } = setup()
 
-    for (const id of [LAYERS.branches, LAYERS.atms, LAYERS.selected]) {
+    for (const id of [LAYERS.branches, LAYERS.selected]) {
       expect(layers[id].layout).toMatchObject({ 'icon-anchor': 'bottom' })
+      expect((layers[id].layout as { 'icon-offset': number[] })['icon-offset'][1]).toBeGreaterThan(0)
+    }
+    for (const id of [LAYERS.atms, LAYERS.selectedAtm]) {
+      expect(layers[id].layout).toMatchObject({ 'icon-anchor': 'center', 'icon-offset': [0, 0] })
     }
   })
 
   it('never hides a pin to avoid a clash with another pin or a map label', () => {
     const { layers } = setup()
 
-    for (const id of [LAYERS.branches, LAYERS.atms, LAYERS.selected]) {
+    for (const id of [LAYERS.branches, LAYERS.atms, LAYERS.selected, LAYERS.selectedAtm]) {
       expect(layers[id].layout).toMatchObject({ 'icon-allow-overlap': true, 'icon-ignore-placement': true })
     }
   })
@@ -82,10 +88,28 @@ describe('addBranchLayers', () => {
     expect(JSON.stringify(layers[LAYERS.atms].filter)).toContain('"==",["get","type"],"atm"')
   })
 
-  it('starts with nothing selected', () => {
+  it('starts with nothing chosen', () => {
     const { layers } = setup()
+    const none = selectedFilters('')
 
-    expect(layers[LAYERS.selected].filter).toEqual(['==', ['get', 'id'], ''])
+    expect(layers[LAYERS.selected].filter).toEqual(none.branch)
+    expect(layers[LAYERS.selectedAtm].filter).toEqual(none.atm)
+  })
+})
+
+describe('selectedFilters', () => {
+  it('matches the chosen id in both layers', () => {
+    const filters = selectedFilters('abc')
+
+    expect(JSON.stringify(filters.branch)).toContain('["==",["get","id"],"abc"]')
+    expect(JSON.stringify(filters.atm)).toContain('["==",["get","id"],"abc"]')
+  })
+
+  it('keeps the chosen branch out of the ATM layer and the chosen ATM out of the branch layer', () => {
+    const filters = selectedFilters('abc')
+
+    expect(JSON.stringify(filters.branch)).toContain('"!=",["get","type"],"atm"')
+    expect(JSON.stringify(filters.atm)).toContain('"==",["get","type"],"atm"')
   })
 })
 
@@ -135,6 +159,10 @@ describe('readMapColors', () => {
 
   it('falls back to the brand colours when the theme variables are missing', () => {
     expect(readMapColors().deep).toBe('#0033a0')
+  })
+
+  it('reads the light blue used behind the chosen ATM, with a fallback', () => {
+    expect(readMapColors().tint).toBe('#cfdefb')
   })
 
   it('uses the familiar blue for the location dot whatever the theme says', () => {

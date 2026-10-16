@@ -1,7 +1,7 @@
 import type { ExpressionSpecification, Map as MapLibreMap, SymbolLayerSpecification } from 'maplibre-gl'
 import { CLUSTER_MAX_ZOOM, LAYERS, PIN_IMAGES, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
 import { userLocationCollection, type BranchFeatureCollection } from './geo'
-import { pinTipOffset } from './pins'
+import { pinTipOffset, type PinKind } from './pins'
 
 export interface MapColors {
   primary: string
@@ -9,6 +9,8 @@ export interface MapColors {
   deep: string
   ink: string
   white: string
+  /** The light blue used behind the chosen ATM. */
+  tint: string
   /** The "you are here" dot. A map convention, so it is not taken from the theme. */
   location: string
 }
@@ -25,6 +27,7 @@ export function readMapColors(): MapColors {
     deep: cssVariable('--app-primary-deep', '#0033a0'),
     ink: '#000000',
     white: '#ffffff',
+    tint: cssVariable('--app-primary-tint', '#cfdefb'),
     location: '#1a73e8',
   }
 }
@@ -84,9 +87,10 @@ export function addBranchLayers(
 
   // Branches, ATMs and the chosen branch are pins, drawn as images (see pins.ts). They are allowed
   // to overlap and to cover map labels, because hiding a branch to avoid a label would be worse.
-  const pinLayout = (image: string, kind: 'branch' | 'atm' | 'selected'): SymbolLayerSpecification['layout'] => ({
+  // A branch pin is held by the tip of its tail, an ATM pin by its centre.
+  const pinLayout = (image: string, kind: PinKind): SymbolLayerSpecification['layout'] => ({
     'icon-image': image,
-    'icon-anchor': 'bottom',
+    'icon-anchor': kind === 'atm' || kind === 'selectedAtm' ? 'center' : 'bottom',
     'icon-offset': [0, pinTipOffset(kind)],
     'icon-allow-overlap': true,
     'icon-ignore-placement': true,
@@ -108,14 +112,36 @@ export function addBranchLayers(
     layout: pinLayout(PIN_IMAGES.atm, 'atm'),
   })
 
-  // The chosen branch: a larger pin on top of the rest. Its filter is set when a branch is selected.
+  // The chosen branch or ATM: a larger pin with a halo, on top of the rest. Their filters are set
+  // when something is selected (see selectedFilters).
+  const none = selectedFilters('')
   map.addLayer({
     id: LAYERS.selected,
     type: 'symbol',
     source: SOURCE_ID,
-    filter: ['==', ['get', 'id'], ''],
+    filter: none.branch,
     layout: pinLayout(PIN_IMAGES.selected, 'selected'),
   })
+
+  map.addLayer({
+    id: LAYERS.selectedAtm,
+    type: 'symbol',
+    source: SOURCE_ID,
+    filter: none.atm,
+    layout: pinLayout(PIN_IMAGES.selectedAtm, 'selectedAtm'),
+  })
+}
+
+/**
+ * The filters for the two "chosen" layers. A branch and an ATM are different pins, so each layer must
+ * only show its own kind. Pass an empty id to show neither.
+ */
+export function selectedFilters(id: string): { branch: ExpressionSpecification; atm: ExpressionSpecification } {
+  const isChosen: ExpressionSpecification = ['==', ['get', 'id'], id]
+  return {
+    branch: ['all', isChosen, ['!=', ['get', 'type'], 'atm']],
+    atm: ['all', isChosen, ['==', ['get', 'type'], 'atm']],
+  }
 }
 
 /** Adds the user's own position: the familiar blue dot with a white ring and a pale halo. */

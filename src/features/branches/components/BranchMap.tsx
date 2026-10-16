@@ -11,7 +11,7 @@ import {
   toFeatureCollection,
   userLocationCollection,
 } from '../map/geo'
-import { addBranchLayers, addUserLocationLayers, readMapColors } from '../map/layers'
+import { addBranchLayers, addUserLocationLayers, readMapColors, selectedFilters } from '../map/layers'
 import { applyBasemapLook } from '../map/basemap'
 import { addPinImages } from '../map/pins'
 import { isWideLayout, motionDuration, viewPadding } from '../map/view'
@@ -162,7 +162,9 @@ export function BranchMap({ branches, selectedId, userLocation, onSelect }: Bran
     const map = mapRef.current
     if (status !== 'ready' || !map) return
 
-    map.setFilter(LAYERS.selected, ['==', ['get', 'id'], selectedId ?? ''])
+    const chosen = selectedFilters(selectedId ?? '')
+    map.setFilter(LAYERS.selected, chosen.branch)
+    map.setFilter(LAYERS.selectedAtm, chosen.atm)
     const branch = selectedId ? latest.current.branches.find((item) => item.id === selectedId) : undefined
     if (branch) {
       map.easeTo({
