@@ -42,6 +42,28 @@ describe('LocateButton', () => {
     expect(button).toHaveAttribute('aria-busy', 'true')
   })
 
+  it('shows a spinner in place of the icon while locating, and the icon otherwise', () => {
+    const { unmount } = render(<LocateButton location={withActions({ status: 'locating' })} />)
+    let button = screen.getByRole('button', { name: 'Finding your location' })
+    expect(button.querySelector('.spinner-border')).not.toBeNull()
+    expect(button.querySelector('svg')).toBeNull()
+    unmount()
+
+    render(<LocateButton location={withActions({ status: 'idle' })} />)
+    button = screen.getByRole('button', { name: 'Near me' })
+    expect(button.querySelector('.spinner-border')).toBeNull()
+    expect(button.querySelector('svg')).not.toBeNull()
+  })
+
+  it('hides the spinner from assistive technology, which hears the message instead', () => {
+    render(<LocateButton location={withActions({ status: 'locating' })} />)
+
+    expect(screen.getByRole('button', { name: 'Finding your location' }).querySelector('.spinner-border')).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    )
+  })
+
   it('shows as pressed once located, and turns the location off when pressed again', async () => {
     const location = setup({ status: 'located', position: { lat: -26.2, lng: 28.05 } })
 
@@ -72,10 +94,18 @@ describe('LocationNote', () => {
     expect(screen.getByRole('status')).toBeEmptyDOMElement()
   })
 
-  it('shows progress while locating', () => {
+  it('announces that it is finding the location, without showing any text for it', () => {
     setup({ status: 'locating' })
 
-    expect(screen.getByRole('status')).toHaveTextContent('Finding your location')
+    const note = screen.getByRole('status')
+    expect(note).toHaveTextContent('Finding your location')
+    expect(note).toHaveClass('visually-hidden')
+  })
+
+  it('shows a failure message on the page, not hidden', () => {
+    setup({ status: 'denied' })
+
+    expect(screen.getByRole('status')).not.toHaveClass('visually-hidden')
   })
 
   it('says nothing once located, because the cards then show distances', () => {

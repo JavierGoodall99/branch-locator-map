@@ -74,8 +74,16 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
       color: $blue-deep;
     }
 
-    &:disabled {
+    // Disabled and busy (finding the location) keeps full strength, so the spinner is easy to see.
+    &:disabled:not([aria-busy='true']) {
       opacity: 0.6;
+    }
+
+    .spinner-border {
+      --bs-spinner-width: 20px;
+      --bs-spinner-height: 20px;
+      --bs-spinner-border-width: 2px;
+      color: $primary;
     }
 
     &:focus-visible {

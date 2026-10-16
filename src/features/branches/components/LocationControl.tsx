@@ -5,7 +5,9 @@ const EXPLANATION = 'Near me sorts by distance. Your location stays on your devi
 
 /**
  * What to tell the user, when there is something to say. Nothing before the button is used, and
- * nothing once it works, because the cards then show distances. Every message says what to do next.
+ * nothing once it works, because the cards then show distances. While it is finding the location
+ * the button shows a spinner, so the words are only for screen readers. Every failure message says
+ * what to do next.
  */
 function note(location: UseLocationResult): string {
   switch (location.status) {
@@ -25,7 +27,8 @@ function note(location: UseLocationResult): string {
 /**
  * The Near me button, an icon that sits inside the search bar. It only asks the browser for the
  * location when it is pressed. Pressed again once located, it turns the location off. What it does
- * is its tooltip, and its description for screen readers, instead of text on the page.
+ * is its tooltip, and its description for screen readers, instead of text on the page. While it
+ * is finding the location it shows a spinner in place of the icon.
  */
 export function LocateButton({ location }: { location: UseLocationResult }) {
   const located = location.status === 'located'
@@ -42,21 +45,24 @@ export function LocateButton({ location }: { location: UseLocationResult }) {
       disabled={locating}
       onClick={located ? location.clear : location.request}
     >
-      <Icon name="locate" />
+      {locating ? <span className="spinner-border" aria-hidden="true" /> : <Icon name="locate" />}
     </button>
   )
 }
 
 /**
- * A note under the search for when Near me is working or has not worked. It stays in the page
- * even when empty, so a screen reader announces the message when it appears.
+ * A note under the search for when Near me has not worked. It stays in the page even when empty,
+ * and while locating it is visually hidden, so a screen reader announces each message when it
+ * appears.
  */
 export function LocationNote({ location }: { location: UseLocationResult }) {
   const message = note(location)
+  // The spinner already shows progress, so that message is announced but not displayed.
+  const shown = Boolean(message) && location.status !== 'locating'
   const canRetry = location.status === 'denied' || location.status === 'failed'
 
   return (
-    <p className={message ? 'location-note' : 'visually-hidden'} role="status">
+    <p className={shown ? 'location-note' : 'visually-hidden'} role="status">
       {message}
       {canRetry && (
         <>
