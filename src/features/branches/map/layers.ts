@@ -1,6 +1,7 @@
-import type { ExpressionSpecification, Map as MapLibreMap } from 'maplibre-gl'
-import { CLUSTER_MAX_ZOOM, LAYERS, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
+import type { ExpressionSpecification, Map as MapLibreMap, SymbolLayerSpecification } from 'maplibre-gl'
+import { CLUSTER_MAX_ZOOM, LAYERS, PIN_IMAGES, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
 import { userLocationCollection, type BranchFeatureCollection } from './geo'
+import { pinTipOffset } from './pins'
 
 export interface MapColors {
   primary: string
@@ -8,6 +9,8 @@ export interface MapColors {
   deep: string
   ink: string
   white: string
+  /** The "you are here" dot. A map convention, so it is not taken from the theme. */
+  location: string
 }
 
 function cssVariable(name: string, fallback: string): string {
@@ -22,6 +25,7 @@ export function readMapColors(): MapColors {
     deep: cssVariable('--app-primary-deep', '#0033a0'),
     ink: '#000000',
     white: '#ffffff',
+    location: '#1a73e8',
   }
 }
 
@@ -78,50 +82,43 @@ export function addBranchLayers(
     paint: { 'text-color': colors.white },
   })
 
-  // Branch: a solid brand-blue dot with a white edge.
+  // Branches, ATMs and the chosen branch are pins, drawn as images (see pins.ts). They are allowed
+  // to overlap and to cover map labels, because hiding a branch to avoid a label would be worse.
+  const pinLayout = (image: string, kind: 'branch' | 'atm' | 'selected'): SymbolLayerSpecification['layout'] => ({
+    'icon-image': image,
+    'icon-anchor': 'bottom',
+    'icon-offset': [0, pinTipOffset(kind)],
+    'icon-allow-overlap': true,
+    'icon-ignore-placement': true,
+  })
+
   map.addLayer({
     id: LAYERS.branches,
-    type: 'circle',
+    type: 'symbol',
     source: SOURCE_ID,
     filter: isBranchPin,
-    paint: {
-      'circle-color': colors.primary,
-      'circle-radius': 10,
-      'circle-stroke-width': 2.5,
-      'circle-stroke-color': colors.white,
-    },
+    layout: pinLayout(PIN_IMAGES.branch, 'branch'),
   })
 
-  // ATM: a white dot with a dark ring. Fill and ring tell it from a branch, so colour is not the only cue.
   map.addLayer({
     id: LAYERS.atms,
-    type: 'circle',
+    type: 'symbol',
     source: SOURCE_ID,
     filter: isAtmPin,
-    paint: {
-      'circle-color': colors.white,
-      'circle-radius': 8,
-      'circle-stroke-width': 3,
-      'circle-stroke-color': colors.deep,
-    },
+    layout: pinLayout(PIN_IMAGES.atm, 'atm'),
   })
 
-  // The chosen branch: larger, with a black ring. Its filter is set when a branch is selected.
+  // The chosen branch: a larger pin on top of the rest. Its filter is set when a branch is selected.
   map.addLayer({
     id: LAYERS.selected,
-    type: 'circle',
+    type: 'symbol',
     source: SOURCE_ID,
     filter: ['==', ['get', 'id'], ''],
-    paint: {
-      'circle-color': colors.strong,
-      'circle-radius': 15,
-      'circle-stroke-width': 4,
-      'circle-stroke-color': colors.ink,
-    },
+    layout: pinLayout(PIN_IMAGES.selected, 'selected'),
   })
 }
 
-/** Adds the user's own position: a dark dot with a pale halo, unlike any branch or ATM pin. */
+/** Adds the user's own position: the familiar blue dot with a white ring and a pale halo. */
 export function addUserLocationLayers(map: Pick<MapLibreMap, 'addSource' | 'addLayer'>, colors: MapColors): void {
   map.addSource(USER_SOURCE_ID, { type: 'geojson', data: userLocationCollection(null) })
 
@@ -129,15 +126,15 @@ export function addUserLocationLayers(map: Pick<MapLibreMap, 'addSource' | 'addL
     id: USER_LAYERS.halo,
     type: 'circle',
     source: USER_SOURCE_ID,
-    paint: { 'circle-radius': 20, 'circle-color': colors.ink, 'circle-opacity': 0.15 },
+    paint: { 'circle-radius': 24, 'circle-color': colors.location, 'circle-opacity': 0.2 },
   })
   map.addLayer({
     id: USER_LAYERS.dot,
     type: 'circle',
     source: USER_SOURCE_ID,
     paint: {
-      'circle-radius': 7,
-      'circle-color': colors.ink,
+      'circle-radius': 8,
+      'circle-color': colors.location,
       'circle-stroke-width': 3,
       'circle-stroke-color': colors.white,
     },

@@ -12,6 +12,7 @@ import {
   userLocationCollection,
 } from '../map/geo'
 import { addBranchLayers, addUserLocationLayers, readMapColors } from '../map/layers'
+import { addPinImages } from '../map/pins'
 import { isWideLayout, motionDuration, viewPadding } from '../map/view'
 import { isWebGLAvailable } from '../map/webgl'
 import type { Branch, Coordinates } from '../types'
@@ -72,6 +73,7 @@ export function BranchMap({ branches, selectedId, userLocation, onSelect }: Bran
     map.on('load', () => {
       loaded = true
       const colors = readMapColors()
+      addPinImages(map, colors)
       addBranchLayers(map, toFeatureCollection(latest.current.branches), colors)
       addUserLocationLayers(map, colors)
 

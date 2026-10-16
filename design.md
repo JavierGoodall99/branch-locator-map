@@ -178,7 +178,7 @@ Source design: `design/branch-locator/` (exported from Claude Design; view the `
 | Hours | One daily open and close time per site, computed in South African time. No weekly schedules or holiday overrides yet. |
 | Cut from scope | Saved and home branch, language switcher, offline caching, "report incorrect info". |
 | Kept | Map with list, search, filters, nearest-first sorting, open-now status, branch detail, location permission with a fallback, loading, empty and error states. |
-| Map | MapLibre GL with OpenFreeMap tiles. |
+| Map | MapLibre GL with OpenFreeMap tiles in its colourful "liberty" style, which is the closest free look to the maps people know (Google's own tiles are proprietary and need a billed API key). Branches are teardrop pins with a white dot, ATMs are white pins with a dark ring, the chosen branch is a larger pin with a black outline, groups are numbered dark discs, and the user is the familiar blue dot with a halo. Zoom buttons are a white rounded group with a soft shadow. |
 | Open status | Open, Closing soon (under 60 minutes) and Closed, each shown with an icon and a word, never color alone. |
 | Layout | Below 768px: full-bleed map with a bottom sheet. From 768px: side panel (360px, 400px from 1200px) beside the map. |
 

@@ -1,7 +1,14 @@
-import { LAYERS, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
+import { LAYERS, PIN_IMAGES, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
 import { addBranchLayers, addUserLocationLayers, readMapColors, type MapColors } from './layers'
 
-const colors: MapColors = { primary: '#111111', strong: '#222222', deep: '#333333', ink: '#000000', white: '#ffffff' }
+const colors: MapColors = {
+  primary: '#111111',
+  strong: '#222222',
+  deep: '#333333',
+  ink: '#000000',
+  white: '#ffffff',
+  location: '#444444',
+}
 const data = { type: 'FeatureCollection' as const, features: [] }
 
 function setup() {
@@ -38,12 +45,34 @@ describe('addBranchLayers', () => {
     for (const layer of Object.values(layers)) expect(layer.source).toBe(SOURCE_ID)
   })
 
-  it('colours pins from the colours it is given', () => {
+  it('colours the clusters from the colours it is given', () => {
     const { layers } = setup()
 
-    expect(layers[LAYERS.branches].paint).toMatchObject({ 'circle-color': colors.primary })
-    expect(layers[LAYERS.atms].paint).toMatchObject({ 'circle-stroke-color': colors.deep })
     expect(layers[LAYERS.clusters].paint).toMatchObject({ 'circle-color': colors.deep })
+  })
+
+  it('draws branches, ATMs and the selection as pins, each with its own image', () => {
+    const { layers } = setup()
+
+    expect(layers[LAYERS.branches]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.branch } })
+    expect(layers[LAYERS.atms]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.atm } })
+    expect(layers[LAYERS.selected]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.selected } })
+  })
+
+  it('anchors each pin by its tip, so the tip sits on the branch', () => {
+    const { layers } = setup()
+
+    for (const id of [LAYERS.branches, LAYERS.atms, LAYERS.selected]) {
+      expect(layers[id].layout).toMatchObject({ 'icon-anchor': 'bottom' })
+    }
+  })
+
+  it('never hides a pin to avoid a clash with another pin or a map label', () => {
+    const { layers } = setup()
+
+    for (const id of [LAYERS.branches, LAYERS.atms, LAYERS.selected]) {
+      expect(layers[id].layout).toMatchObject({ 'icon-allow-overlap': true, 'icon-ignore-placement': true })
+    }
   })
 
   it('keeps ATMs out of the branch layer and branches out of the ATM layer', () => {
@@ -89,10 +118,13 @@ describe('addUserLocationLayers', () => {
     expect(Object.keys(layers)).toEqual(Object.values(USER_LAYERS))
   })
 
-  it('draws the dot in the ink colour, so it is unlike any branch or ATM pin', () => {
+  it('draws the dot in the location colour, with a white ring', () => {
     const { layers } = setupUser()
 
-    expect(layers[USER_LAYERS.dot].paint).toMatchObject({ 'circle-color': colors.ink })
+    expect(layers[USER_LAYERS.dot].paint).toMatchObject({
+      'circle-color': colors.location,
+      'circle-stroke-color': colors.white,
+    })
   })
 })
 
@@ -103,6 +135,10 @@ describe('readMapColors', () => {
 
   it('falls back to the brand colours when the theme variables are missing', () => {
     expect(readMapColors().deep).toBe('#0033a0')
+  })
+
+  it('uses the familiar blue for the location dot whatever the theme says', () => {
+    expect(readMapColors().location).toBe('#1a73e8')
   })
 
   it('reads the theme variables when they are set', () => {

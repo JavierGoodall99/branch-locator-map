@@ -1,7 +1,13 @@
-/** OpenFreeMap's quiet light style: no API key, and muted enough for our pins to stand out. */
-export const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
+/**
+ * OpenFreeMap's "liberty" style: no API key, and the closest free look to the maps people know,
+ * with yellow main roads, green parks, blue water and road shields.
+ */
+export const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty'
 
 export const SOURCE_ID = 'branches'
+
+/** Names of the pin images drawn at startup (see pins.ts) and used by the pin layers. */
+export const PIN_IMAGES = { branch: 'pin-branch', atm: 'pin-atm', selected: 'pin-selected' } as const
 
 export const LAYERS = {
   clusters: 'branch-clusters',

@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { LAYERS, MAP_STYLE_URL, NEAREST_TO_SHOW, SELECTED_ZOOM, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from '../map/config'
+import { addPinImages } from '../map/pins'
 import { isWebGLAvailable } from '../map/webgl'
 import type { Branch, Coordinates } from '../types'
 import { BranchMap } from './BranchMap'
@@ -61,6 +62,11 @@ vi.mock('maplibre-gl', () => ({
   setWorkerUrl: mocks.setWorkerUrl,
 }))
 vi.mock('../map/webgl', () => ({ isWebGLAvailable: vi.fn(() => true) }))
+// Pins are drawn on a canvas, which jsdom cannot do; pins.ts has its own tests.
+vi.mock('../map/pins', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../map/pins')>()),
+  addPinImages: vi.fn(),
+}))
 
 // setWorkerUrl runs once, when BranchMap is first imported, so record it before any test can reset mocks.
 const workerUrlCalls = [...mocks.setWorkerUrl.mock.calls]
@@ -110,6 +116,7 @@ function setup(
 describe('BranchMap', () => {
   beforeEach(() => {
     mocks.maps.length = 0
+    vi.mocked(addPinImages).mockClear()
     vi.mocked(isWebGLAvailable).mockReturnValue(true)
   })
 
@@ -142,6 +149,16 @@ describe('BranchMap', () => {
 
     expect(currentMap().sources).toEqual([SOURCE_ID, USER_SOURCE_ID])
     expect(currentMap().layers).toEqual([...Object.values(LAYERS), ...Object.values(USER_LAYERS)])
+  })
+
+  it('draws the pin images before the layers that use them', async () => {
+    setup()
+    await loadMap()
+
+    expect(addPinImages).toHaveBeenCalledTimes(1)
+    const pinsFirst = vi.mocked(addPinImages).mock.invocationCallOrder[0]
+    const firstLayer = currentMap().addLayer.mock.invocationCallOrder[0]
+    expect(pinsFirst).toBeLessThan(firstLayer)
   })
 
   it('sends the branches to the map and fits them in view', async () => {
