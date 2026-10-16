@@ -76,7 +76,6 @@ export function BranchDetail({ branch, position, total, now, distanceKm, onBack,
         {distanceKm !== undefined && (
           <span className="branch-detail__distance">{formatDistance(distanceKm)} away</span>
         )}
-        <span className="sample-badge">Sample data</span>
       </div>
 
       <div className="branch-card__actions">

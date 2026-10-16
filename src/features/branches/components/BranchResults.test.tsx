@@ -43,11 +43,10 @@ describe('BranchResults', () => {
     select.mockReset()
   })
 
-  it('shows a single h1 and labels the data as sample data', () => {
+  it('shows a single h1', () => {
     render(<Results state={success([])} />)
 
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
-    expect(screen.getByText('Sample data')).toBeInTheDocument()
   })
 
   it('announces loading and shows placeholders instead of cards', () => {

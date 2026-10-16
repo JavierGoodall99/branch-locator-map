@@ -54,7 +54,6 @@ export function BranchResults({ state, filters, now, origin, onClearFilters, onS
             {countLabel(state, branches.length, Boolean(origin))}
           </p>
         </div>
-        <span className="sample-badge">Sample data</span>
       </div>
 
       {state.status === 'loading' && <SkeletonList />}
