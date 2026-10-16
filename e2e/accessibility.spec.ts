@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
-import { expect, test } from './fixtures'
+import { expect, test, searchField } from './fixtures'
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
@@ -54,8 +54,18 @@ test.describe('accessibility', () => {
 
   test('the no-matches message has no WCAG A or AA violations', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('searchbox').fill('zzzz nowhere')
+    await searchField(page).fill('zzzz nowhere')
     await expect(page.getByRole('heading', { name: 'No matches found' })).toBeVisible()
+
+    expect(await scan(page)).toEqual([])
+  })
+
+  test('the search suggestions are valid and have no WCAG A or AA violations while open', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    await searchField(page).fill('pretor')
+    await expect(page.getByRole('listbox', { name: 'Suggestions' })).toBeVisible()
+    await page.keyboard.press('ArrowDown')
 
     expect(await scan(page)).toEqual([])
   })

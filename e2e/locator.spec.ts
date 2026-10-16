@@ -1,4 +1,4 @@
-import { expect, resultCount, test } from './fixtures'
+import { expect, resultCount, test, searchField } from './fixtures'
 
 test.describe('finding a branch', () => {
   test('lists the branches with a count', async ({ page }) => {
@@ -15,20 +15,20 @@ test.describe('finding a branch', () => {
     await expect(page.getByRole('article').first()).toBeVisible()
     const all = await resultCount(page)
 
-    await page.getByRole('searchbox').fill('sandton')
+    await searchField(page).fill('sandton')
     await expect.poll(() => resultCount(page)).toBeLessThan(all)
     expect(await resultCount(page)).toBeGreaterThan(0)
     await expect(page.getByRole('article').first()).toContainText('Sandton')
 
     await page.getByRole('button', { name: 'Clear search' }).first().click()
-    await expect(page.getByRole('searchbox')).toHaveValue('')
+    await expect(searchField(page)).toHaveValue('')
     await expect.poll(() => resultCount(page)).toBe(all)
   })
 
   test('tells the user when nothing matches, and how to recover', async ({ page }) => {
     await page.goto('/')
 
-    await page.getByRole('searchbox').fill('zzzz nowhere')
+    await searchField(page).fill('zzzz nowhere')
 
     await expect(page.getByRole('heading', { name: 'No matches found' })).toBeVisible()
     await page.getByRole('button', { name: 'Clear search' }).first().click()
@@ -81,7 +81,7 @@ test.describe('branch details', () => {
     await page.getByRole('article').first().getByRole('button', { name: /^Details/ }).click()
     await expect(page.getByRole('button', { name: 'Back to results' })).toBeVisible()
 
-    await page.getByRole('searchbox').fill('paarl')
+    await searchField(page).fill('paarl')
 
     await expect(page.getByRole('heading', { level: 1, name: 'Branches and ATMs' })).toBeVisible()
   })
@@ -98,5 +98,60 @@ test.describe('keyboard', () => {
     await page.keyboard.press('Enter')
 
     await expect(page.getByRole('main')).toBeFocused()
+  })
+})
+
+test.describe('search suggestions', () => {
+  test('suggest places and branches as the user types, and a chosen place narrows the list', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    const all = await resultCount(page)
+
+    await searchField(page).fill('pretor')
+
+    const list = page.getByRole('listbox', { name: 'Suggestions' })
+    await expect(list).toBeVisible()
+    await expect(list.getByRole('group', { name: 'Places' })).toBeVisible()
+    await expect(list.getByRole('group', { name: 'Branches and ATMs' })).toBeVisible()
+
+    await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
+
+    await expect(list).toBeHidden()
+    await expect(searchField(page)).toHaveValue(/^Pretoria/)
+    await expect.poll(() => resultCount(page)).toBeLessThan(all)
+  })
+
+  test('choosing a branch suggestion opens that branch', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+
+    await searchField(page).fill('Alexandra Yarona')
+    await page.getByRole('option', { name: /Capitec Bank Alexandra Yarona/ }).click()
+
+    await expect(page.getByRole('heading', { level: 1, name: 'Capitec Bank Alexandra Yarona' })).toBeVisible()
+    await expect(page.getByRole('listbox')).toBeHidden()
+  })
+
+  test('close on Escape, and the clear button empties the search', async ({ page }) => {
+    await page.goto('/')
+    await searchField(page).fill('pretor')
+    await expect(page.getByRole('listbox')).toBeVisible()
+
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('listbox')).toBeHidden()
+    await expect(searchField(page)).toHaveValue('pretor')
+
+    await page.getByRole('button', { name: 'Clear search' }).first().click()
+    await expect(searchField(page)).toHaveValue('')
+    await expect(searchField(page)).toBeFocused()
+  })
+
+  test('are not offered for a single character', async ({ page }) => {
+    await page.goto('/')
+
+    await searchField(page).fill('p')
+
+    await expect(page.getByRole('listbox')).toHaveCount(0)
   })
 })

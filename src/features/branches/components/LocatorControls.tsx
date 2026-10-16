@@ -1,12 +1,18 @@
 import { Icon, type IconName } from '../../../shared/ui/Icon'
-import { clearFilters, hasActiveFilters, type LocatorFilters, type ShowMode } from '../model/filters'
+import type { LocatorFilters, ShowMode } from '../model/filters'
 import type { UseLocationResult } from '../model/useLocation'
-import { LocationControl } from './LocationControl'
+import type { Branch } from '../types'
+import { LocateButton, LocationNote } from './LocationControl'
+import { SearchBox } from './SearchBox'
 
 interface LocatorControlsProps {
   filters: LocatorFilters
   onChange: (filters: LocatorFilters) => void
   location: UseLocationResult
+  /** Everything that can be suggested while the user types. */
+  branches: Branch[]
+  /** A branch suggestion was chosen. */
+  onPickBranch: (id: string) => void
 }
 
 const SHOW_OPTIONS: { value: ShowMode; label: string; icon?: IconName }[] = [
@@ -15,8 +21,8 @@ const SHOW_OPTIONS: { value: ShowMode; label: string; icon?: IconName }[] = [
   { value: 'both', label: 'Both' },
 ]
 
-/** Brand, search, the show switch and Near me. Changes go up through onChange. */
-export function LocatorControls({ filters, onChange, location }: LocatorControlsProps) {
+/** Brand, search with suggestions and Near me, and the show switch. */
+export function LocatorControls({ filters, onChange, location, branches, onPickBranch }: LocatorControlsProps) {
   const set = (change: Partial<LocatorFilters>) => onChange({ ...filters, ...change })
 
   return (
@@ -26,20 +32,13 @@ export function LocatorControls({ filters, onChange, location }: LocatorControls
         <p className="small text-body-secondary m-0">Find a branch or ATM</p>
       </div>
 
-      <form role="search" className="search-box" onSubmit={(event) => event.preventDefault()}>
-        <Icon name="search" />
-        <label htmlFor="branch-search" className="visually-hidden">
-          Search by name, suburb, town or postcode
-        </label>
-        <input
-          id="branch-search"
-          type="search"
-          autoComplete="off"
-          placeholder="Name, suburb, town or postcode"
-          value={filters.query}
-          onChange={(event) => set({ query: event.target.value })}
-        />
-      </form>
+      <SearchBox
+        value={filters.query}
+        onChange={(query) => set({ query })}
+        branches={branches}
+        onPickBranch={onPickBranch}
+        trailing={<LocateButton location={location} />}
+      />
 
       <div className="type-switch" role="group" aria-label="Show">
         {SHOW_OPTIONS.map(({ value, label, icon }) => (
@@ -55,13 +54,7 @@ export function LocatorControls({ filters, onChange, location }: LocatorControls
         ))}
       </div>
 
-      {hasActiveFilters(filters) && (
-        <button type="button" className="btn btn-link btn-sm align-self-start" onClick={() => onChange(clearFilters(filters))}>
-          Clear search
-        </button>
-      )}
-
-      <LocationControl location={location} />
+      <LocationNote location={location} />
     </>
   )
 }

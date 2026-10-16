@@ -20,36 +20,44 @@ function note(location: UseLocationResult): string {
 }
 
 /**
- * The Near me button and a note that explains it. The note is visible before the user taps, so
- * they know why the browser is about to ask for their location, and it says what to do if it fails.
+ * The Near me button, an icon that sits inside the search bar. It only asks the browser for the
+ * location when it is pressed. Pressed again once located, it turns the location off.
  */
-export function LocationControl({ location }: { location: UseLocationResult }) {
+export function LocateButton({ location }: { location: UseLocationResult }) {
   const located = location.status === 'located'
   const locating = location.status === 'locating'
+
+  return (
+    <button
+      type="button"
+      className="search-box__action search-box__locate"
+      aria-label={locating ? 'Finding your location' : 'Near me'}
+      title="Near me"
+      aria-pressed={located}
+      aria-busy={locating}
+      disabled={locating}
+      onClick={located ? location.clear : location.request}
+    >
+      <Icon name="locate" />
+    </button>
+  )
+}
+
+/**
+ * A note under the search that explains Near me. It is visible before the user taps, so they know
+ * why the browser is about to ask for their location, and it says what to do if that fails.
+ */
+export function LocationNote({ location }: { location: UseLocationResult }) {
   const canRetry = location.status === 'denied' || location.status === 'failed'
 
   return (
-    <div className="location-control">
-      <button
-        type="button"
-        className="chip"
-        aria-pressed={located}
-        disabled={locating}
-        onClick={located ? location.clear : location.request}
-      >
-        <Icon name="locate" size={16} />
-        {locating ? 'Finding you…' : 'Near me'}
-        {located && <Icon name="close" size={16} />}
-      </button>
-
-      <p className="location-control__note" role="status">
-        {note(location)}{' '}
-        {canRetry && (
-          <button type="button" className="btn btn-link btn-sm p-0 align-baseline" onClick={location.request}>
-            Try again
-          </button>
-        )}
-      </p>
-    </div>
+    <p className="location-note" role="status">
+      {note(location)}{' '}
+      {canRetry && (
+        <button type="button" className="btn btn-link btn-sm p-0 align-baseline" onClick={location.request}>
+          Try again
+        </button>
+      )}
+    </p>
   )
 }

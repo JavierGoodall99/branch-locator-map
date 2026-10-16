@@ -1,27 +1,25 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { LocationState, UseLocationResult } from '../model/useLocation'
-import { LocationControl } from './LocationControl'
-
-function setup(state: LocationState) {
-  const location = withActions(state)
-  render(<LocationControl location={location} />)
-  return location
-}
+import { LocateButton, LocationNote } from './LocationControl'
 
 function withActions(state: LocationState): UseLocationResult {
   return { ...state, request: vi.fn(), clear: vi.fn() }
 }
 
-describe('LocationControl', () => {
-  it('explains what Near me does before the user taps, including that nothing leaves the device', () => {
-    setup({ status: 'idle' })
+function setup(state: LocationState) {
+  const location = withActions(state)
+  render(
+    <>
+      <LocateButton location={location} />
+      <LocationNote location={location} />
+    </>,
+  )
+  return location
+}
 
-    expect(screen.getByRole('status')).toHaveTextContent('sorts by distance')
-    expect(screen.getByRole('status')).toHaveTextContent('stays on your device')
-  })
-
-  it('asks for the location only when the button is pressed', async () => {
+describe('LocateButton', () => {
+  it('is a button named Near me that asks for the location only when pressed', async () => {
     const location = setup({ status: 'idle' })
     expect(location.request).not.toHaveBeenCalled()
 
@@ -30,24 +28,50 @@ describe('LocationControl', () => {
     expect(location.request).toHaveBeenCalledTimes(1)
   })
 
-  it('shows progress and cannot be pressed again while locating', () => {
-    setup({ status: 'locating' })
+  it('is not pressed until a location has been found', () => {
+    setup({ status: 'idle' })
 
-    expect(screen.getByRole('button', { name: 'Finding you…' })).toBeDisabled()
-    expect(screen.getByRole('status')).toHaveTextContent('Finding your location')
+    expect(screen.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'false')
   })
 
-  it('shows as pressed once located, and turns off when pressed again', async () => {
+  it('says it is busy and cannot be pressed again while locating', () => {
+    setup({ status: 'locating' })
+
+    const button = screen.getByRole('button', { name: 'Finding your location' })
+    expect(button).toBeDisabled()
+    expect(button).toHaveAttribute('aria-busy', 'true')
+  })
+
+  it('shows as pressed once located, and turns the location off when pressed again', async () => {
     const location = setup({ status: 'located', position: { lat: -26.2, lng: 28.05 } })
 
     const button = screen.getByRole('button', { name: 'Near me' })
     expect(button).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByRole('status')).toHaveTextContent('nearest first')
-
     await userEvent.click(button)
 
     expect(location.clear).toHaveBeenCalledTimes(1)
     expect(location.request).not.toHaveBeenCalled()
+  })
+})
+
+describe('LocationNote', () => {
+  it('explains what Near me does before the user taps, including that nothing leaves the device', () => {
+    setup({ status: 'idle' })
+
+    expect(screen.getByRole('status')).toHaveTextContent('sorts by distance')
+    expect(screen.getByRole('status')).toHaveTextContent('stays on your device')
+  })
+
+  it('shows progress while locating', () => {
+    setup({ status: 'locating' })
+
+    expect(screen.getByRole('status')).toHaveTextContent('Finding your location')
+  })
+
+  it('confirms the nearest are shown once located', () => {
+    setup({ status: 'located', position: { lat: -26.2, lng: 28.05 } })
+
+    expect(screen.getByRole('status')).toHaveTextContent('nearest first')
   })
 
   it('tells the user how to fix a refusal, and lets them try again', async () => {

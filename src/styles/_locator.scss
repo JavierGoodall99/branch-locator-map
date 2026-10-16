@@ -33,7 +33,8 @@ body {
 .locator__controls {
   position: absolute;
   inset: 0 0 auto;
-  z-index: 10;
+  // Above the results sheet (12), so the search suggestions can open over it.
+  z-index: 20;
   display: flex;
   flex-direction: column;
   gap: $spacer * 0.5;
@@ -89,7 +90,9 @@ body {
   }
 
   .locator__controls {
-    position: static;
+    // Relative, not static, so it can sit above the results below it and the suggestions overlap them.
+    position: relative;
+    z-index: 20;
     grid-column: 1;
     grid-row: 1;
     padding: $spacer * 1.25 $spacer * 1.5 $spacer;

@@ -11,6 +11,7 @@ vi.mock('./features/branches/components/BranchMap', () => ({
 // There are ~190 cards, and role queries compute an accessible name for each, which is slow
 // in jsdom and can time out on a busy machine. Counting cards with a plain selector keeps
 // these tests quick; each card's own accessibility is covered by the BranchCard tests.
+const searchField = () => screen.getByRole('combobox', { name: 'Search by name, suburb, town or postcode' })
 const cardCount = () => document.querySelectorAll('article.branch-card').length
 const firstDetailsButton = () => document.querySelector<HTMLButtonElement>('[id^="details-"]')!
 
@@ -57,14 +58,14 @@ describe('App', () => {
     await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
     const before = cardCount()
 
-    await userEvent.type(screen.getByRole('searchbox'), 'sandton')
+    await userEvent.type(searchField(), 'sandton')
 
     expect(cardCount()).toBeGreaterThan(0)
     expect(cardCount()).toBeLessThan(before)
 
     await userEvent.click(screen.getByRole('button', { name: 'Clear search' }))
     expect(cardCount()).toBe(before)
-    expect(screen.getByRole('searchbox')).toHaveValue('')
+    expect(searchField()).toHaveValue('')
   })
 
   it('shows more locations when both branches and ATMs are selected', async () => {
@@ -123,10 +124,57 @@ describe('App', () => {
     it('returns to the list when the search changes', async () => {
       await openFirstBranch()
 
-      await userEvent.type(screen.getByRole('searchbox'), 'a')
+      await userEvent.type(searchField(), 'a')
 
       expect(cardCount()).toBeGreaterThan(0)
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Branches and ATMs')
+    })
+  })
+
+  describe('search suggestions', () => {
+    it('suggests places and branches as the user types, and narrows the list to a chosen place', async () => {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      const before = cardCount()
+
+      await userEvent.type(searchField(), 'pretor')
+
+      const list = screen.getByRole('listbox', { name: 'Suggestions' })
+      expect(list).toHaveTextContent('Places')
+      expect(list).toHaveTextContent('Branches and ATMs')
+
+      await userEvent.click(screen.getByRole('option', { name: /^Pretoria\s*\d+ locations?$/ }))
+
+      expect(searchField()).toHaveValue('Pretoria')
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+      expect(cardCount()).toBeGreaterThan(0)
+      expect(cardCount()).toBeLessThan(before)
+    })
+
+    it('opens a branch when its suggestion is chosen', async () => {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+
+      await userEvent.type(searchField(), 'Alexandra Yarona')
+      await userEvent.click(screen.getByRole('option', { name: /Capitec Bank Alexandra Yarona/ }))
+
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Capitec Bank Alexandra Yarona')
+      expect(screen.getByRole('button', { name: 'Back to results' })).toBeInTheDocument()
+    })
+
+    it('opens an ATM from the suggestions even while the list is on branches', async () => {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      const atm = sample.find((item) => item.type === 'atm' && item.status !== 'permanently-closed')!
+
+      await userEvent.type(searchField(), atm.name)
+      await userEvent.click(screen.getByRole('option', { name: (name) => name.includes(atm.name) }))
+
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(atm.name)
+      expect(screen.getByRole('button', { name: 'ATMs' })).toHaveAttribute('aria-pressed', 'true')
     })
   })
 
