@@ -54,12 +54,22 @@ describe('LocateButton', () => {
   })
 })
 
-describe('LocationNote', () => {
-  it('explains what Near me does before the user taps, including that nothing leaves the device', () => {
+describe('LocateButton explanation', () => {
+  it('explains Near me as its tooltip, which is also its description for assistive technology', () => {
     setup({ status: 'idle' })
 
-    expect(screen.getByRole('status')).toHaveTextContent('sorts by distance')
-    expect(screen.getByRole('status')).toHaveTextContent('stays on your device')
+    const button = screen.getByRole('button', { name: 'Near me' })
+    expect(button).toHaveAttribute('title', expect.stringContaining('sorts by distance'))
+    expect(button).toHaveAttribute('title', expect.stringContaining('stays on your device'))
+    expect(button).toHaveAccessibleDescription(/stays on your device/)
+  })
+})
+
+describe('LocationNote', () => {
+  it('says nothing before Near me is used, so the page is not cluttered', () => {
+    setup({ status: 'idle' })
+
+    expect(screen.getByRole('status')).toBeEmptyDOMElement()
   })
 
   it('shows progress while locating', () => {
@@ -68,10 +78,10 @@ describe('LocationNote', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Finding your location')
   })
 
-  it('confirms the nearest are shown once located', () => {
+  it('says nothing once located, because the cards then show distances', () => {
     setup({ status: 'located', position: { lat: -26.2, lng: 28.05 } })
 
-    expect(screen.getByRole('status')).toHaveTextContent('nearest first')
+    expect(screen.getByRole('status')).toBeEmptyDOMElement()
   })
 
   it('tells the user how to fix a refusal, and lets them try again', async () => {

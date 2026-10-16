@@ -89,10 +89,11 @@ describe('LocatorControls', () => {
     expect(request).toHaveBeenCalledTimes(1)
   })
 
-  it('explains Near me under the search before it is used', () => {
+  it('explains Near me in its tooltip, not as text on the page', () => {
     setup()
 
-    expect(screen.getByText(/sorts by distance. Your location stays on your device/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Near me' })).toHaveAttribute('title', expect.stringContaining('stays on your device'))
+    expect(screen.queryByText(/sorts by distance/)).not.toBeInTheDocument()
   })
 
   it('marks the current show option as pressed', () => {

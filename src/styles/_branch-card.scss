@@ -75,22 +75,6 @@
 }
 
 // Results panel
-.results-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: $spacer * 0.5;
-  margin-bottom: $spacer * 0.75;
-
-  &__count {
-    margin: 0;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: $body-secondary-color;
-    font-variant-numeric: tabular-nums;
-  }
-}
-
 .results-list {
   display: flex;
   flex-direction: column;

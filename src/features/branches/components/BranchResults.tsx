@@ -47,13 +47,10 @@ export function BranchResults({ state, filters, now, origin, onClearFilters, onS
 
   return (
     <>
-      <div className="results-header">
-        <div>
-          <h1 className="h4 m-0">Branches and ATMs</h1>
-          <p className="results-header__count" role="status">
-            {countLabel(state, branches.length, Boolean(origin))}
-          </p>
-        </div>
+      {/* Not shown, but still the page heading and a live count for screen reader users. */}
+      <div className="visually-hidden">
+        <h1>Branches and ATMs</h1>
+        <p role="status">{countLabel(state, branches.length, Boolean(origin))}</p>
       </div>
 
       {state.status === 'loading' && <SkeletonList />}

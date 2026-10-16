@@ -57,7 +57,7 @@ test.describe('near me when the browser blocks it', () => {
 })
 
 test.describe('before anything is asked', () => {
-  test('explains Near me up front and does not ask for the location on load', async ({ page, context }) => {
+  test('does not ask for the location on load, and explains Near me on the button', async ({ page, context }) => {
     let asked = false
     await context.addInitScript(() => {
       const original = navigator.geolocation?.getCurrentPosition?.bind(navigator.geolocation)
@@ -71,7 +71,7 @@ test.describe('before anything is asked', () => {
     })
 
     await page.goto('/')
-    await expect(page.getByText(/sorts by distance. Your location stays on your device/)).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('title', /stays on your device/)
     await expect(page.getByRole('article').first()).toBeVisible()
 
     asked = await page.evaluate(() => (window as unknown as { __geoAsked: boolean }).__geoAsked)
@@ -80,12 +80,15 @@ test.describe('before anything is asked', () => {
 })
 
 test.describe('where Near me is', () => {
-  test('is an icon button inside the search bar, with the explanation under it', async ({ page }) => {
+  test('is an icon button inside the search bar, with no extra text under it', async ({ page }) => {
     await page.goto('/')
 
     const bar = page.getByRole('search')
     await expect(bar.getByRole('button', { name: 'Near me' })).toBeVisible()
-    await expect(page.getByText(/sorts by distance. Your location stays on your device/)).toBeVisible()
+    await expect(page.getByText(/sorts by distance/)).toHaveCount(0)
+    // The heading and count are kept for screen readers but not shown.
+    await expect(page.getByRole('heading', { level: 1, name: 'Branches and ATMs' })).toHaveCount(1)
+    await expect(page.getByText('Branches and ATMs', { exact: true })).not.toBeInViewport()
     // The Open now and province filters are gone.
     await expect(page.getByRole('button', { name: 'Open now' })).toHaveCount(0)
     await expect(page.getByRole('combobox', { name: 'Province' })).toHaveCount(0)
