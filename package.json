@@ -35,6 +35,7 @@
     "sass": "^1.105.1",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
+    "vite-imagetools": "^12.0.1",
     "vitest": "^5.0.4"
   }
 }
