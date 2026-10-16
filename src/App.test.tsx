@@ -78,7 +78,6 @@ describe('App', () => {
     await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
     const branchesOnly = cardCount()
 
-    await userEvent.click(screen.getByRole('button', { name: 'Filters' }))
     await userEvent.click(screen.getByRole('button', { name: 'Both' }))
 
     expect(cardCount()).toBeGreaterThan(branchesOnly)
@@ -147,6 +146,80 @@ describe('App', () => {
     })
   })
 
+  describe('the Filters window', () => {
+    const filtersButton = () => screen.getByRole('button', { name: /^Filters/ })
+
+    it('narrows the list to a province, and says how many filters are in use', async () => {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      const before = cardCount()
+
+      await userEvent.click(filtersButton())
+      const dialog = screen.getByRole('dialog', { name: 'Filters' })
+      await userEvent.selectOptions(within(dialog).getByRole('combobox', { name: 'Province' }), 'Gauteng')
+      await userEvent.click(within(dialog).getByRole('button', { name: /^Show \d+ results?$/ }))
+
+      expect(cardCount()).toBeGreaterThan(0)
+      expect(cardCount()).toBeLessThan(before)
+      expect(filtersButton()).toHaveAccessibleName('Filters, 1 in use')
+    })
+
+    it('says how many places the choices leave before they are applied, and leaves the list alone until then', async () => {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      const before = cardCount()
+
+      await userEvent.click(filtersButton())
+      const dialog = screen.getByRole('dialog', { name: 'Filters' })
+      await userEvent.selectOptions(within(dialog).getByRole('combobox', { name: 'Province' }), 'Northern Cape')
+
+      const button = within(dialog).getByRole('button', { name: /^Show \d+ results?$/ })
+      const promised = Number(button.textContent!.match(/\d+/)![0])
+      expect(promised).toBeLessThan(before)
+      expect(cardCount()).toBe(before)
+
+      await userEvent.click(button)
+      expect(cardCount()).toBe(promised)
+    })
+
+    it('offers to clear the filters when they leave nothing, and clears them', async () => {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await userEvent.click(filtersButton())
+      const dialog = screen.getByRole('dialog', { name: 'Filters' })
+      await userEvent.selectOptions(within(dialog).getByRole('combobox', { name: 'Province' }), 'Northern Cape')
+      await userEvent.click(within(dialog).getByRole('button', { name: /^Show/ }))
+      await userEvent.type(searchField(), 'zzzz nowhere{Enter}')
+
+      expect(screen.getByRole('heading', { name: 'No matches found' })).toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
+
+      expect(cardCount()).toBeGreaterThan(0)
+      expect(filtersButton()).toHaveAccessibleName('Filters')
+      expect(searchField()).toHaveValue('')
+    })
+
+    it('opening a branch from the suggestions clears the filters that might hide it', async () => {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await userEvent.click(filtersButton())
+      const dialog = screen.getByRole('dialog', { name: 'Filters' })
+      await userEvent.selectOptions(within(dialog).getByRole('combobox', { name: 'Province' }), 'Northern Cape')
+      await userEvent.click(within(dialog).getByRole('button', { name: /^Show/ }))
+
+      await userEvent.type(searchField(), 'Alexandra Yarona')
+      await userEvent.click(screen.getByRole('option', { name: /Capitec Bank Alexandra Yarona/ }))
+
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Capitec Bank Alexandra Yarona')
+      await userEvent.click(screen.getByRole('button', { name: 'Back to results' }))
+      expect(filtersButton()).toHaveAccessibleName('Filters')
+    })
+  })
+
   describe('search suggestions', () => {
     it('suggests places and branches as the user types, and narrows the list to a chosen place', async () => {
       stubSample()
@@ -190,9 +263,6 @@ describe('App', () => {
       await userEvent.click(screen.getByRole('option', { name: (name) => name.includes(atm.name) }))
 
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(atm.name)
-      // The show switch moved to ATMs, which the Filters button reports.
-      expect(screen.getByRole('button', { name: 'Filters, 1 in use' })).toBeInTheDocument()
-      await userEvent.click(screen.getByRole('button', { name: /^Filters/ }))
       expect(screen.getByRole('button', { name: 'ATMs' })).toHaveAttribute('aria-pressed', 'true')
     })
   })
@@ -249,19 +319,16 @@ describe('App', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
       const nearest = cardCount()
 
-      await userEvent.click(screen.getByRole('button', { name: 'Filters' }))
       await userEvent.click(screen.getByRole('button', { name: '10 km' }))
 
       expect(cardCount()).toBeGreaterThan(0)
       expect(cardCount()).toBeLessThan(nearest)
       expect(screen.getByText(/locations? within 10 km, nearest first$/)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Filters, 1 in use' })).toBeInTheDocument()
 
       await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
 
       expect(cardCount()).toBe(nearest)
       expect(screen.getByRole('button', { name: '10 km' })).toBeDisabled()
-      expect(screen.getByRole('button', { name: 'Filters' })).toBeInTheDocument()
     })
 
     it('keeps the default list and explains how to carry on when location is refused', async () => {

@@ -32,7 +32,12 @@ function App() {
   const openBranch = (id: string) => {
     const branch = branches.status === 'success' ? branches.branches.find((item) => item.id === id) : undefined
     if (!branch) return
-    setFilters((current) => ({ ...current, query: branch.name, show: branch.type === 'atm' ? 'atms' : 'branches' }))
+    // Every other filter is cleared too, so the branch is certain to be in the list.
+    setFilters((current) => ({
+      ...clearFilters(current),
+      query: branch.name,
+      show: branch.type === 'atm' ? 'atms' : 'branches',
+    }))
     setSelectedId(id)
   }
 
@@ -59,6 +64,11 @@ function App() {
           location={location}
           branches={branches.status === 'success' ? branches.branches : []}
           onPickBranch={openBranch}
+          countResults={(next) =>
+            branches.status === 'success'
+              ? listBranches(branches.branches, toBranchFilters(next), now, origin, next.radiusKm).length
+              : 0
+          }
         />
       }
       results={

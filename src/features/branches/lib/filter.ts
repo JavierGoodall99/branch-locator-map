@@ -8,6 +8,8 @@ export interface BranchFilters {
   types?: BranchType[]
   province?: Province
   openNow?: boolean
+  /** A branch that offers at least one of these. Empty or missing means any. */
+  services?: string[]
 }
 
 /** Lower-cases, strips accents and trims, so "Café" matches "cafe". */
@@ -33,11 +35,13 @@ export function filterBranches(branches: Branch[], filters: BranchFilters, now: 
     .split(/\s+/)
     .filter(Boolean)
   const types = filters.types ?? []
+  const services = filters.services ?? []
 
   return branches.filter((branch) => {
     if (branch.status === 'permanently-closed') return false
     if (types.length > 0 && !types.includes(branch.type)) return false
     if (filters.province && branch.province !== filters.province) return false
+    if (services.length > 0 && !branch.services.some((service) => services.includes(service))) return false
 
     if (words.length > 0) {
       const text = searchableText(branch)

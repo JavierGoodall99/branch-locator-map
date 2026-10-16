@@ -1,6 +1,6 @@
 import { Button } from 'react-bootstrap'
 import { listBranches } from '../lib/listing'
-import { hasActiveFilters, toBranchFilters, type LocatorFilters } from '../model/filters'
+import { hasActiveFilters, hasChosenFilters, toBranchFilters, type LocatorFilters } from '../model/filters'
 import type { UseBranchesResult } from '../model/useBranches'
 import type { Coordinates } from '../types'
 import { BranchCard } from './BranchCard'
@@ -70,11 +70,11 @@ export function BranchResults({ state, filters, now, origin, onClearFilters, onS
             <>
               <h2 className="h4">No matches found</h2>
               <p>
-                {filters.radiusKm === null
-                  ? 'Try a different search, or clear it to see everything.'
-                  : 'Try a different search or a larger distance, or clear them to see everything.'}
+                {hasChosenFilters(filters)
+                  ? 'Try a different search or fewer filters, or clear them to see everything.'
+                  : 'Try a different search, or clear it to see everything.'}
               </p>
-              <Button onClick={onClearFilters}>{filters.radiusKm === null ? 'Clear search' : 'Clear filters'}</Button>
+              <Button onClick={onClearFilters}>{hasChosenFilters(filters) ? 'Clear filters' : 'Clear search'}</Button>
             </>
           ) : (
             <>

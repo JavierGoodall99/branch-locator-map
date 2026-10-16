@@ -56,7 +56,6 @@ test.describe('finding a branch', () => {
     await expect(page.getByRole('article').first()).toBeVisible()
     const branches = await resultCount(page)
 
-    await page.getByRole('button', { name: 'Filters' }).click()
     await page.getByRole('button', { name: 'Both' }).click()
     await expect.poll(() => resultCount(page)).toBeGreaterThan(branches)
     const both = await resultCount(page)
@@ -64,9 +63,55 @@ test.describe('finding a branch', () => {
     await page.getByRole('button', { name: 'ATMs' }).click()
     await expect.poll(() => resultCount(page)).toBeLessThan(both)
     await expect(page.getByRole('button', { name: 'ATMs' })).toHaveAttribute('aria-pressed', 'true')
-    await expect(page.getByRole('button', { name: 'Filters, 1 in use' })).toBeVisible()
   })
 
+})
+
+test.describe('the Filters window', () => {
+  test('opens from the button beside the search, and applies province and open now together', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    const all = await resultCount(page)
+
+    await page.getByRole('button', { name: 'Filters' }).click()
+    const dialog = page.getByRole('dialog', { name: 'Filters' })
+    await expect(dialog).toBeVisible()
+    await dialog.getByRole('combobox', { name: 'Province' }).selectOption('Northern Cape')
+    // The button says how many places this leaves before it is pressed, and the list waits for it.
+    const apply = dialog.getByRole('button', { name: /^Show \d+ results?$/ })
+    const promised = Number((await apply.textContent())!.match(/\d+/)![0])
+    expect(promised).toBeLessThan(all)
+    expect(await resultCount(page)).toBe(all)
+    await apply.click()
+
+    await expect(dialog).toBeHidden()
+    await expect.poll(() => resultCount(page)).toBe(promised)
+    await expect(page.getByRole('button', { name: 'Filters, 1 in use' })).toBeFocused()
+  })
+
+  test('closing it with Escape changes nothing', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    const all = await resultCount(page)
+
+    await page.getByRole('button', { name: 'Filters' }).click()
+    await page.getByRole('dialog', { name: 'Filters' }).getByRole('combobox', { name: 'Province' }).selectOption('Northern Cape')
+    await page.keyboard.press('Escape')
+
+    await expect(page.getByRole('dialog')).toBeHidden()
+    expect(await resultCount(page)).toBe(all)
+    await expect(page.getByRole('button', { name: 'Filters' })).toBeFocused()
+  })
+
+  test('does not hold the show switch or the distances, which stay on the page', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    await page.getByRole('button', { name: 'Filters' }).click()
+    const dialog = page.getByRole('dialog', { name: 'Filters' })
+
+    await expect(dialog.getByRole('button', { name: 'Both' })).toHaveCount(0)
+    await expect(dialog.getByRole('button', { name: /km$/ })).toHaveCount(0)
+  })
 })
 
 test.describe('branch details', () => {
@@ -135,7 +180,6 @@ test.describe('opening a card', () => {
     await searchField(page).fill('pretoria')
     await page.keyboard.press('Enter')
     await expect(searchField(page)).toBeVisible()
-    await page.getByRole('button', { name: 'Filters' }).click()
     await expect(page.getByRole('group', { name: 'Show' })).toBeVisible()
 
     await openButton(page.getByRole('article').first()).click()

@@ -81,6 +81,20 @@ describe('filterBranches', () => {
     expect(ids(filterBranches(all, { types: [] }, morning))).toHaveLength(4)
   })
 
+  it('keeps only places that offer one of the chosen services', () => {
+    const smart = branch({ id: 'smart', services: ['Branch', 'SmartID Services'] })
+    const cash = branch({ id: 'cash', type: 'atm', services: ['ATM', 'Cash Accepting ATM'] })
+    const plain = branch({ id: 'plain', services: ['Branch'] })
+    const list = [smart, cash, plain]
+
+    expect(ids(filterBranches(list, { services: ['SmartID Services'] }, morning))).toEqual(['smart'])
+    expect(ids(filterBranches(list, { services: ['SmartID Services', 'Cash Accepting ATM'] }, morning))).toEqual([
+      'smart',
+      'cash',
+    ])
+    expect(ids(filterBranches(list, { services: [] }, morning))).toEqual(['smart', 'cash', 'plain'])
+  })
+
   it('filters by province', () => {
     expect(ids(filterBranches(all, { province: 'Western Cape' }, morning))).toEqual(['paarl'])
   })

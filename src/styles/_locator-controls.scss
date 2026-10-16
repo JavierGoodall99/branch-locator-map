@@ -43,13 +43,6 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
     outline-offset: 2px;
   }
 
-  // Open: tinted and in the brand colour, and announced as expanded.
-  &[aria-expanded='true'] {
-    background: $blue-tint;
-    border-color: $primary;
-    color: $blue-deep;
-  }
-
   // How many filters are in use.
   &__count {
     position: absolute;
@@ -70,48 +63,26 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
   }
 }
 
-// The filters under the search: what to show, and how far away.
-.filter-panel {
-  display: flex;
-  flex-direction: column;
-  gap: $spacer;
-
-  &__group {
-    display: flex;
-    flex-direction: column;
-    gap: $spacer * 0.5;
-  }
-
-  &__label {
-    margin: 0;
-    font-size: 0.875rem;
-    font-weight: 700;
-  }
-
-  &__hint {
-    margin: 0;
-    font-size: 0.875rem;
-    color: $body-secondary-color;
-  }
-}
-
+// Always one row: the five pills share the width, however wide the sidebar is.
 .radius-chips {
   display: flex;
-  flex-wrap: wrap;
-  gap: $spacer * 0.5;
+  gap: 6px;
 }
 
 // A distance to choose, a pill as the design shows. The chosen one is tinted and outlined in blue.
 .radius-chip {
+  flex: 1 1 0;
+  min-width: 0;
   min-height: 44px;
-  padding: 0 $spacer;
+  padding: 0 4px;
   background: $white;
   border: 1px solid $control-hairline;
   border-radius: $border-radius-pill;
   color: $body-color;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 
   &:hover:not(:disabled, [aria-pressed='true']) {
     background: $blue-tint;
@@ -313,7 +284,7 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
     }
 
     &[aria-pressed='true'] {
-      background: $blue-deep;
+      background: $primary;
       color: $white;
     }
 

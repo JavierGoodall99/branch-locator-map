@@ -52,24 +52,32 @@ test.describe('accessibility', () => {
     expect(await scan(page)).toEqual([])
   })
 
-  test('the filters, with a distance chosen, have no WCAG A or AA violations', async ({ page, context }) => {
+  test('the distances, with one chosen, have no WCAG A or AA violations', async ({ page, context }) => {
     await context.grantPermissions(['geolocation'])
     await context.setGeolocation({ latitude: -33.9249, longitude: 18.4241 })
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
     await page.getByRole('button', { name: 'Near me' }).click()
-    await page.getByRole('button', { name: 'Filters' }).click()
     await page.getByRole('button', { name: '25 km' }).click()
     await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'true')
 
     expect(await scan(page)).toEqual([])
   })
 
-  test('the filters, before Near me is on, have no WCAG A or AA violations', async ({ page }) => {
+  test('the distances, before Near me is on, have no WCAG A or AA violations', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    await expect(page.getByRole('button', { name: '10 km' })).toBeDisabled()
+
+    expect(await scan(page)).toEqual([])
+  })
+
+  test('the Filters window has no WCAG A or AA violations', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
     await page.getByRole('button', { name: 'Filters' }).click()
-    await expect(page.getByText(/Turn on Near me/)).toBeVisible()
+    await expect(page.getByRole('dialog', { name: 'Filters' })).toBeVisible()
+    await page.getByRole('combobox', { name: 'Province' }).selectOption('Gauteng')
 
     expect(await scan(page)).toEqual([])
   })

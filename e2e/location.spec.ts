@@ -26,9 +26,7 @@ test.describe('near me when the browser allows it', () => {
   test('limits the list to a chosen distance, and the distances wait for Near me', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
-    await page.getByRole('button', { name: 'Filters' }).click()
     await expect(page.getByRole('button', { name: '10 km' })).toBeDisabled()
-    await expect(page.getByText(/Turn on Near me/)).toBeVisible()
 
     await page.getByRole('button', { name: 'Near me' }).click()
     await expect(page.getByRole('button', { name: '10 km' })).toBeEnabled()

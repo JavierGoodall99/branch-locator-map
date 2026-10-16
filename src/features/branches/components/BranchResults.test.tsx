@@ -162,7 +162,7 @@ describe('BranchResults', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'No matches found' })).toBeInTheDocument()
-    expect(screen.getByText(/larger distance/)).toBeInTheDocument()
+    expect(screen.getByText(/fewer filters/)).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
     expect(clear).toHaveBeenCalledTimes(1)
   })
