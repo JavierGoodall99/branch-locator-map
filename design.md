@@ -4,7 +4,7 @@ Design tokens and rules for this app. The visual language is based on a brand ex
 
 Notes on provenance:
 - **Extracted** values come straight from the site. **Decided** values are my choices where the extraction was empty or noisy (marked below).
-- This is a candidate project, not a Capitec product. Do not ship Capitec's logo, favicon or imagery. Use a neutral wordmark.
+- This is a candidate project, not a Capitec product. The header uses Capitec's logo (`src/assets/capitec-logo.svg`, copied from capitecbank.co.za) with a divider and "Branch finder", because this assessment is for Capitec. The logo is Capitec's trademark: it is used only to present this assessment, is not covered by any licence for this repository, and should be removed if the project is reused. Their favicon and imagery are not used.
 
 ## Color
 

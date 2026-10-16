@@ -2,6 +2,7 @@ import { Icon, type IconName } from '../../../shared/ui/Icon'
 import type { LocatorFilters, ShowMode } from '../model/filters'
 import type { UseLocationResult } from '../model/useLocation'
 import type { Branch } from '../types'
+import { BrandHeader } from './BrandHeader'
 import { LocateButton, LocationNote } from './LocationControl'
 import { SearchBox } from './SearchBox'
 
@@ -27,10 +28,7 @@ export function LocatorControls({ filters, onChange, location, branches, onPickB
 
   return (
     <>
-      <div className="d-none d-md-block">
-        <p className="h4 m-0 brand">Capitec</p>
-        <p className="small text-body-secondary m-0">Find a branch or ATM</p>
-      </div>
+      <BrandHeader />
 
       <SearchBox
         value={filters.query}

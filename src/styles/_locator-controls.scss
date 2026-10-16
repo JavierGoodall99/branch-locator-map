@@ -210,3 +210,32 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
     box-shadow: none;
   }
 }
+
+// The page's name: logo, divider, "Branch finder". Wider screens only; a phone keeps its space for the map.
+.brand-header {
+  display: none;
+  align-items: center;
+  gap: $spacer;
+
+  &__logo {
+    display: block;
+    width: auto;
+    height: 22px;
+  }
+
+  &__divider {
+    width: 1px;
+    height: 28px;
+    background: $body-color;
+  }
+
+  &__name {
+    font-size: 1.125rem;
+    line-height: 1.2;
+    color: $body-color;
+  }
+
+  @include media-breakpoint-up(md) {
+    display: flex;
+  }
+}
