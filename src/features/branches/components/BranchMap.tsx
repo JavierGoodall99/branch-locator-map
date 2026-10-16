@@ -12,6 +12,7 @@ import {
   userLocationCollection,
 } from '../map/geo'
 import { addBranchLayers, addUserLocationLayers, readMapColors } from '../map/layers'
+import { applyBasemapLook } from '../map/basemap'
 import { addPinImages } from '../map/pins'
 import { isWideLayout, motionDuration, viewPadding } from '../map/view'
 import { isWebGLAvailable } from '../map/webgl'
@@ -73,6 +74,8 @@ export function BranchMap({ branches, selectedId, userLocation, onSelect }: Bran
     map.on('load', () => {
       loaded = true
       const colors = readMapColors()
+      // Recolour the base map first, so our own layers are never touched by it.
+      applyBasemapLook(map)
       addPinImages(map, colors)
       addBranchLayers(map, toFeatureCollection(latest.current.branches), colors)
       addUserLocationLayers(map, colors)

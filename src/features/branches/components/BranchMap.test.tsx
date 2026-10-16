@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { LAYERS, MAP_STYLE_URL, NEAREST_TO_SHOW, SELECTED_ZOOM, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from '../map/config'
+import { applyBasemapLook } from '../map/basemap'
 import { addPinImages } from '../map/pins'
 import { isWebGLAvailable } from '../map/webgl'
 import type { Branch, Coordinates } from '../types'
@@ -62,6 +63,8 @@ vi.mock('maplibre-gl', () => ({
   setWorkerUrl: mocks.setWorkerUrl,
 }))
 vi.mock('../map/webgl', () => ({ isWebGLAvailable: vi.fn(() => true) }))
+// The base map's recolouring has its own tests, against the real layer list.
+vi.mock('../map/basemap', () => ({ applyBasemapLook: vi.fn() }))
 // Pins are drawn on a canvas, which jsdom cannot do; pins.ts has its own tests.
 vi.mock('../map/pins', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../map/pins')>()),
@@ -117,6 +120,7 @@ describe('BranchMap', () => {
   beforeEach(() => {
     mocks.maps.length = 0
     vi.mocked(addPinImages).mockClear()
+    vi.mocked(applyBasemapLook).mockClear()
     vi.mocked(isWebGLAvailable).mockReturnValue(true)
   })
 
@@ -149,6 +153,16 @@ describe('BranchMap', () => {
 
     expect(currentMap().sources).toEqual([SOURCE_ID, USER_SOURCE_ID])
     expect(currentMap().layers).toEqual([...Object.values(LAYERS), ...Object.values(USER_LAYERS)])
+  })
+
+  it('recolours the base map before adding any of our own layers', async () => {
+    setup()
+    await loadMap()
+
+    expect(applyBasemapLook).toHaveBeenCalledTimes(1)
+    expect(applyBasemapLook).toHaveBeenCalledWith(currentMap())
+    const recoloured = vi.mocked(applyBasemapLook).mock.invocationCallOrder[0]
+    expect(recoloured).toBeLessThan(currentMap().addSource.mock.invocationCallOrder[0])
   })
 
   it('draws the pin images before the layers that use them', async () => {
