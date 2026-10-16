@@ -46,7 +46,7 @@ export function LocatorControls({ filters, onChange, location, branches, onPickB
             aria-pressed={filters.show === value}
             onClick={() => set({ show: value })}
           >
-            {icon && <Icon name={icon} />}
+            {icon && <Icon name={icon} size={18} />}
             {label}
           </button>
         ))}

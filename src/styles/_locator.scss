@@ -37,7 +37,7 @@ body {
   z-index: 20;
   display: flex;
   flex-direction: column;
-  gap: $spacer * 0.5;
+  gap: $spacer * 0.75;
   padding: $spacer $spacer 0;
   pointer-events: none; // let the map take drags between controls
 
@@ -95,7 +95,9 @@ body {
     z-index: 20;
     grid-column: 1;
     grid-row: 1;
-    padding: $spacer * 1.25 $spacer * 1.5 $spacer;
+    // More room between the name, the search and the switch than on a phone, where space is tight.
+    gap: $spacer;
+    padding: $spacer * 1.5 $spacer * 1.5 $spacer * 1.25;
     border-right: 1px solid $border-color;
     background: $white;
     pointer-events: auto;

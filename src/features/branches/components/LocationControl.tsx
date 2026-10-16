@@ -45,7 +45,7 @@ export function LocateButton({ location }: { location: UseLocationResult }) {
       disabled={locating}
       onClick={located ? location.clear : location.request}
     >
-      {locating ? <span className="spinner-border" aria-hidden="true" /> : <Icon name="locate" />}
+      {locating ? <span className="spinner-border" aria-hidden="true" /> : <Icon name="locate" size={18} />}
     </button>
   )
 }
