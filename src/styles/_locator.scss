@@ -46,6 +46,12 @@ body {
   }
 }
 
+// While one branch is open its details take the whole sidebar: the search, the switch and the name
+// step aside. They are hidden, not removed, so the search keeps what was typed.
+.locator--detail .locator__controls {
+  display: none;
+}
+
 .locator__results {
   position: absolute;
   inset: $sheet-top 0 0;
@@ -111,6 +117,11 @@ body {
     border-right: 1px solid $border-color;
     box-shadow: none;
     padding: $spacer $spacer * 1.5;
+  }
+
+  // With the controls hidden the details fill the whole column, from top to bottom.
+  .locator--detail .locator__results {
+    grid-row: 1 / -1;
   }
 }
 

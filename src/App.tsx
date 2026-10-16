@@ -43,8 +43,12 @@ function App() {
   const visible =
     branches.status === 'success' ? listBranches(branches.branches, toBranchFilters(filters), now, origin) : []
 
+  // One branch is open, and it is in the list: its details take the whole sidebar.
+  const detailOpen = selectedId !== null && visible.some((branch) => branch.id === selectedId)
+
   return (
     <LocatorLayout
+      detailOpen={detailOpen}
       controls={
         <LocatorControls
           filters={filters}

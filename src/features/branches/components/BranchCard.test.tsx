@@ -28,11 +28,12 @@ describe('BranchCard', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Capitec Bank Sandton City' })).toBeInTheDocument()
   })
 
-  it('shows the address, open status and services', () => {
+  it('shows the open status and services, but not the full address, which is for the details', () => {
     render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
     const card = screen.getByRole('article')
 
-    expect(within(card).getByText(/Rivonia Road/)).toBeInTheDocument()
+    expect(within(card).queryByText(/Rivonia Road/)).not.toBeInTheDocument()
+    expect(card).not.toHaveTextContent('2196')
     expect(within(card).getByText('Open until 17:00')).toBeInTheDocument()
     const services = within(within(card).getByRole('list'))
     expect(services.getByText('Branch')).toBeInTheDocument()
@@ -70,13 +71,47 @@ describe('BranchCard', () => {
     expect(screen.getByText('Temporarily closed')).toBeInTheDocument()
   })
 
-  it('opens the details when Details is pressed', async () => {
+  it('opens the details when the card is pressed, through its name', async () => {
     const onSelect = vi.fn()
     render(<BranchCard branch={branch} now={morning} onSelect={onSelect} />)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Details for Capitec Bank Sandton City' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Capitec Bank Sandton City' }))
 
     expect(onSelect).toHaveBeenCalledWith('sandton')
+  })
+
+  it('has no separate Details button', () => {
+    render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
+
+    expect(screen.queryByRole('button', { name: /Details/ })).not.toBeInTheDocument()
+  })
+
+  it('opens from the keyboard, and has one stop for the card, on its name', async () => {
+    const onSelect = vi.fn()
+    render(<BranchCard branch={branch} now={morning} onSelect={onSelect} />)
+
+    await userEvent.tab()
+    expect(screen.getByRole('button', { name: 'Capitec Bank Sandton City' })).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+
+    expect(onSelect).toHaveBeenCalledWith('sandton')
+  })
+
+  it('keeps Directions and Call as their own controls, which do not open the details', async () => {
+    const onSelect = vi.fn()
+    render(<BranchCard branch={branch} now={morning} onSelect={onSelect} />)
+
+    await userEvent.click(screen.getByRole('link', { name: /Directions/ }))
+    await userEvent.click(screen.getByRole('link', { name: /Call/ }))
+
+    expect(onSelect).not.toHaveBeenCalled()
+  })
+
+  it('keeps the name button inside the heading, so the card is still named by its heading', () => {
+    render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
+
+    const heading = screen.getByRole('heading', { level: 2 })
+    expect(within(heading).getByRole('button', { name: 'Capitec Bank Sandton City' })).toBeInTheDocument()
   })
 
   it('shows how far away it is when the distance is known', () => {

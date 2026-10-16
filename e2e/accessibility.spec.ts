@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
-import { expect, test, searchField } from './fixtures'
+import { expect, test, searchField, openButton } from './fixtures'
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
@@ -46,7 +46,7 @@ test.describe('accessibility', () => {
 
   test('a branch’s details have no WCAG A or AA violations', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('article').first().getByRole('button', { name: /^Details/ }).click()
+    await openButton(page.getByRole('article').first()).click()
     await expect(page.getByRole('heading', { level: 2, name: 'Opening hours' })).toBeVisible()
 
     expect(await scan(page)).toEqual([])

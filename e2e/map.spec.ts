@@ -1,4 +1,4 @@
-import { breakMap, expect, test, searchField } from './fixtures'
+import { breakMap, expect, resultCount, searchField, test } from './fixtures'
 
 test.describe('the map', () => {
   test('loads with zoom controls, and the list does not wait for it', async ({ page }) => {
@@ -46,9 +46,10 @@ test.describe('the map', () => {
 
     await expect(page.getByRole('alert')).toContainText('The map couldn’t load')
     await expect(page.getByRole('article').first()).toBeVisible()
+    const before = await resultCount(page)
     await searchField(page).fill('sandton')
     await page.keyboard.press('Enter')
-    await expect(page.getByRole('article').first()).toContainText('Sandton')
+    await expect.poll(() => resultCount(page)).toBeLessThan(before)
 
     await restore()
     await page.getByRole('button', { name: 'Try again', exact: true }).click()

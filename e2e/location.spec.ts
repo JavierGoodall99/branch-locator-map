@@ -1,6 +1,6 @@
-import { expect, resultCount, test } from './fixtures'
+import { expect, resultCount, test, openButton } from './fixtures'
 
-/** Cape Town, so the nearest branches are in the Western Cape and not the first ones by name. */
+/** Cape Town, so the nearest branches are in Cape Town and not the first ones by name. */
 const CAPE_TOWN = { latitude: -33.9249, longitude: 18.4241 }
 
 test.describe('near me when the browser allows it', () => {
@@ -17,7 +17,7 @@ test.describe('near me when the browser allows it', () => {
 
     await expect(page.getByRole('status').filter({ hasText: 'nearest first' }).first()).toBeVisible()
     const nearest = page.getByRole('article').first()
-    await expect(nearest).toContainText('Western Cape')
+    await expect(nearest).toContainText('Cape Town')
     await expect(nearest.getByRole('heading')).not.toHaveText(nameBefore!)
     await expect(nearest).toContainText(/\d+ (m|km) away/)
     expect(await resultCount(page)).toBe(countBefore)
@@ -28,7 +28,7 @@ test.describe('near me when the browser allows it', () => {
     await page.getByRole('button', { name: 'Near me' }).click()
     await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'true')
 
-    await page.getByRole('article').first().getByRole('button', { name: /^Details/ }).click()
+    await openButton(page.getByRole('article').first()).click()
     await expect(page.getByText(/\d+ (m|km) away$/)).toBeVisible()
     await page.getByRole('button', { name: 'Back to results' }).click()
 

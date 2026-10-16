@@ -35,3 +35,33 @@ describe('LocatorLayout', () => {
     expect(main.compareDocumentPosition(map) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 })
+
+describe('LocatorLayout when a branch is open', () => {
+  const layout = (detailOpen?: boolean) =>
+    render(
+      <LocatorLayout
+        controls={<input aria-label="Search" />}
+        results={<h1>Results</h1>}
+        map={<p>Map content</p>}
+        detailOpen={detailOpen}
+      />,
+    )
+
+  it('is the normal layout by default', () => {
+    const { container } = layout()
+
+    expect(container.firstElementChild).not.toHaveClass('locator--detail')
+  })
+
+  it('switches to the detail layout, in which the details take the whole sidebar', () => {
+    const { container } = layout(true)
+
+    expect(container.firstElementChild).toHaveClass('locator--detail')
+  })
+
+  it('keeps the controls in the page, hidden by the layout, so what was typed survives', () => {
+    layout(true)
+
+    expect(screen.getByLabelText('Search')).toBeInTheDocument()
+  })
+})

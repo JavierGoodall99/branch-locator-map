@@ -18,8 +18,9 @@ interface BranchCardProps {
   onSelect: (id: string) => void
 }
 
-// Links are plain anchors with Bootstrap's button classes: react-bootstrap's Button gives
-// anchors role="button", which is wrong for navigation.
+// The whole card opens the details (see the name button below). Directions and Call sit above that
+// and stay separate controls. Links are plain anchors with Bootstrap's button classes:
+// react-bootstrap's Button gives anchors role="button", which is wrong for navigation.
 export function BranchCard({ branch, now, distanceKm, onSelect }: BranchCardProps) {
   const headingId = `branch-${branch.id}`
   const status = getOpenStatus(branch, now)
@@ -36,7 +37,16 @@ export function BranchCard({ branch, now, distanceKm, onSelect }: BranchCardProp
         <TypeBadge type={branch.type} />
         <div className="branch-card__heading">
           <h2 className="h4 m-0" id={headingId}>
-            {branch.name}
+            {/* The name is the card's button. CSS stretches it over the whole card, so a click anywhere
+                opens the details, while keyboard and screen reader users get a single stop. */}
+            <button
+              type="button"
+              id={`details-${branch.id}`}
+              className="branch-card__open"
+              onClick={() => onSelect(branch.id)}
+            >
+              {branch.name}
+            </button>
           </h2>
           <p className="branch-card__meta">
             {meta.map((part, index) => (
@@ -50,7 +60,6 @@ export function BranchCard({ branch, now, distanceKm, onSelect }: BranchCardProp
           </p>
         </div>
       </div>
-      <p className="branch-card__address">{branch.address}</p>
       <div className="mt-2">
         <StatusChip status={status} />
       </div>
@@ -66,15 +75,6 @@ export function BranchCard({ branch, now, distanceKm, onSelect }: BranchCardProp
           Directions{' '}
           <span className="visually-hidden">to {branch.name} (opens in a new tab)</span>
         </a>
-        <button
-          type="button"
-          id={`details-${branch.id}`}
-          className="btn btn-link btn-sm"
-          onClick={() => onSelect(branch.id)}
-        >
-          Details{' '}
-          <span className="visually-hidden">for {branch.name}</span>
-        </button>
         {branch.phone && (
           <a className="btn btn-link btn-sm" href={telUrl(branch.phone)}>
             <Icon name="phone" />

@@ -1,4 +1,4 @@
-import { test as base, expect, type Page, type Route } from '@playwright/test'
+import { test as base, expect, type Locator, type Page, type Route } from '@playwright/test'
 
 /**
  * A map style with nothing in it but a background. The real tiles come from a third party, so
@@ -48,6 +48,9 @@ export { expect }
 
 /** The search field. It is a combobox, because it offers suggestions as the user types. */
 export const searchField = (page: Page) => page.getByRole('combobox', { name: 'Search by name, suburb, town or postcode' })
+
+/** The button on a card that opens its details: the name, which is stretched over the whole card. */
+export const openButton = (card: Locator) => card.getByRole('heading').getByRole('button')
 
 /** The number in the results count, for example 128 from "128 locations, sorted by name". */
 export async function resultCount(page: Page): Promise<number> {

@@ -7,6 +7,11 @@ interface LocatorLayoutProps {
   results: ReactNode
   /** The map. It supplements the list, so it is a labelled region, not the main content. */
   map: ReactNode
+  /**
+   * One branch is open. Its details then take the whole sidebar: the controls step aside (they are
+   * hidden, not removed, so what was typed is still there on return).
+   */
+  detailOpen?: boolean
 }
 
 /**
@@ -16,9 +21,9 @@ interface LocatorLayoutProps {
  * the map fills the screen, the controls float over it and the results sit in a sheet.
  * DOM order is controls, results, map, so the list works as a complete alternative to the map.
  */
-export function LocatorLayout({ controls, results, map }: LocatorLayoutProps) {
+export function LocatorLayout({ controls, results, map, detailOpen = false }: LocatorLayoutProps) {
   return (
-    <div className="locator">
+    <div className={detailOpen ? 'locator locator--detail' : 'locator'}>
       <a className="locator__skip" href="#results">
         Skip to results
       </a>

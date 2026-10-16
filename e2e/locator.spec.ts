@@ -1,4 +1,4 @@
-import { expect, resultCount, test, searchField } from './fixtures'
+import { expect, resultCount, test, searchField, openButton } from './fixtures'
 
 test.describe('finding a branch', () => {
   test('lists the branches with a count', async ({ page }) => {
@@ -21,7 +21,6 @@ test.describe('finding a branch', () => {
     await page.keyboard.press('Enter')
     await expect.poll(() => resultCount(page)).toBeLessThan(all)
     expect(await resultCount(page)).toBeGreaterThan(0)
-    await expect(page.getByRole('article').first()).toContainText('Sandton')
 
     await page.getByRole('button', { name: 'Clear search' }).first().click()
     await expect(searchField(page)).toHaveValue('')
@@ -75,7 +74,7 @@ test.describe('branch details', () => {
     await expect(firstCard).toBeVisible()
     const name = await firstCard.getByRole('heading').textContent()
 
-    await firstCard.getByRole('button', { name: /^Details/ }).click()
+    await openButton(firstCard).click()
 
     const heading = page.getByRole('heading', { level: 1 })
     await expect(heading).toHaveText(name!)
@@ -90,24 +89,97 @@ test.describe('branch details', () => {
 
     await page.getByRole('button', { name: 'Back to results' }).click()
     await expect(page.getByRole('heading', { level: 1, name: 'Branches and ATMs' })).toBeVisible()
-    await expect(firstCard.getByRole('button', { name: /^Details/ })).toBeFocused()
+    await expect(openButton(firstCard)).toBeFocused()
   })
 
-  test('returns to the list when the search changes', async ({ page }) => {
+})
+
+test.describe('opening a card', () => {
+  test('a click anywhere on the card opens it, and the address is only on the details', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('article').first().getByRole('button', { name: /^Details/ }).click()
-    await expect(page.getByRole('button', { name: 'Back to results' })).toBeVisible()
+    const card = page.getByRole('article').first()
+    await expect(card).toBeVisible()
+    const name = await card.getByRole('heading').textContent()
+    // The full address, which ends in a four-digit postcode, is not on the card.
+    await expect(card).not.toContainText(/\b\d{4}\b/)
 
-    await searchField(page).fill('paarl')
-    // Still looking at the branch while typing.
-    await expect(page.getByRole('button', { name: 'Back to results' })).toBeVisible()
+    // Click the badge with the real mouse, a long way from the name. Playwright's own click refuses,
+    // because the stretched name button covers the badge, which is exactly the design.
+    const badge = (await card.locator('.type-badge').boundingBox())!
+    await page.mouse.click(badge.x + badge.width / 2, badge.y + badge.height / 2)
+
+    await expect(page.getByRole('heading', { level: 1, name: name! })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 2, name: 'Address' })).toBeVisible()
+    await expect(page.getByText(/\b\d{4}$/).first()).toBeVisible()
+  })
+
+  test('has no separate Details button', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+
+    await expect(page.getByRole('button', { name: /Details/ })).toHaveCount(0)
+  })
+
+  test('Directions and Call on a card do not open it', async ({ page }) => {
+    await page.goto('/')
+    const card = page.getByRole('article').first()
+    await expect(card).toBeVisible()
+
+    const call = card.getByRole('link', { name: /^Call/ })
+    await call.evaluate((link) => link.addEventListener('click', (event) => event.preventDefault()))
+    await call.click()
+
+    await expect(page.getByRole('heading', { level: 1, name: 'Branches and ATMs' })).toBeAttached()
+    await expect(page.getByRole('button', { name: 'Back to results' })).toHaveCount(0)
+  })
+
+  test('the details take the whole sidebar, and the search comes back on return', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    await searchField(page).fill('pretoria')
     await page.keyboard.press('Enter')
+    await expect(searchField(page)).toBeVisible()
 
-    await expect(page.getByRole('heading', { level: 1, name: 'Branches and ATMs' })).toBeVisible()
+    await openButton(page.getByRole('article').first()).click()
+
+    await expect(page.getByRole('button', { name: 'Back to results' })).toBeVisible()
+    await expect(searchField(page)).toBeHidden()
+    await expect(page.getByRole('group', { name: 'Show' })).toBeHidden()
+    await expect(page.getByRole('img', { name: 'Capitec' })).toBeHidden()
+
+    await page.getByRole('button', { name: 'Back to results' }).click()
+
+    await expect(searchField(page)).toBeVisible()
+    await expect(searchField(page)).toHaveValue('pretoria')
+  })
+
+  test('on a desktop the details fill the sidebar from top to bottom', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'The sidebar is a sheet on a phone')
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+
+    await openButton(page.getByRole('article').first()).click()
+
+    const box = await page.locator('.locator__results').boundingBox()
+    const viewport = page.viewportSize()!
+    expect(box!.y).toBeLessThanOrEqual(1)
+    expect(box!.height).toBeGreaterThanOrEqual(viewport.height - 1)
   })
 })
 
 test.describe('keyboard', () => {
+  test('tab reaches a card on its name, and Enter opens it', async ({ page }) => {
+    await page.goto('/')
+    const card = page.getByRole('article').first()
+    await expect(card).toBeVisible()
+    const name = await card.getByRole('heading').textContent()
+
+    await openButton(card).focus()
+    await page.keyboard.press('Enter')
+
+    await expect(page.getByRole('heading', { level: 1, name: name! })).toBeFocused()
+  })
+
   test('the skip link moves focus to the results', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()

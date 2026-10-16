@@ -35,15 +35,22 @@
 }
 
 .branch-card {
+  position: relative; // the open button stretches over the card, so it needs a positioned parent
   background: $white;
   border: 1px solid $border-color;
   border-radius: $border-radius-lg;
   padding: $spacer;
+  cursor: pointer;
 
-  &__address {
-    margin: 2px 0 0;
-    font-size: 0.875rem;
-    color: $body-secondary-color;
+  &:hover {
+    border-color: $blue-soft;
+    background: #f7f9fe;
+  }
+
+  // The focus ring goes around the whole card, not just the name it is on.
+  &:has(.branch-card__open:focus-visible) {
+    outline: 2px solid #000;
+    outline-offset: 2px;
   }
 
   &__services {
@@ -116,6 +123,27 @@
   }
 }
 
+// The card's name is its button, stretched over the whole card.
+.branch-card__open {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  &:focus-visible {
+    outline: none; // the card shows the ring instead
+  }
+}
+
 // The kind of site as a badge: a blue square with a building for a branch, a white circle with a
 // ring and a card for an ATM.
 .type-badge {
@@ -158,7 +186,12 @@
   font-variant-numeric: tabular-nums;
 }
 
-// Directions takes the spare room but can shrink, so Details and Call fit beside it on a phone.
+// Directions takes the spare room but can shrink, so Call fits beside it on a phone.
+.branch-card__actions {
+  position: relative;
+  z-index: 1; // above the stretched name button, so Directions and Call stay clickable
+}
+
 .branch-card__actions .btn-primary {
   flex: 1 1 7rem;
 }

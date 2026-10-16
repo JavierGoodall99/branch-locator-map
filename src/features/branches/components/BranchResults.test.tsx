@@ -161,7 +161,7 @@ describe('BranchResults', () => {
   it('reports which branch was chosen', async () => {
     render(<Results state={success([branch('a', 'Capitec Bank Paarl')])} />)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Details for Capitec Bank Paarl' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Capitec Bank Paarl' }))
 
     expect(select).toHaveBeenCalledWith('a')
   })

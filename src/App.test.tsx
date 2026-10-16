@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import sample from '../public/branches.json'
 import App from './App'
@@ -125,16 +125,37 @@ describe('App', () => {
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(first!)
     })
 
-    it('returns to the list when a search is made, not while still typing', async () => {
+    it('gives the details the whole sidebar, and gives it back on return', async () => {
       await openFirstBranch()
+      expect(document.querySelector('.locator')).toHaveClass('locator--detail')
 
-      await userEvent.type(searchField(), 'a')
-      expect(screen.getByRole('button', { name: 'Back to results' })).toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: 'Back to results' }))
 
-      await userEvent.keyboard('{Enter}')
+      expect(document.querySelector('.locator')).not.toHaveClass('locator--detail')
+    })
 
-      expect(cardCount()).toBeGreaterThan(0)
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Branches and ATMs')
+    it('keeps what was typed in the search while the details are open', async () => {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await userEvent.type(searchField(), 'pretoria{Enter}')
+
+      await userEvent.click(firstDetailsButton())
+      await userEvent.click(screen.getByRole('button', { name: 'Back to results' }))
+
+      expect(searchField()).toHaveValue('pretoria')
+    })
+
+    it('opens a card by its name, which is the only control that stands for the whole card', async () => {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      const firstCard = document.querySelector('article.branch-card') as HTMLElement
+      const name = firstCard.querySelector('h2')!.textContent!
+
+      await userEvent.click(within(firstCard).getByRole('button', { name }))
+
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(name)
     })
   })
 
@@ -218,7 +239,8 @@ describe('App', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
 
       const nearest = document.querySelector('article.branch-card')!
-      expect(nearest.textContent).toContain('Western Cape')
+      // The nearest branch to Cape Town is in Cape Town. The address itself is only on the details.
+      expect(nearest.textContent).toContain('Cape Town')
       expect(nearest.textContent).not.toBe(byName)
       expect(nearest.querySelector('.branch-card__meta')!.textContent).toContain(' away')
       expect(screen.getByText(/nearest first$/)).toBeInTheDocument()
