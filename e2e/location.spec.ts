@@ -23,6 +23,27 @@ test.describe('near me when the browser allows it', () => {
     expect(await resultCount(page)).toBe(countBefore)
   })
 
+  test('limits the list to a chosen distance, and the distances wait for Near me', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    await page.getByRole('button', { name: 'Filters' }).click()
+    await expect(page.getByRole('button', { name: '10 km' })).toBeDisabled()
+    await expect(page.getByText(/Turn on Near me/)).toBeVisible()
+
+    await page.getByRole('button', { name: 'Near me' }).click()
+    await expect(page.getByRole('button', { name: '10 km' })).toBeEnabled()
+    const nearest = await resultCount(page)
+    await page.getByRole('button', { name: '10 km' }).click()
+
+    await expect.poll(() => resultCount(page)).toBeLessThan(nearest)
+    expect(await resultCount(page)).toBeGreaterThan(0)
+    await expect(page.getByRole('status').filter({ hasText: 'within 10 km' }).first()).toBeAttached()
+    await expect(page.getByRole('button', { name: '10 km' })).toHaveAttribute('aria-pressed', 'true')
+
+    await page.getByRole('button', { name: '10 km' }).click()
+    await expect.poll(() => resultCount(page)).toBe(nearest)
+  })
+
   test('shows the distance on a branch when it is opened, and can be turned off again', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Near me' }).click()

@@ -15,10 +15,11 @@ interface BranchResultsProps {
   onSelect: (id: string) => void
 }
 
-function countLabel(state: UseBranchesResult, shown: number, nearestFirst: boolean): string {
+function countLabel(state: UseBranchesResult, shown: number, nearestFirst: boolean, radiusKm: number | null): string {
   if (state.status === 'loading') return 'Loading branches'
   if (state.status === 'error') return ''
-  return `${shown} ${shown === 1 ? 'location' : 'locations'}, ${nearestFirst ? 'nearest first' : 'sorted by name'}`
+  const within = radiusKm === null ? '' : ` within ${radiusKm} km`
+  return `${shown} ${shown === 1 ? 'location' : 'locations'}${within}, ${nearestFirst ? 'nearest first' : 'sorted by name'}`
 }
 
 function SkeletonList() {
@@ -42,7 +43,7 @@ function SkeletonList() {
 export function BranchResults({ state, filters, now, origin, onClearFilters, onSelect }: BranchResultsProps) {
   const branches =
     state.status === 'success'
-      ? listBranches(state.branches, toBranchFilters(filters), now, origin)
+      ? listBranches(state.branches, toBranchFilters(filters), now, origin, filters.radiusKm)
       : []
 
   return (
@@ -50,7 +51,7 @@ export function BranchResults({ state, filters, now, origin, onClearFilters, onS
       {/* Not shown, but still the page heading and a live count for screen reader users. */}
       <div className="visually-hidden">
         <h1>Branches and ATMs</h1>
-        <p role="status">{countLabel(state, branches.length, Boolean(origin))}</p>
+        <p role="status">{countLabel(state, branches.length, Boolean(origin), filters.radiusKm)}</p>
       </div>
 
       {state.status === 'loading' && <SkeletonList />}
@@ -68,8 +69,12 @@ export function BranchResults({ state, filters, now, origin, onClearFilters, onS
           {hasActiveFilters(filters) ? (
             <>
               <h2 className="h4">No matches found</h2>
-              <p>Try a different search, or clear it to see everything.</p>
-              <Button onClick={onClearFilters}>Clear search</Button>
+              <p>
+                {filters.radiusKm === null
+                  ? 'Try a different search, or clear it to see everything.'
+                  : 'Try a different search or a larger distance, or clear them to see everything.'}
+              </p>
+              <Button onClick={onClearFilters}>{filters.radiusKm === null ? 'Clear search' : 'Clear filters'}</Button>
             </>
           ) : (
             <>

@@ -56,6 +56,7 @@ test.describe('finding a branch', () => {
     await expect(page.getByRole('article').first()).toBeVisible()
     const branches = await resultCount(page)
 
+    await page.getByRole('button', { name: 'Filters' }).click()
     await page.getByRole('button', { name: 'Both' }).click()
     await expect.poll(() => resultCount(page)).toBeGreaterThan(branches)
     const both = await resultCount(page)
@@ -63,6 +64,7 @@ test.describe('finding a branch', () => {
     await page.getByRole('button', { name: 'ATMs' }).click()
     await expect.poll(() => resultCount(page)).toBeLessThan(both)
     await expect(page.getByRole('button', { name: 'ATMs' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByRole('button', { name: 'Filters, 1 in use' })).toBeVisible()
   })
 
 })
@@ -133,6 +135,8 @@ test.describe('opening a card', () => {
     await searchField(page).fill('pretoria')
     await page.keyboard.press('Enter')
     await expect(searchField(page)).toBeVisible()
+    await page.getByRole('button', { name: 'Filters' }).click()
+    await expect(page.getByRole('group', { name: 'Show' })).toBeVisible()
 
     await openButton(page.getByRole('article').first()).click()
 
@@ -145,6 +149,7 @@ test.describe('opening a card', () => {
 
     await expect(searchField(page)).toBeVisible()
     await expect(searchField(page)).toHaveValue('pretoria')
+    await expect(page.getByRole('group', { name: 'Show' })).toBeVisible()
   })
 
   test('on a desktop the details fill the sidebar from top to bottom', async ({ page, isMobile }) => {

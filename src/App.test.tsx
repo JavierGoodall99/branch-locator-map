@@ -78,6 +78,7 @@ describe('App', () => {
     await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
     const branchesOnly = cardCount()
 
+    await userEvent.click(screen.getByRole('button', { name: 'Filters' }))
     await userEvent.click(screen.getByRole('button', { name: 'Both' }))
 
     expect(cardCount()).toBeGreaterThan(branchesOnly)
@@ -189,6 +190,9 @@ describe('App', () => {
       await userEvent.click(screen.getByRole('option', { name: (name) => name.includes(atm.name) }))
 
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(atm.name)
+      // The show switch moved to ATMs, which the Filters button reports.
+      expect(screen.getByRole('button', { name: 'Filters, 1 in use' })).toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: /^Filters/ }))
       expect(screen.getByRole('button', { name: 'ATMs' })).toHaveAttribute('aria-pressed', 'true')
     })
   })
@@ -235,6 +239,29 @@ describe('App', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
       expect(document.querySelector('article.branch-card')!.textContent).toBe(byName)
       expect(document.querySelector('.branch-card__meta')!.textContent).not.toContain(' away')
+    })
+
+    it('limits the list to a distance, and drops the limit when Near me is turned off', async () => {
+      stubSample()
+      stubGeolocation('granted')
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
+      const nearest = cardCount()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Filters' }))
+      await userEvent.click(screen.getByRole('button', { name: '10 km' }))
+
+      expect(cardCount()).toBeGreaterThan(0)
+      expect(cardCount()).toBeLessThan(nearest)
+      expect(screen.getByText(/locations? within 10 km, nearest first$/)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Filters, 1 in use' })).toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
+
+      expect(cardCount()).toBe(nearest)
+      expect(screen.getByRole('button', { name: '10 km' })).toBeDisabled()
+      expect(screen.getByRole('button', { name: 'Filters' })).toBeInTheDocument()
     })
 
     it('keeps the default list and explains how to carry on when location is refused', async () => {

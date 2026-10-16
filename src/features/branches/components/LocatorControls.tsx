@@ -1,8 +1,10 @@
-import { Icon, type IconName } from '../../../shared/ui/Icon'
-import type { LocatorFilters, ShowMode } from '../model/filters'
+import { useId, useState } from 'react'
+import { countChosenFilters, type LocatorFilters } from '../model/filters'
 import type { UseLocationResult } from '../model/useLocation'
 import type { Branch } from '../types'
 import { BrandHeader } from './BrandHeader'
+import { FilterButton } from './FilterButton'
+import { FilterPanel } from './FilterPanel'
 import { LocateButton, LocationNote } from './LocationControl'
 import { SearchBox } from './SearchBox'
 
@@ -16,41 +18,34 @@ interface LocatorControlsProps {
   onPickBranch: (id: string) => void
 }
 
-const SHOW_OPTIONS: { value: ShowMode; label: string; icon?: IconName }[] = [
-  { value: 'branches', label: 'Branches', icon: 'bank' },
-  { value: 'atms', label: 'ATMs', icon: 'cash' },
-  { value: 'both', label: 'Both' },
-]
-
-/** Brand, search with suggestions and Near me, and the show switch. */
+/** Brand, search with suggestions and Near me, the Filters button and its panel. */
 export function LocatorControls({ filters, onChange, location, branches, onPickBranch }: LocatorControlsProps) {
-  const set = (change: Partial<LocatorFilters>) => onChange({ ...filters, ...change })
+  const panelId = useId()
+  const [filtersOpen, setFiltersOpen] = useState(false)
 
   return (
     <>
       <BrandHeader />
 
-      <SearchBox
-        value={filters.query}
-        onSearch={(query) => set({ query })}
-        branches={branches}
-        onPickBranch={onPickBranch}
-        trailing={<LocateButton location={location} />}
-      />
-
-      <div className="type-switch" role="group" aria-label="Show">
-        {SHOW_OPTIONS.map(({ value, label, icon }) => (
-          <button
-            key={value}
-            type="button"
-            aria-pressed={filters.show === value}
-            onClick={() => set({ show: value })}
-          >
-            {icon && <Icon name={icon} size={18} />}
-            {label}
-          </button>
-        ))}
+      <div className="search-row">
+        <SearchBox
+          value={filters.query}
+          onSearch={(query) => onChange({ ...filters, query })}
+          branches={branches}
+          onPickBranch={onPickBranch}
+          trailing={<LocateButton location={location} />}
+        />
+        <FilterButton
+          open={filtersOpen}
+          controls={panelId}
+          count={countChosenFilters(filters)}
+          onToggle={() => setFiltersOpen((open) => !open)}
+        />
       </div>
+
+      {filtersOpen && (
+        <FilterPanel id={panelId} filters={filters} onChange={onChange} located={location.status === 'located'} />
+      )}
 
       <LocationNote location={location} />
     </>

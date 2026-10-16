@@ -39,9 +39,12 @@ function App() {
   // The user's position, once they have shared it.
   const origin = location.status === 'located' ? location.position : null
 
+  // A distance is measured from the user, so it only counts while their location is known.
+  const view = origin ? filters : { ...filters, radiusKm: null }
+
   // The same list the results panel shows, so the map and the list never disagree.
   const visible =
-    branches.status === 'success' ? listBranches(branches.branches, toBranchFilters(filters), now, origin) : []
+    branches.status === 'success' ? listBranches(branches.branches, toBranchFilters(view), now, origin, view.radiusKm) : []
 
   // One branch is open, and it is in the list: its details take the whole sidebar.
   const detailOpen = selectedId !== null && visible.some((branch) => branch.id === selectedId)
@@ -51,7 +54,7 @@ function App() {
       detailOpen={detailOpen}
       controls={
         <LocatorControls
-          filters={filters}
+          filters={view}
           onChange={changeFilters}
           location={location}
           branches={branches.status === 'success' ? branches.branches : []}
@@ -61,12 +64,12 @@ function App() {
       results={
         <ResultsPanel
           state={branches}
-          filters={filters}
+          filters={view}
           now={now}
           origin={origin}
           selectedId={selectedId}
           onSelect={setSelectedId}
-          onClearFilters={() => changeFilters(clearFilters(filters))}
+          onClearFilters={() => changeFilters(clearFilters(view))}
         />
       }
       map={<LazyBranchMap branches={visible} selectedId={selectedId} userLocation={origin} onSelect={setSelectedId} />}

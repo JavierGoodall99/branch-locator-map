@@ -19,6 +19,7 @@ const PATHS = {
   pin: 'M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10zM12 8.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z',
   locate:'M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v3M12 19v3M2 12h3M19 12h3',
   arrowLeft: 'M19 12H5M11 6l-6 6 6 6',
+  filter: 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4',
   chevronLeft: 'M15 6l-6 6 6 6',
   chevronRight: 'M9 6l6 6-6 6',
 } as const

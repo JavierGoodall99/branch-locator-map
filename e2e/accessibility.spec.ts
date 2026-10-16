@@ -52,6 +52,28 @@ test.describe('accessibility', () => {
     expect(await scan(page)).toEqual([])
   })
 
+  test('the filters, with a distance chosen, have no WCAG A or AA violations', async ({ page, context }) => {
+    await context.grantPermissions(['geolocation'])
+    await context.setGeolocation({ latitude: -33.9249, longitude: 18.4241 })
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    await page.getByRole('button', { name: 'Near me' }).click()
+    await page.getByRole('button', { name: 'Filters' }).click()
+    await page.getByRole('button', { name: '25 km' }).click()
+    await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'true')
+
+    expect(await scan(page)).toEqual([])
+  })
+
+  test('the filters, before Near me is on, have no WCAG A or AA violations', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    await page.getByRole('button', { name: 'Filters' }).click()
+    await expect(page.getByText(/Turn on Near me/)).toBeVisible()
+
+    expect(await scan(page)).toEqual([])
+  })
+
   test('the no-matches message has no WCAG A or AA violations', async ({ page }) => {
     await page.goto('/')
     await searchField(page).fill('zzzz nowhere')

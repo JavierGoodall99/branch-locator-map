@@ -152,6 +152,33 @@ describe('BranchResults', () => {
     expect(clear).toHaveBeenCalledTimes(1)
   })
 
+  it('explains when nothing is within the chosen distance and offers to clear the filters', async () => {
+    render(
+      <Results
+        state={success([branch('a', 'Capitec Bank Paarl', { location: { lat: -33.7, lng: 18.97 } })])}
+        filters={{ ...DEFAULT_FILTERS, radiusKm: 5 }}
+        origin={{ lat: -26.2, lng: 28.05 }}
+      />,
+    )
+
+    expect(screen.getByRole('heading', { name: 'No matches found' })).toBeInTheDocument()
+    expect(screen.getByText(/larger distance/)).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
+    expect(clear).toHaveBeenCalledTimes(1)
+  })
+
+  it('says the distance in the count that screen readers hear', () => {
+    render(
+      <Results
+        state={success([branch('a', 'Capitec Bank Paarl')])}
+        filters={{ ...DEFAULT_FILTERS, radiusKm: 25 }}
+        origin={{ lat: -26.2, lng: 28.05 }}
+      />,
+    )
+
+    expect(screen.getByRole('status')).toHaveTextContent('1 location within 25 km, nearest first')
+  })
+
   it('does not offer to clear the search when there is none', () => {
     render(<Results state={success([])} />)
 

@@ -3,8 +3,134 @@
 
 $control-hairline: #c9d3d8; // decorative edge, as in the locator design
 
+// The search with the Filters button beside it.
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: $spacer * 0.5;
+}
+
 .search-field {
   position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+// The round button beside the search, the same height and edge as the bar. It opens the filters.
+.filter-button {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  background: $white;
+  border: 1px solid $control-hairline;
+  border-radius: 50%;
+  color: $body-secondary-color;
+  box-shadow: $box-shadow-lg; // floats over the map, as the search does
+
+  &:hover {
+    border-color: $primary;
+    background: $blue-tint;
+    color: $blue-deep;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  // Open: tinted and in the brand colour, and announced as expanded.
+  &[aria-expanded='true'] {
+    background: $blue-tint;
+    border-color: $primary;
+    color: $blue-deep;
+  }
+
+  // How many filters are in use.
+  &__count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: $blue-deep;
+    color: $white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+}
+
+// The filters under the search: what to show, and how far away.
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $spacer;
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacer * 0.5;
+  }
+
+  &__label {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: 0.875rem;
+    color: $body-secondary-color;
+  }
+}
+
+.radius-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacer * 0.5;
+}
+
+// A distance to choose, a pill as the design shows. The chosen one is tinted and outlined in blue.
+.radius-chip {
+  min-height: 44px;
+  padding: 0 $spacer;
+  background: $white;
+  border: 1px solid $control-hairline;
+  border-radius: $border-radius-pill;
+  color: $body-color;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+
+  &:hover:not(:disabled, [aria-pressed='true']) {
+    background: $blue-tint;
+  }
+
+  &[aria-pressed='true'] {
+    background: $blue-tint;
+    border-color: $primary;
+    color: $blue-deep;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
 }
 
 .search-box {

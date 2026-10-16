@@ -54,7 +54,7 @@ export const openButton = (card: Locator) => card.getByRole('heading').getByRole
 
 /** The number in the results count, for example 128 from "128 locations, sorted by name". */
 export async function resultCount(page: Page): Promise<number> {
-  const text = await page.getByRole('status').filter({ hasText: /locations?,/ }).first().textContent()
+  const text = await page.getByRole('status').filter({ hasText: /^\d+ locations?/ }).first().textContent()
   const match = text?.match(/^(\d+)/)
   if (!match) throw new Error(`No result count found in: ${text}`)
   return Number(match[1])

@@ -80,4 +80,30 @@ describe('listBranches with a location', () => {
     expect(result.map((item) => item.id)).toEqual(['far', 'near'])
     expect(result[0].distanceKm).toBeUndefined()
   })
+
+  describe('within a distance', () => {
+    it('drops everything farther away than the radius', () => {
+      const result = listBranches([far, near], {}, now, johannesburg, 25)
+
+      expect(result.map((item) => item.id)).toEqual(['near'])
+    })
+
+    it('keeps a place that is exactly on the edge', () => {
+      const [{ distanceKm }] = listBranches([near], {}, now, johannesburg)
+
+      expect(listBranches([near], {}, now, johannesburg, distanceKm)).toHaveLength(1)
+    })
+
+    it('can leave nothing at all', () => {
+      expect(listBranches([far], {}, now, johannesburg, 100)).toEqual([])
+    })
+
+    it('does nothing with no radius', () => {
+      expect(listBranches([far, near], {}, now, johannesburg, null)).toHaveLength(2)
+    })
+
+    it('does nothing without a location, because there is nothing to measure from', () => {
+      expect(listBranches([far, near], {}, now, null, 5)).toHaveLength(2)
+    })
+  })
 })
