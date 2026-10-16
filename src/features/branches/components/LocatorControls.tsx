@@ -34,7 +34,7 @@ export function LocatorControls({ filters, onChange, location, branches, onPickB
 
       <SearchBox
         value={filters.query}
-        onChange={(query) => set({ query })}
+        onSearch={(query) => set({ query })}
         branches={branches}
         onPickBranch={onPickBranch}
         trailing={<LocateButton location={location} />}

@@ -47,12 +47,22 @@ describe('LocatorControls', () => {
     expect(screen.getByRole('search')).toContainElement(search())
   })
 
-  it('reports each typed character as the new query', async () => {
+  it('does not change the search while the user types', async () => {
     const { onChange } = setup()
 
-    await userEvent.type(search(), 'p')
+    await userEvent.type(search(), 'paarl')
 
-    expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, query: 'p' })
+    expect(search()).toHaveValue('paarl')
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('searches when the user presses Enter', async () => {
+    const { onChange } = setup()
+
+    await userEvent.type(search(), 'paarl{Enter}')
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, query: 'paarl' })
   })
 
   it('does not submit the form on Enter', async () => {

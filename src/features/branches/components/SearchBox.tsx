@@ -4,8 +4,10 @@ import { buildPlaceIndex, suggest, type BranchSuggestion, type PlaceEntry } from
 import type { Branch, BranchType } from '../types'
 
 interface SearchBoxProps {
+  /** The search that is applied to the list and the map. What is being typed is kept separately. */
   value: string
-  onChange: (value: string) => void
+  /** Called when the user searches: Enter, the Search button, a chosen place, or clearing the text. */
+  onSearch: (query: string) => void
   /** Everything that can be suggested. */
   branches: Branch[]
   /** A branch suggestion was chosen: open it. */
@@ -33,11 +35,13 @@ function placeDetail(place: PlaceEntry): string {
 }
 
 /**
- * The search field, with suggestions as the user types. It follows the ARIA combobox pattern:
+ * The search field, with suggestions as the user types. Typing does not change the results: the
+ * list and the map wait until the user presses Enter or the Search button, or chooses a suggestion.
+ * It follows the ARIA combobox pattern:
  * focus stays in the field while arrow keys move a highlight through the list, and the field
  * tells assistive technology which suggestion is highlighted. Everything works without a mouse.
  */
-export function SearchBox({ value, onChange, branches, onPickBranch, trailing }: SearchBoxProps) {
+export function SearchBox({ value, onSearch, branches, onPickBranch, trailing }: SearchBoxProps) {
   const id = useId()
   const inputId = `${id}-input`
   const listId = `${id}-list`
@@ -45,8 +49,17 @@ export function SearchBox({ value, onChange, branches, onPickBranch, trailing }:
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(-1)
 
+  // What is typed, which may be ahead of the applied search. When the applied search changes from
+  // outside (a clear, a chosen branch), the text follows it.
+  const [draft, setDraft] = useState(value)
+  const [syncedValue, setSyncedValue] = useState(value)
+  if (value !== syncedValue) {
+    setSyncedValue(value)
+    setDraft(value)
+  }
+
   const placeIndex = useMemo(() => buildPlaceIndex(branches), [branches])
-  const suggestions = useMemo(() => suggest(value, placeIndex, branches), [value, placeIndex, branches])
+  const suggestions = useMemo(() => suggest(draft, placeIndex, branches), [draft, placeIndex, branches])
 
   const options: Option[] = [
     ...suggestions.places.map((place): Option => ({ kind: 'place', place })),
@@ -63,8 +76,12 @@ export function SearchBox({ value, onChange, branches, onPickBranch, trailing }:
 
   const choose = (option: Option) => {
     close()
-    if (option.kind === 'place') onChange(option.place.label)
-    else onPickBranch(option.branch.id)
+    if (option.kind === 'place') {
+      setDraft(option.place.label)
+      onSearch(option.place.label)
+    } else {
+      onPickBranch(option.branch.id)
+    }
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -94,8 +111,9 @@ export function SearchBox({ value, onChange, branches, onPickBranch, trailing }:
         if (expanded) {
           event.preventDefault()
           close()
-        } else if (value) {
-          onChange('')
+        } else if (draft || value) {
+          setDraft('')
+          onSearch('')
         }
         break
     }
@@ -135,8 +153,20 @@ export function SearchBox({ value, onChange, branches, onPickBranch, trailing }:
 
   return (
     <div className="search-field" onBlur={onBlur}>
-      <form role="search" className="search-box" onSubmit={(event) => event.preventDefault()}>
-        <Icon name="search" />
+      <form
+        role="search"
+        className="search-box"
+        onSubmit={(event) => {
+          // Enter, or the Search button. Choosing a highlighted suggestion with Enter is handled
+          // on the field and never reaches here.
+          event.preventDefault()
+          close()
+          onSearch(draft.trim())
+        }}
+      >
+        <button type="submit" className="search-box__action" aria-label="Search">
+          <Icon name="search" />
+        </button>
         <label htmlFor={inputId} className="visually-hidden">
           Search by name, suburb, town or postcode
         </label>
@@ -153,22 +183,25 @@ export function SearchBox({ value, onChange, branches, onPickBranch, trailing }:
           spellCheck={false}
           enterKeyHint="search"
           placeholder="Name, suburb, town or postcode"
-          value={value}
+          value={draft}
           onChange={(event) => {
-            onChange(event.target.value)
+            setDraft(event.target.value)
             setOpen(true)
             setActive(-1)
+            // Emptying the field resets the list, so it never shows a search that is no longer there.
+            if (event.target.value === '') onSearch('')
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={onKeyDown}
         />
-        {value && (
+        {draft && (
           <button
             type="button"
             className="search-box__action"
             aria-label="Clear search"
             onClick={() => {
-              onChange('')
+              setDraft('')
+              onSearch('')
               close()
               inputRef.current?.focus()
             }}

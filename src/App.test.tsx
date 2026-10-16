@@ -59,6 +59,10 @@ describe('App', () => {
     const before = cardCount()
 
     await userEvent.type(searchField(), 'sandton')
+    // Typing alone changes nothing: the list waits for Enter or a chosen suggestion.
+    expect(cardCount()).toBe(before)
+
+    await userEvent.keyboard('{Enter}')
 
     expect(cardCount()).toBeGreaterThan(0)
     expect(cardCount()).toBeLessThan(before)
@@ -121,10 +125,13 @@ describe('App', () => {
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(first!)
     })
 
-    it('returns to the list when the search changes', async () => {
+    it('returns to the list when a search is made, not while still typing', async () => {
       await openFirstBranch()
 
       await userEvent.type(searchField(), 'a')
+      expect(screen.getByRole('button', { name: 'Back to results' })).toBeInTheDocument()
+
+      await userEvent.keyboard('{Enter}')
 
       expect(cardCount()).toBeGreaterThan(0)
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Branches and ATMs')

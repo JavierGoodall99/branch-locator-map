@@ -47,6 +47,7 @@ test.describe('the map', () => {
     await expect(page.getByRole('alert')).toContainText('The map couldn’t load')
     await expect(page.getByRole('article').first()).toBeVisible()
     await searchField(page).fill('sandton')
+    await page.keyboard.press('Enter')
     await expect(page.getByRole('article').first()).toContainText('Sandton')
 
     await restore()

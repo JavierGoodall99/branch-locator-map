@@ -10,9 +10,9 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
 .search-box {
   display: flex;
   align-items: center;
-  gap: $spacer * 0.5;
+  gap: 4px;
   min-height: 52px;
-  padding: 0 4px 0 $spacer;
+  padding: 0 4px; // the Search and Near me buttons are 44px, so they carry the side spacing
   background: $white;
   border: 1px solid $control-hairline;
   border-radius: $border-radius-pill;
@@ -55,7 +55,7 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
     background: $control-hairline;
   }
 
-  // Round 44px icon buttons inside the bar: clear, and Near me.
+  // Round 44px icon buttons inside the bar: Search, clear, and Near me.
   &__action {
     display: inline-flex;
     flex: none;

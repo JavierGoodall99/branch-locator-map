@@ -16,6 +16,9 @@ test.describe('finding a branch', () => {
     const all = await resultCount(page)
 
     await searchField(page).fill('sandton')
+    // Typing alone changes nothing: the list waits for Enter or a chosen suggestion.
+    expect(await resultCount(page)).toBe(all)
+    await page.keyboard.press('Enter')
     await expect.poll(() => resultCount(page)).toBeLessThan(all)
     expect(await resultCount(page)).toBeGreaterThan(0)
     await expect(page.getByRole('article').first()).toContainText('Sandton')
@@ -25,10 +28,24 @@ test.describe('finding a branch', () => {
     await expect.poll(() => resultCount(page)).toBe(all)
   })
 
+  test('the Search button searches too, for people not using the keyboard', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    const all = await resultCount(page)
+
+    await searchField(page).fill('paarl')
+    expect(await resultCount(page)).toBe(all)
+    await page.getByRole('button', { name: 'Search', exact: true }).click()
+
+    await expect.poll(() => resultCount(page)).toBeLessThan(all)
+    await expect(page.getByRole('article').first()).toContainText('Paarl')
+  })
+
   test('tells the user when nothing matches, and how to recover', async ({ page }) => {
     await page.goto('/')
 
     await searchField(page).fill('zzzz nowhere')
+    await page.keyboard.press('Enter')
 
     await expect(page.getByRole('heading', { name: 'No matches found' })).toBeVisible()
     await page.getByRole('button', { name: 'Clear search' }).first().click()
@@ -82,6 +99,9 @@ test.describe('branch details', () => {
     await expect(page.getByRole('button', { name: 'Back to results' })).toBeVisible()
 
     await searchField(page).fill('paarl')
+    // Still looking at the branch while typing.
+    await expect(page.getByRole('button', { name: 'Back to results' })).toBeVisible()
+    await page.keyboard.press('Enter')
 
     await expect(page.getByRole('heading', { level: 1, name: 'Branches and ATMs' })).toBeVisible()
   })

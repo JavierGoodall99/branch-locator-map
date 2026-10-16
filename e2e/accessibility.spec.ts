@@ -55,6 +55,7 @@ test.describe('accessibility', () => {
   test('the no-matches message has no WCAG A or AA violations', async ({ page }) => {
     await page.goto('/')
     await searchField(page).fill('zzzz nowhere')
+    await page.keyboard.press('Enter')
     await expect(page.getByRole('heading', { name: 'No matches found' })).toBeVisible()
 
     expect(await scan(page)).toEqual([])
