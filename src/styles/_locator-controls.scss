@@ -166,6 +166,18 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
   }
 }
 
+@keyframes search-box-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-box__action .search-box__spin {
+    animation-duration: 1.5s;
+  }
+}
+
 .search-box {
   display: flex;
   align-items: center;
@@ -234,16 +246,17 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
       color: $blue-deep;
     }
 
-    // Disabled and busy (finding the location) keeps full strength, so the spinner is easy to see.
+    // Disabled and busy (finding the location) keeps full strength, so the spinning icon is easy to see.
     &:disabled:not([aria-busy='true']) {
       opacity: 0.6;
     }
 
-    .spinner-border {
-      --bs-spinner-width: 18px;
-      --bs-spinner-height: 18px;
-      --bs-spinner-border-width: 2px;
+    // While the location is being found the Near me icon itself turns, in the brand colour. It slows
+    // right down for people who ask for less motion, as Bootstrap's own spinner does.
+    .search-box__spin {
+      display: inline-flex;
       color: $primary;
+      animation: search-box-spin 0.75s linear infinite;
     }
 
     &:focus-visible {

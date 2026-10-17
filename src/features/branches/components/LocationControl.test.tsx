@@ -42,23 +42,24 @@ describe('LocateButton', () => {
     expect(button).toHaveAttribute('aria-busy', 'true')
   })
 
-  it('shows a spinner in place of the icon while locating, and the icon otherwise', () => {
+  it('keeps the same icon while locating, and turns it, instead of swapping in a spinner', () => {
     const { unmount } = render(<LocateButton location={withActions({ status: 'locating' })} />)
-    let button = screen.getByRole('button', { name: 'Finding your location' })
-    expect(button.querySelector('.spinner-border')).not.toBeNull()
-    expect(button.querySelector('svg')).toBeNull()
+    const busy = screen.getByRole('button', { name: 'Finding your location' })
+    expect(busy.querySelector('.spinner-border')).toBeNull()
+    expect(busy.querySelector('svg')).not.toBeNull()
+    expect(busy.querySelector('svg')!.parentElement).toHaveClass('search-box__spin')
     unmount()
 
     render(<LocateButton location={withActions({ status: 'idle' })} />)
-    button = screen.getByRole('button', { name: 'Near me' })
-    expect(button.querySelector('.spinner-border')).toBeNull()
-    expect(button.querySelector('svg')).not.toBeNull()
+    const idle = screen.getByRole('button', { name: 'Near me' })
+    expect(idle.querySelector('svg')).not.toBeNull()
+    expect(idle.querySelector('.search-box__spin')).toBeNull()
   })
 
-  it('hides the spinner from assistive technology, which hears the message instead', () => {
+  it('keeps the turning icon hidden from assistive technology, which hears the message instead', () => {
     render(<LocateButton location={withActions({ status: 'locating' })} />)
 
-    expect(screen.getByRole('button', { name: 'Finding your location' }).querySelector('.spinner-border')).toHaveAttribute(
+    expect(screen.getByRole('button', { name: 'Finding your location' }).querySelector('svg')).toHaveAttribute(
       'aria-hidden',
       'true',
     )
