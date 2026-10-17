@@ -64,7 +64,20 @@ test.describe('near me when the browser allows it', () => {
     await page.getByRole('button', { name: 'Near me' }).click()
     await expect(page.getByRole('status').filter({ hasText: 'sorted by name' }).first()).toBeVisible()
     await expect(page.getByText(/\d+ (m|km) away/)).toHaveCount(0)
-    await expect(page.getByRole('button', { name: '25 km' })).toBeDisabled()
+    await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  test('a distance pill finds the location again after Near me was turned off', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'true')
+    await page.getByRole('button', { name: 'Near me' }).click()
+    await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'false')
+
+    await page.getByRole('button', { name: '10 km' }).click()
+
+    await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByRole('button', { name: '10 km' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByRole('status').filter({ hasText: 'within 10 km' }).first()).toBeAttached()
   })
 })
 
@@ -80,7 +93,9 @@ test.describe('near me when the browser blocks it', () => {
     await expect(page.getByRole('article').first()).toBeVisible()
     await expect(page.getByRole('status').filter({ hasText: 'sorted by name' }).first()).toBeAttached()
     await expect(page.getByText(/\d+ (m|km) away/)).toHaveCount(0)
-    await expect(page.getByRole('button', { name: '25 km' })).toBeDisabled()
+    // The distances stay on: choosing one asks again, which is the way back after a refusal.
+    await expect(page.getByRole('button', { name: '25 km' })).toBeEnabled()
+    await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'false')
   })
 })
 

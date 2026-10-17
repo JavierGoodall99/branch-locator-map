@@ -66,10 +66,10 @@ test.describe('accessibility', () => {
     expect(await scan(page)).toEqual([])
   })
 
-  test('the distances, before Near me is on, have no WCAG A or AA violations', async ({ page }) => {
+  test('the distances, with the location refused, have no WCAG A or AA violations', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
-    await expect(page.getByRole('button', { name: '10 km' })).toBeDisabled()
+    await expect(page.getByRole('button', { name: '10 km' })).toBeEnabled()
 
     expect(await scan(page)).toEqual([])
   })

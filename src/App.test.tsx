@@ -403,7 +403,7 @@ describe('App', () => {
       expect(cardCount()).toBe(listed)
       expect(screen.getByText(`${listed} locations, sorted by name`)).toBeInTheDocument()
       expect(document.querySelector('.branch-card__meta')!.textContent).not.toContain(' away')
-      expect(screen.getByRole('button', { name: '25 km' })).toBeDisabled()
+      expect(screen.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'false')
       expect(getCurrentPosition).toHaveBeenCalledTimes(1)
     })
 
@@ -433,7 +433,38 @@ describe('App', () => {
       expect(screen.getByText(/turned off for this site/)).toBeInTheDocument()
       expect(cardCount()).toBe(listed)
       expect(document.querySelector('.branch-card__meta')!.textContent).not.toContain(' away')
-      expect(screen.getByRole('button', { name: '25 km' })).toBeDisabled()
+      expect(screen.getByRole('button', { name: '25 km' })).toBeEnabled()
+      expect(screen.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'false')
+    })
+
+    it('finds the location when a distance is chosen after Near me was turned off, and applies that distance', async () => {
+      stubSample()
+      const getCurrentPosition = stubGeolocation('granted')
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
+      expect(cardCount()).toBe(listed)
+
+      await userEvent.click(screen.getByRole('button', { name: '10 km' }))
+
+      expect(getCurrentPosition).toHaveBeenCalledTimes(2)
+      expect(screen.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'true')
+      expect(screen.getByRole('button', { name: '10 km' })).toHaveAttribute('aria-pressed', 'true')
+      expect(screen.getByText(/locations? within 10 km, nearest first$/)).toBeInTheDocument()
+      expect(cardCount()).toBeLessThan(listed)
+    })
+
+    it('finds the location from a distance after a refusal, once the browser allows it, and applies that distance', async () => {
+      stubSample()
+      stubGeolocation('denied')
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+
+      stubGeolocation('granted')
+      await userEvent.click(screen.getByRole('button', { name: '50 km' }))
+
+      expect(screen.getByRole('button', { name: '50 km' })).toHaveAttribute('aria-pressed', 'true')
+      expect(screen.getByText(/locations? within 50 km, nearest first$/)).toBeInTheDocument()
     })
 
     it('tries again from the note, and then finds the nearest', async () => {

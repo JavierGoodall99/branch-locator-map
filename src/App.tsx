@@ -68,7 +68,8 @@ function App() {
       detailOpen={detailOpen}
       controls={
         <LocatorControls
-          filters={view}
+          // The raw filters, not the view: a distance chosen before the location arrives has to be kept.
+          filters={filters}
           onChange={changeFilters}
           location={location}
           branches={branches.status === 'success' ? branches.branches : []}

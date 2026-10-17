@@ -59,11 +59,7 @@ export function LocatorControls({ filters, onChange, location, branches, onPickB
         ))}
       </div>
 
-      <RadiusChips
-        radiusKm={filters.radiusKm}
-        onChange={(radiusKm) => set({ radiusKm })}
-        located={location.status === 'located'}
-      />
+      <RadiusChips radiusKm={filters.radiusKm} onChange={(radiusKm) => set({ radiusKm })} location={location} />
 
       <LocationNote location={location} />
 

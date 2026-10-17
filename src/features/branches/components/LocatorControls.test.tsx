@@ -149,7 +149,7 @@ describe('LocatorControls', () => {
       setup()
 
       expect(screen.queryByText('Within')).not.toBeInTheDocument()
-      expect(screen.getByText(/Turn on Near me/)).toHaveClass('visually-hidden')
+      expect(screen.getByText(/Choosing a distance asks for your location/)).toHaveClass('visually-hidden')
     })
 
     it('chooses a distance, and marks the chosen one', async () => {
@@ -170,12 +170,54 @@ describe('LocatorControls', () => {
       expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, radiusKm: null })
     })
 
-    it('turns the distances off, and tells a screen reader why, until Near me is on', () => {
+    it('keeps the distances on before the location is known, with none of them chosen', () => {
       setup()
 
       const group = screen.getByRole('group', { name: 'Distance from you' })
-      for (const chip of within(group).getAllByRole('button')) expect(chip).toBeDisabled()
-      expect(group).toHaveAccessibleDescription(/Turn on Near me/)
+      for (const chip of within(group).getAllByRole('button')) {
+        expect(chip).toBeEnabled()
+        expect(chip).toHaveAttribute('aria-pressed', 'false')
+      }
+      expect(group).toHaveAccessibleDescription(/asks for your location/)
+    })
+
+    it('asks for the location when a distance is chosen before it is known, and keeps the distance', async () => {
+      const request = vi.fn()
+      const { onChange } = setup(DEFAULT_FILTERS, { status: 'idle', request, clear: vi.fn() })
+
+      await userEvent.click(screen.getByRole('button', { name: '10 km' }))
+
+      expect(request).toHaveBeenCalledTimes(1)
+      expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, radiusKm: 10 })
+    })
+
+    it('asks again after a refusal, from the distance pills too', async () => {
+      const request = vi.fn()
+      setup(DEFAULT_FILTERS, { status: 'denied', request, clear: vi.fn() })
+
+      await userEvent.click(screen.getByRole('button', { name: '50 km' }))
+
+      expect(request).toHaveBeenCalledTimes(1)
+    })
+
+    it('shows the chosen distance as pressed while the location is on its way, and does not ask twice', async () => {
+      const request = vi.fn()
+      const { onChange } = setup({ ...DEFAULT_FILTERS, radiusKm: 25 }, { status: 'locating', request, clear: vi.fn() })
+
+      expect(screen.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'true')
+      await userEvent.click(screen.getByRole('button', { name: '5 km' }))
+
+      expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, radiusKm: 5 })
+      expect(request).not.toHaveBeenCalled()
+    })
+
+    it('does not ask for the location when the location is already known', async () => {
+      const request = vi.fn()
+      setup(DEFAULT_FILTERS, { ...located, request })
+
+      await userEvent.click(screen.getByRole('button', { name: '10 km' }))
+
+      expect(request).not.toHaveBeenCalled()
     })
   })
 
