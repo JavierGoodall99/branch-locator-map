@@ -62,7 +62,7 @@ export function BranchDetail({ branch, now, distanceKm, onBack }: BranchDetailPr
             <span className="visually-hidden">(opens in a new tab)</span>
           </a>
           {branch.phone && (
-            <a className="btn btn-outline-dark" href={telUrl(branch.phone)}>
+            <a className="btn btn-link" href={telUrl(branch.phone)}>
               <Icon name="phone" />
               Call
               <span className="visually-hidden"> {branch.name}</span>

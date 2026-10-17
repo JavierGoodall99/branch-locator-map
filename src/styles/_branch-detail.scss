@@ -43,6 +43,12 @@
     display: flex;
     gap: $spacer * 0.5;
     width: 100%;
+
+    // Call is a plain blue link, as on the cards. The brand blue is 4.5:1 on white but not on this grey
+    // panel, so it takes the next shade down, which passes.
+    .btn-link {
+      --bs-btn-color: #{$blue-strong};
+    }
   }
 
   &__body {
