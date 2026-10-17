@@ -5,7 +5,8 @@ import App from './App'
 
 // The real map needs WebGL, which jsdom does not have. BranchMap has its own tests with a fake map.
 vi.mock('./features/branches/components/BranchMap', () => ({
-  BranchMap: () => <div data-testid="map" />,
+  // It reports which place it was told to highlight, so the tests can see the list and the map agree.
+  BranchMap: ({ hoveredId }: { hoveredId?: string | null }) => <div data-testid="map" data-hovered={hoveredId ?? ''} />,
 }))
 
 // There are ~190 cards, and role queries compute an accessible name for each, which is slow
@@ -170,6 +171,48 @@ describe('App', () => {
       await userEvent.click(within(firstCard).getByRole('button', { name }))
 
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(name)
+    })
+  })
+
+  describe('hovering a card', () => {
+    const mapHovered = () => screen.getByTestId('map').getAttribute('data-hovered')
+    const idOf = (card: Element) => card.querySelector('[id^="details-"]')!.id.replace('details-', '')
+
+    async function load() {
+      stubSample()
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await screen.findByTestId('map')
+    }
+
+    it('tells the map which place the pointer is over, and lets go when it leaves', async () => {
+      await load()
+      const cards = document.querySelectorAll('article.branch-card')
+      expect(mapHovered()).toBe('')
+
+      await userEvent.hover(cards[1])
+      expect(mapHovered()).toBe(idOf(cards[1]))
+
+      await userEvent.unhover(cards[1])
+      expect(mapHovered()).toBe('')
+    })
+
+    it('follows the keyboard as well', async () => {
+      await load()
+
+      firstDetailsButton().focus()
+
+      await waitFor(() => expect(mapHovered()).toBe(firstDetailsButton().id.replace('details-', '')))
+    })
+
+    it('clears when the details open, because the list is gone', async () => {
+      await load()
+      await userEvent.hover(document.querySelector('article.branch-card')!)
+      expect(mapHovered()).not.toBe('')
+
+      await userEvent.click(firstDetailsButton())
+
+      expect(mapHovered()).toBe('')
     })
   })
 

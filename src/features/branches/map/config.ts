@@ -6,6 +6,9 @@ export const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty'
 
 export const SOURCE_ID = 'branches'
 
+/** The one place under the pointer in the list, kept apart from the clustered source so it is never inside a cluster. */
+export const HOVER_SOURCE_ID = 'hovered'
+
 /** Names of the pin images drawn at startup (see pins.ts) and used by the pin layers. */
 export const PIN_IMAGES = {
   branch: 'pin-branch',
@@ -21,6 +24,8 @@ export const LAYERS = {
   atms: 'atm-pins',
   selected: 'branch-selected',
   selectedAtm: 'atm-selected',
+  hovered: 'branch-hovered',
+  hoveredAtm: 'atm-hovered',
 } as const
 
 /** Pins merge into numbered clusters at or below this zoom, and split apart above it. */

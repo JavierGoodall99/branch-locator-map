@@ -27,6 +27,8 @@ function App() {
     requestLocation()
   }, [requestLocation])
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  // The card the pointer is over, or that has the keyboard, which the map highlights.
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   // Changing the search or filters means the user wants a list again, so leave the detail view.
   const changeFilters = (next: LocatorFilters) => {
@@ -86,10 +88,18 @@ function App() {
           origin={origin}
           selectedId={selectedId}
           onSelect={setSelectedId}
+          onHover={setHoveredId}
           onClearFilters={() => changeFilters(clearFilters(view))}
         />
       }
-      map={<LazyBranchMap branches={visible} selectedId={selectedId} userLocation={origin} onSelect={setSelectedId} />}
+      map={<LazyBranchMap
+          branches={visible}
+          selectedId={selectedId}
+          // The list is gone while a branch is open, so nothing in it can be hovered.
+          hoveredId={detailOpen ? null : hoveredId}
+          userLocation={origin}
+          onSelect={setSelectedId}
+        />}
     />
   )
 }

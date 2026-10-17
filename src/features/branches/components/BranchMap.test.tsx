@@ -1,6 +1,15 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { LAYERS, MAP_STYLE_URL, NEAREST_TO_SHOW, SELECTED_ZOOM, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from '../map/config'
+import {
+  HOVER_SOURCE_ID,
+  LAYERS,
+  MAP_STYLE_URL,
+  NEAREST_TO_SHOW,
+  SELECTED_ZOOM,
+  SOURCE_ID,
+  USER_LAYERS,
+  USER_SOURCE_ID,
+} from '../map/config'
 import { applyBasemapLook } from '../map/basemap'
 import { selectedFilters } from '../map/layers'
 import { addPinImages } from '../map/pins'
@@ -21,13 +30,14 @@ const mocks = vi.hoisted(() => {
     touchZoomRotate = { disableRotation: vi.fn() }
     setData = vi.fn()
     userSetData = vi.fn()
+    hoverSetData = vi.fn()
     getClusterExpansionZoom = vi.fn().mockResolvedValue(15)
     addControl = vi.fn()
     addSource = vi.fn((id: string) => void this.sources.push(id))
     addLayer = vi.fn((layer: { id: string }) => void this.layers.push(layer.id))
     getSource = vi.fn((id: string) => ({
       // The user's dot and the branches are separate sources, so tests can tell them apart.
-      setData: id === 'user-location' ? this.userSetData : this.setData,
+      setData: id === 'user-location' ? this.userSetData : id === 'hovered' ? this.hoverSetData : this.setData,
       getClusterExpansionZoom: this.getClusterExpansionZoom,
     }))
     setFilter = vi.fn()
@@ -99,15 +109,28 @@ function setup(
   branches: Branch[] = [branch('a'), branch('b', -33.9, 18.4)],
   selectedId: string | null = null,
   userLocation: Coordinates | null = null,
+  hoveredId: string | null = null,
 ) {
   const onSelect = vi.fn()
   const view = render(
-    <BranchMap branches={branches} selectedId={selectedId} userLocation={userLocation} onSelect={onSelect} />,
+    <BranchMap
+      branches={branches}
+      selectedId={selectedId}
+      hoveredId={hoveredId}
+      userLocation={userLocation}
+      onSelect={onSelect}
+    />,
   )
-  const update = (next: { branches?: Branch[]; selectedId?: string | null; userLocation?: Coordinates | null }) =>
+  const update = (next: {
+    branches?: Branch[]
+    selectedId?: string | null
+    hoveredId?: string | null
+    userLocation?: Coordinates | null
+  }) =>
     view.rerender(
       <BranchMap
         branches={next.branches ?? branches}
+        hoveredId={'hoveredId' in next ? (next.hoveredId ?? null) : hoveredId}
         // `in`, not `??`: null is a real value here (nothing selected), not "unchanged".
         selectedId={'selectedId' in next ? (next.selectedId ?? null) : selectedId}
         userLocation={'userLocation' in next ? (next.userLocation ?? null) : userLocation}
@@ -152,7 +175,7 @@ describe('BranchMap', () => {
     setup()
     await loadMap()
 
-    expect(currentMap().sources).toEqual([SOURCE_ID, USER_SOURCE_ID])
+    expect(currentMap().sources).toEqual([SOURCE_ID, HOVER_SOURCE_ID, USER_SOURCE_ID])
     expect(currentMap().layers).toEqual([...Object.values(LAYERS), ...Object.values(USER_LAYERS)])
   })
 
@@ -283,6 +306,71 @@ describe('BranchMap', () => {
 
     expect(currentMap().setFilter).toHaveBeenCalledWith(LAYERS.selected, selectedFilters('').branch)
     expect(currentMap().setFilter).toHaveBeenLastCalledWith(LAYERS.selectedAtm, selectedFilters('').atm)
+  })
+
+  describe('the place under the pointer in the list', () => {
+    const drawn = () => currentMap().hoverSetData.mock.lastCall![0].features.map((feature: { properties: { id: string } }) => feature.properties.id)
+
+    it('is drawn on the map, without moving it', async () => {
+      const { update } = setup([branch('a'), branch('b', -33.9, 18.4)])
+      await loadMap()
+      currentMap().easeTo.mockClear()
+      currentMap().fitBounds.mockClear()
+
+      update({ hoveredId: 'b' })
+
+      expect(drawn()).toEqual(['b'])
+      expect(currentMap().easeTo).not.toHaveBeenCalled()
+      expect(currentMap().fitBounds).not.toHaveBeenCalled()
+    })
+
+    it('is taken off again when the pointer leaves', async () => {
+      const { update } = setup([branch('a')], null, null, 'a')
+      await loadMap()
+      expect(drawn()).toEqual(['a'])
+
+      update({ hoveredId: null })
+
+      expect(drawn()).toEqual([])
+    })
+
+    it('follows the pointer from one card to the next', async () => {
+      const { update } = setup([branch('a'), branch('b', -33.9, 18.4)])
+      await loadMap()
+
+      update({ hoveredId: 'a' })
+      expect(drawn()).toEqual(['a'])
+      update({ hoveredId: 'b' })
+      expect(drawn()).toEqual(['b'])
+    })
+
+    it('is not drawn a second time for the chosen place, which has its own pin', async () => {
+      const { update } = setup([branch('a'), branch('b', -33.9, 18.4)], 'a')
+      await loadMap()
+
+      update({ hoveredId: 'a' })
+
+      expect(drawn()).toEqual([])
+    })
+
+    it('draws nothing for a place that is not on the map any more', async () => {
+      const { update } = setup([branch('a')])
+      await loadMap()
+
+      update({ hoveredId: 'gone' })
+
+      expect(drawn()).toEqual([])
+    })
+
+    it('does not touch the branch source, so the clusters are not rebuilt on every hover', async () => {
+      const { update } = setup()
+      await loadMap()
+      currentMap().setData.mockClear()
+
+      update({ hoveredId: 'a' })
+
+      expect(currentMap().setData).not.toHaveBeenCalled()
+    })
   })
 
   it('tells the user when the map cannot load, and builds a new map on retry', async () => {

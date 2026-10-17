@@ -2,7 +2,15 @@ import { Map as MapLibreMap, NavigationControl, setWorkerUrl, type GeoJSONSource
 import 'maplibre-gl/dist/maplibre-gl.css'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { useEffect, useRef, useState } from 'react'
-import { LAYERS, MAP_STYLE_URL, NEAREST_TO_SHOW, SELECTED_ZOOM, SOURCE_ID, USER_SOURCE_ID } from '../map/config'
+import {
+  HOVER_SOURCE_ID,
+  LAYERS,
+  MAP_STYLE_URL,
+  NEAREST_TO_SHOW,
+  SELECTED_ZOOM,
+  SOURCE_ID,
+  USER_SOURCE_ID,
+} from '../map/config'
 import {
   SOUTH_AFRICA_BOUNDS,
   boundsFor,
@@ -11,7 +19,7 @@ import {
   toFeatureCollection,
   userLocationCollection,
 } from '../map/geo'
-import { addBranchLayers, addUserLocationLayers, readMapColors, selectedFilters } from '../map/layers'
+import { addBranchLayers, addHoverLayers, addUserLocationLayers, readMapColors, selectedFilters } from '../map/layers'
 import { applyBasemapLook } from '../map/basemap'
 import { addPinImages } from '../map/pins'
 import { isWideLayout, motionDuration, viewPadding } from '../map/view'
@@ -26,6 +34,8 @@ interface BranchMapProps {
   /** The branches to show: the same filtered list the results panel shows. */
   branches: Branch[]
   selectedId: string | null
+  /** The place under the pointer, or focused, in the results list. It is highlighted on the map, not moved to. */
+  hoveredId?: string | null
   /** The user's position, once they have shared it. It is drawn as a dot and framed with the nearest branches. */
   userLocation?: Coordinates | null
   onSelect: (id: string) => void
@@ -37,7 +47,7 @@ type MapStatus = 'loading' | 'ready' | 'failed'
  * The map. It is a supplement to the results list, which stays the complete, accessible way to
  * use the page: pins are not keyboard focusable, but every pin's branch is in the list.
  */
-export function BranchMap({ branches, selectedId, userLocation, onSelect }: BranchMapProps) {
+export function BranchMap({ branches, selectedId, hoveredId, userLocation, onSelect }: BranchMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const appliedKey = useRef<string | null>(null)
@@ -78,6 +88,7 @@ export function BranchMap({ branches, selectedId, userLocation, onSelect }: Bran
       applyBasemapLook(map)
       addPinImages(map, colors)
       addBranchLayers(map, toFeatureCollection(latest.current.branches), colors)
+      addHoverLayers(map)
       addUserLocationLayers(map, colors)
 
       map.on('click', LAYERS.clusters, async (event) => {
@@ -175,6 +186,16 @@ export function BranchMap({ branches, selectedId, userLocation, onSelect }: Bran
       })
     }
   }, [selectedId, status])
+
+  // Show the place under the pointer in the list. The chosen place already has its own pin, so it is
+  // not drawn twice. The map does not move, because it would jump with every card the pointer crosses.
+  useEffect(() => {
+    const map = mapRef.current
+    if (status !== 'ready' || !map) return
+
+    const hovered = hoveredId && hoveredId !== selectedId ? branches.find((item) => item.id === hoveredId) : undefined
+    ;(map.getSource(HOVER_SOURCE_ID) as GeoJSONSource).setData(toFeatureCollection(hovered ? [hovered] : []))
+  }, [hoveredId, selectedId, branches, status])
 
   const retry = () => {
     setStatus('loading')

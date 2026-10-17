@@ -1,5 +1,5 @@
-import { LAYERS, PIN_IMAGES, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
-import { addBranchLayers, addUserLocationLayers, readMapColors, selectedFilters, type MapColors } from './layers'
+import { HOVER_SOURCE_ID, LAYERS, PIN_IMAGES, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
+import { addBranchLayers, addHoverLayers, addUserLocationLayers, readMapColors, selectedFilters, type MapColors } from './layers'
 
 const colors: MapColors = {
   primary: '#111111',
@@ -37,7 +37,8 @@ describe('addBranchLayers', () => {
   it('adds a layer each for clusters, counts, branches, ATMs and the chosen branch and ATM', () => {
     const { layers } = setup()
 
-    expect(Object.keys(layers)).toEqual(Object.values(LAYERS))
+    const hover: string[] = [LAYERS.hovered, LAYERS.hoveredAtm]
+    expect(Object.keys(layers)).toEqual(Object.values(LAYERS).filter((id) => !hover.includes(id)))
   })
 
   it('draws every layer from the branch source', () => {
@@ -110,6 +111,48 @@ describe('selectedFilters', () => {
 
     expect(JSON.stringify(filters.branch)).toContain('"!=",["get","type"],"atm"')
     expect(JSON.stringify(filters.atm)).toContain('"==",["get","type"],"atm"')
+  })
+})
+
+describe('addHoverLayers', () => {
+  function setupHover() {
+    const sources: Record<string, unknown> = {}
+    const layers: Record<string, Record<string, unknown>> = {}
+    const map = {
+      addSource: vi.fn((id: string, source: unknown) => {
+        sources[id] = source
+      }),
+      addLayer: vi.fn((layer: { id: string }) => {
+        layers[layer.id] = layer as Record<string, unknown>
+      }),
+    }
+    addHoverLayers(map as never)
+    return { sources, layers }
+  }
+
+  it('adds an unclustered source that starts empty, so the place shows even where it is inside a cluster', () => {
+    const { sources } = setupHover()
+
+    expect(sources[HOVER_SOURCE_ID]).toMatchObject({ type: 'geojson', data: { features: [] } })
+    expect(sources[HOVER_SOURCE_ID]).not.toHaveProperty('cluster')
+  })
+
+  it('draws a branch and an ATM each with the larger pin, the way a chosen one looks', () => {
+    const { layers } = setupHover()
+
+    expect(Object.keys(layers)).toEqual([LAYERS.hovered, LAYERS.hoveredAtm])
+    expect(layers[LAYERS.hovered]).toMatchObject({ source: HOVER_SOURCE_ID, layout: { 'icon-image': PIN_IMAGES.selected } })
+    expect(layers[LAYERS.hoveredAtm]).toMatchObject({
+      source: HOVER_SOURCE_ID,
+      layout: { 'icon-image': PIN_IMAGES.selectedAtm },
+    })
+  })
+
+  it('keeps each kind in its own layer', () => {
+    const { layers } = setupHover()
+
+    expect(JSON.stringify(layers[LAYERS.hovered].filter)).toContain('atm')
+    expect(layers[LAYERS.hoveredAtm].filter).toEqual(['==', ['get', 'type'], 'atm'])
   })
 })
 

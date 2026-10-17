@@ -8,6 +8,7 @@ const BranchMap = lazy(() => import('./BranchMap').then((module) => ({ default: 
 interface LazyBranchMapProps {
   branches: Branch[]
   selectedId: string | null
+  hoveredId?: string | null
   userLocation?: Coordinates | null
   onSelect: (id: string) => void
 }

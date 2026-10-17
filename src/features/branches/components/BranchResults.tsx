@@ -13,6 +13,8 @@ interface BranchResultsProps {
   origin?: Coordinates | null
   onClearFilters: () => void
   onSelect: (id: string) => void
+  /** The card the pointer is over, or null when it leaves. */
+  onHover?: (id: string | null) => void
 }
 
 function countLabel(state: UseBranchesResult, shown: number, nearestFirst: boolean, radiusKm: number | null): string {
@@ -40,7 +42,7 @@ function SkeletonList() {
 }
 
 /** The results heading and list, covering loading, error, empty and loaded states. */
-export function BranchResults({ state, filters, now, origin, onClearFilters, onSelect }: BranchResultsProps) {
+export function BranchResults({ state, filters, now, origin, onClearFilters, onSelect, onHover }: BranchResultsProps) {
   const branches =
     state.status === 'success'
       ? listBranches(state.branches, toBranchFilters(filters), now, origin, filters.radiusKm, filters.sort)
@@ -89,7 +91,13 @@ export function BranchResults({ state, filters, now, origin, onClearFilters, onS
         <ul className="results-list">
           {branches.map((branch) => (
             <li key={branch.id}>
-              <BranchCard branch={branch} now={now} distanceKm={branch.distanceKm} onSelect={onSelect} />
+              <BranchCard
+                branch={branch}
+                now={now}
+                distanceKm={branch.distanceKm}
+                onSelect={onSelect}
+                onHover={onHover}
+              />
             </li>
           ))}
         </ul>

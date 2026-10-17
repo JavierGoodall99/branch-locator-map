@@ -15,11 +15,13 @@ interface ResultsPanelProps {
   /** The branch being viewed in detail, or null for the list. */
   selectedId: string | null
   onSelect: (id: string | null) => void
+  /** The card the pointer is over, or null when it leaves. */
+  onHover?: (id: string | null) => void
   onClearFilters: () => void
 }
 
 /** Shows the results list, or one branch in detail, and keeps keyboard focus sensible between them. */
-export function ResultsPanel({ state, filters, now, origin, selectedId, onSelect, onClearFilters }: ResultsPanelProps) {
+export function ResultsPanel({ state, filters, now, origin, selectedId, onSelect, onHover, onClearFilters }: ResultsPanelProps) {
   // The list is only worked out here while a branch is open, to find it. In list mode BranchResults
   // does that work itself.
   const visible =
@@ -57,6 +59,7 @@ export function ResultsPanel({ state, filters, now, origin, selectedId, onSelect
       origin={origin}
       onClearFilters={onClearFilters}
       onSelect={onSelect}
+      onHover={onHover}
     />
   )
 }

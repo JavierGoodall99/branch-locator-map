@@ -16,12 +16,14 @@ interface BranchCardProps {
   /** Distance from the user, when their location is known. */
   distanceKm?: number
   onSelect: (id: string) => void
+  /** Called with this card's id when the pointer is over it or it has the keyboard, and with null when that ends. */
+  onHover?: (id: string | null) => void
 }
 
 // The whole card opens the details (see the name button below). Directions and Call sit above that
 // and stay separate controls. Links are plain anchors with Bootstrap's button classes:
 // react-bootstrap's Button gives anchors role="button", which is wrong for navigation.
-export function BranchCard({ branch, now, distanceKm, onSelect }: BranchCardProps) {
+export function BranchCard({ branch, now, distanceKm, onSelect, onHover }: BranchCardProps) {
   const headingId = `branch-${branch.id}`
   const status = getOpenStatus(branch, now)
   // For example "Branch · 3,0 km away · Wynberg". The distance is only there once the location is known.
@@ -32,7 +34,18 @@ export function BranchCard({ branch, now, distanceKm, onSelect }: BranchCardProp
   ]
 
   return (
-    <article className="branch-card" aria-labelledby={headingId}>
+    <article
+      className="branch-card"
+      aria-labelledby={headingId}
+      // The map shows which place this is. Keyboard focus does the same as the pointer, so the two match.
+      onMouseEnter={() => onHover?.(branch.id)}
+      onMouseLeave={() => onHover?.(null)}
+      onFocus={() => onHover?.(branch.id)}
+      onBlur={(event) => {
+        // Moving between this card's own buttons and links is not leaving it.
+        if (!event.currentTarget.contains(event.relatedTarget)) onHover?.(null)
+      }}
+    >
       <div className="branch-card__header">
         <TypeBadge type={branch.type} />
         <div className="branch-card__heading">

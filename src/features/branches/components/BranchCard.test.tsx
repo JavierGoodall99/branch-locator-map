@@ -177,6 +177,51 @@ describe('BranchCard', () => {
     })
   })
 
+  describe('telling the map which card is under the pointer', () => {
+    it('reports its id when the pointer enters, and null when it leaves', async () => {
+      const onHover = vi.fn()
+      render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} onHover={onHover} />)
+      const card = screen.getByRole('article')
+
+      await userEvent.hover(card)
+      expect(onHover).toHaveBeenLastCalledWith('sandton')
+
+      await userEvent.unhover(card)
+      expect(onHover).toHaveBeenLastCalledWith(null)
+    })
+
+    it('reports the same for the keyboard, so the map follows Tab as it follows the pointer', async () => {
+      const onHover = vi.fn()
+      render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} onHover={onHover} />)
+
+      await userEvent.tab()
+      expect(onHover).toHaveBeenLastCalledWith('sandton')
+
+      await userEvent.tab({ shift: true })
+      expect(onHover).toHaveBeenLastCalledWith(null)
+    })
+
+    it('does not let go while focus moves between its own buttons and links', async () => {
+      const onHover = vi.fn()
+      render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} onHover={onHover} />)
+
+      await userEvent.tab() // the name
+      await userEvent.tab() // Directions
+      await userEvent.tab() // Call
+
+      expect(onHover).not.toHaveBeenCalledWith(null)
+    })
+
+    it('works without a listener', async () => {
+      render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
+
+      await userEvent.hover(screen.getByRole('article'))
+      await userEvent.unhover(screen.getByRole('article'))
+
+      expect(screen.getByRole('article')).toBeInTheDocument()
+    })
+  })
+
   it('shows a badge for the kind of site, hidden from assistive technology', () => {
     const { container, rerender } = render(<BranchCard branch={branch} now={morning} onSelect={vi.fn()} />)
     expect(container.querySelector('.type-badge--branch')).toHaveAttribute('aria-hidden', 'true')
