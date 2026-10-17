@@ -1,0 +1,7 @@
+# Keep line endings the same on every machine, so Windows and Linux checkouts do not differ.
+* text=auto eol=lf
+
+# Binary files are never converted.
+*.jpg binary
+*.png binary
+*.woff2 binary
