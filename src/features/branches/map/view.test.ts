@@ -8,6 +8,14 @@ describe('viewPadding', () => {
   it('keeps the top controls and the results sheet clear on a phone', () => {
     expect(viewPadding(false, 800)).toEqual({ top: 272, right: 24, bottom: 360, left: 24 })
   })
+
+  it('keeps only the taller details sheet clear on a phone, because the controls are hidden then', () => {
+    expect(viewPadding(false, 800, true)).toEqual({ top: 24, right: 24, bottom: 544, left: 24 })
+  })
+
+  it('does not change the wide layout for the details', () => {
+    expect(viewPadding(true, 900, true)).toEqual(viewPadding(true, 900))
+  })
 })
 
 describe('matchMedia helpers', () => {

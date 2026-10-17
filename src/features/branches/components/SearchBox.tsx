@@ -177,7 +177,7 @@ export function SearchBox({ value, onSearch, branches, onPickBranch, trailing }:
           autoComplete="off"
           spellCheck={false}
           enterKeyHint="search"
-          placeholder="Name, suburb, town or postcode"
+          placeholder="Search name or place"
           value={draft}
           onChange={(event) => {
             setDraft(event.target.value)

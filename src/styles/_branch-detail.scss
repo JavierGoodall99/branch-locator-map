@@ -44,10 +44,16 @@
     gap: $spacer * 0.5;
     width: 100%;
 
+    // Get directions stays on one line even on a narrow phone, and Call takes only the room it needs.
+    .btn {
+      white-space: nowrap;
+    }
+
     // Call is a plain blue link, as on the cards. The brand blue is 4.5:1 on white but not on this grey
     // panel, so it takes the next shade down, which passes.
     .btn-link {
       --bs-btn-color: #{$blue-strong};
+      flex: none;
     }
   }
 
@@ -120,7 +126,9 @@
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 9;
+    // On a phone the photo gives way to the name and the buttons, which matter more: it is about a
+    // fifth of the screen, never less than 120px or more than 200px.
+    height: clamp(120px, 22vh, 200px);
     object-fit: cover;
     // Keeps the machine and the people in frame when the photo is cropped.
     object-position: center 40%;
@@ -137,6 +145,7 @@
 
 @include media-breakpoint-up(md) {
   .branch-detail .detail-hero__image {
+    height: auto;
     aspect-ratio: 4 / 3;
   }
 }

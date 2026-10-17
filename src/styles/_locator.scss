@@ -6,6 +6,12 @@ $panel-width-xl: 440px;
 // The results sheet covers the bottom 45% of the screen on a phone, leaving the most room for
 // the map that still shows a couple of cards. view.ts and _branch-map.scss use the same 45%.
 $sheet-top: 55%;
+// While one place is open its details need more room, and the controls are gone, so the sheet takes
+// 68% of a phone screen. view.ts uses the same 68%.
+$detail-sheet-top: 32%;
+// A lowered sheet is only its handle: a strip along the bottom, so the whole map shows.
+$sheet-lowered-height: 56px;
+$control-grab: #c9d3d8; // the little bar on the handle
 
 html,
 body,
@@ -52,6 +58,10 @@ body {
   display: none;
 }
 
+.locator--detail .locator__results {
+  inset-block-start: $detail-sheet-top;
+}
+
 .locator__results {
   position: absolute;
   inset: $sheet-top 0 0;
@@ -60,11 +70,67 @@ body {
   background: $white;
   border-radius: $border-radius-xl $border-radius-xl 0 0;
   box-shadow: 0 -8px 24px rgba($black, 0.12);
-  padding: $spacer;
+  padding: 0 $spacer $spacer;
 
   &:focus {
     outline: none; // focus lands here only via the skip link
   }
+}
+
+// The handle on the top edge of the phone sheet. It stays in view as the list scrolls, and lowers the
+// sheet to a strip or raises it again. It is not needed beside the map, so it is hidden from 768px.
+.sheet-handle {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: calc(100% + #{$spacer * 2});
+  min-height: 44px;
+  margin: 0 (-$spacer);
+  padding: 0;
+  background: $white;
+  border: 0;
+  border-radius: $border-radius-xl $border-radius-xl 0 0;
+  color: $body-secondary-color;
+
+  &__bar {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: $control-grab;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $body-color;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: -2px;
+  }
+}
+
+// Lowered (but not while a place's details are open, which always have their sheet): only the handle
+// shows, along the bottom, and the list is out of the way for everyone.
+.locator--lowered:not(.locator--detail) {
+  .locator__results {
+    inset-block-start: calc(100% - #{$sheet-lowered-height});
+    overflow: hidden;
+  }
+
+  .locator__results-content {
+    display: none;
+  }
+}
+
+.locator--detail .sheet-handle {
+  display: none;
 }
 
 .locator__skip {
@@ -83,6 +149,10 @@ body {
 }
 
 @include media-breakpoint-up(md) {
+  .sheet-handle {
+    display: none;
+  }
+
   .locator {
     display: grid;
     grid-template-columns: $panel-width-md 1fr;

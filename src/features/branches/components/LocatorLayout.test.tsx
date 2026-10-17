@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { LocatorLayout } from './LocatorLayout'
 
 function renderLayout() {
@@ -63,5 +64,62 @@ describe('LocatorLayout when a branch is open', () => {
     layout(true)
 
     expect(screen.getByLabelText('Search')).toBeInTheDocument()
+  })
+})
+
+describe('LocatorLayout sheet handle', () => {
+  const layout = (detailOpen?: boolean) =>
+    render(
+      <LocatorLayout
+        controls={<input aria-label="Search" />}
+        results={<h1>Results</h1>}
+        map={<p>Map content</p>}
+        detailOpen={detailOpen}
+      />,
+    )
+
+  it('is the first thing in the results, as a button that says what it does', () => {
+    layout()
+
+    const handle = screen.getByRole('button', { name: 'Hide results' })
+    expect(screen.getByRole('main').firstElementChild).toBe(handle)
+    expect(handle).toHaveAttribute('aria-controls', 'results-content')
+    expect(document.getElementById('results-content')).toContainElement(screen.getByRole('heading', { name: 'Results' }))
+  })
+
+  it('lowers the sheet, and raises it again, and its name follows', async () => {
+    const { container } = layout()
+    expect(container.firstElementChild).not.toHaveClass('locator--lowered')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Hide results' }))
+    expect(container.firstElementChild).toHaveClass('locator--lowered')
+    expect(screen.getByRole('button', { name: 'Show results' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Show results' }))
+    expect(container.firstElementChild).not.toHaveClass('locator--lowered')
+  })
+
+  it('shows its name only while lowered, when there is nothing else on the strip', async () => {
+    layout()
+    expect(screen.getByText('Hide results')).toHaveClass('visually-hidden')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Hide results' }))
+
+    expect(screen.getByText('Show results')).not.toHaveClass('visually-hidden')
+  })
+
+  it('keeps the results in the page while lowered, so nothing is lost', async () => {
+    layout()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Hide results' }))
+
+    expect(screen.getByRole('heading', { name: 'Results' })).toBeInTheDocument()
+  })
+
+  it('starts raised in the details layout', () => {
+    const { container } = layout(true)
+
+    expect(container.firstElementChild).toHaveClass('locator--detail')
+    expect(container.firstElementChild).not.toHaveClass('locator--lowered')
   })
 })

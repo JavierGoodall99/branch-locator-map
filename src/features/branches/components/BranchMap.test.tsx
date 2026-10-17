@@ -294,7 +294,19 @@ describe('BranchMap', () => {
     expect(currentMap().setFilter).toHaveBeenCalledWith(LAYERS.selected, selectedFilters('a').branch)
     expect(currentMap().setFilter).toHaveBeenCalledWith(LAYERS.selectedAtm, selectedFilters('a').atm)
     expect(currentMap().easeTo).toHaveBeenCalledWith(
-      expect.objectContaining({ center: [28.05, -26.2], zoom: SELECTED_ZOOM, padding: expect.any(Object) }),
+      expect.objectContaining({ center: [28.05, -26.2], zoom: SELECTED_ZOOM }),
+    )
+  })
+
+  it('keeps the taller details sheet clear when it moves to the selected branch, on a phone', async () => {
+    const { update } = setup([branch('a', -26.2, 28.05)])
+    await loadMap()
+
+    update({ selectedId: 'a' })
+
+    // The container is 800px high in the fake, and the details sheet covers 68% of it.
+    expect(currentMap().easeTo).toHaveBeenCalledWith(
+      expect.objectContaining({ padding: expect.objectContaining({ bottom: 544 }) }),
     )
   })
 

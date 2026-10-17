@@ -134,7 +134,13 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
     flex-wrap: nowrap;
     gap: $spacer;
 
+    // Bootstrap gives each footer child a margin; the gap is enough, and the button needs the room.
+    > * {
+      margin: 0;
+    }
+
     .btn-link {
+      flex: none;
       color: $body-secondary-color;
       font-weight: 600;
       padding-left: 0;
@@ -145,6 +151,7 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
       min-height: 48px;
       border-radius: $border-radius-pill;
       font-weight: 700;
+      white-space: nowrap;
     }
   }
 

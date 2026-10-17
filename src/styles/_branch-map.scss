@@ -38,6 +38,22 @@
     bottom: 45%;
   }
 
+  // A lowered sheet is only its handle, so they drop with it.
+  .locator--lowered:not(.locator--detail) .branch-map .maplibregl-ctrl-bottom-left,
+  .locator--lowered:not(.locator--detail) .branch-map .maplibregl-ctrl-bottom-right {
+    bottom: $sheet-lowered-height;
+  }
+
+  .locator--lowered:not(.locator--detail) .map-status {
+    bottom: calc(#{$sheet-lowered-height} + #{$spacer * 0.75});
+  }
+
+  // The taller details sheet pushes them up with it.
+  .locator--detail .branch-map .maplibregl-ctrl-bottom-left,
+  .locator--detail .branch-map .maplibregl-ctrl-bottom-right {
+    bottom: 68%;
+  }
+
   .map-status {
     top: auto;
     bottom: calc(45% + #{$spacer * 0.75});
