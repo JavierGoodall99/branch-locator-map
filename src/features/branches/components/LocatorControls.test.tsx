@@ -71,7 +71,8 @@ describe('LocatorControls', () => {
     await userEvent.type(search(), 'paarl{Enter}')
 
     expect(onChange).toHaveBeenCalledTimes(1)
-    expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, query: 'paarl' })
+    // A search sets the distance aside, so a place anywhere in the country is found.
+    expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, query: 'paarl', radiusKm: null })
   })
 
   it('does not submit the form on Enter', async () => {
@@ -106,6 +107,14 @@ describe('LocatorControls', () => {
   })
 
   describe('the show switch and the distances', () => {
+    it('puts Both first, and chooses it by default', () => {
+      setup()
+
+      const show = within(screen.getByRole('group', { name: 'Show' })).getAllByRole('button')
+      expect(show.map((button) => button.textContent)).toEqual(['Both', 'Branches', 'ATMs'])
+      expect(screen.getByRole('button', { name: 'Both' })).toHaveAttribute('aria-pressed', 'true')
+    })
+
     it('shows the switch and the distances without opening anything', () => {
       setup()
 
@@ -123,9 +132,9 @@ describe('LocatorControls', () => {
     it('switches what is shown', async () => {
       const { onChange } = setup()
 
-      await userEvent.click(screen.getByRole('button', { name: 'Both' }))
+      await userEvent.click(screen.getByRole('button', { name: 'ATMs' }))
 
-      expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, show: 'both' })
+      expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, show: 'atms' })
     })
 
     it('offers 5, 10, 25, 50 and 100 km once the location is known', () => {
@@ -186,15 +195,34 @@ describe('LocatorControls', () => {
       expect(within(dialog()).queryByText(/km/)).not.toBeInTheDocument()
     })
 
-    it('offers open now, province and the services in the data', async () => {
-      setup()
+    it('groups pills under When, Services, Province and Sort by, from our own data', async () => {
+      setup(DEFAULT_FILTERS, located)
       await userEvent.click(filtersButton())
 
       const window = within(dialog())
-      expect(window.getByRole('switch', { name: 'Open now' })).not.toBeChecked()
-      expect(window.getByRole('combobox', { name: 'Province' })).toHaveValue('')
-      expect(window.getByRole('group', { name: 'Services' })).toBeInTheDocument()
-      expect(window.getByRole('checkbox', { name: 'SmartID Services' })).toBeInTheDocument()
+      const when = within(window.getByRole('group', { name: 'When' }))
+      expect(when.getAllByRole('button').map((chip) => chip.textContent)).toEqual(['Open now', 'Open 24 hours'])
+      expect(within(window.getByRole('group', { name: 'Services' })).getByRole('button', { name: 'SmartID Services' })).toBeInTheDocument()
+      expect(within(window.getByRole('group', { name: 'Province' })).getAllByRole('button')).toHaveLength(9)
+      expect(within(window.getByRole('radiogroup', { name: 'Sort by' })).getAllByRole('radio').map((chip) => chip.textContent)).toEqual([
+        'Distance',
+        'Name',
+      ])
+    })
+
+    it('offers no days of the week, because the data has one set of hours for every day', async () => {
+      setup()
+      await userEvent.click(filtersButton())
+
+      expect(within(dialog()).queryByText(/Saturday|Sunday/)).not.toBeInTheDocument()
+    })
+
+    it('marks Distance as the chosen sort when the location is known', async () => {
+      setup(DEFAULT_FILTERS, located)
+      await userEvent.click(filtersButton())
+
+      expect(within(dialog()).getByRole('radio', { name: 'Distance' })).toBeChecked()
+      expect(within(dialog()).getByRole('radio', { name: 'Name' })).not.toBeChecked()
     })
 
     it('says how many filters are in use on the button', () => {
@@ -203,8 +231,8 @@ describe('LocatorControls', () => {
       expect(filtersButton()).toHaveAccessibleName('Filters, 2 in use')
     })
 
-    it('shows no count for the switch or the distance, which are outside the window', () => {
-      setup({ ...DEFAULT_FILTERS, show: 'atms', radiusKm: 10 })
+    it('shows no count for the switch, the distance or the sort, which are not filters in the window', () => {
+      setup({ ...DEFAULT_FILTERS, show: 'atms', radiusKm: 10, sort: 'name' })
 
       expect(filtersButton()).toHaveAccessibleName('Filters')
       expect(document.querySelector('.filter-button__count')).toBeNull()
@@ -215,8 +243,8 @@ describe('LocatorControls', () => {
       countResults.mockReturnValue(12)
       await userEvent.click(filtersButton())
 
-      await userEvent.click(within(dialog()).getByRole('switch', { name: 'Open now' }))
-      await userEvent.selectOptions(within(dialog()).getByRole('combobox', { name: 'Province' }), 'Gauteng')
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Open now' }))
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Gauteng' }))
       expect(onChange).not.toHaveBeenCalled()
       await userEvent.click(within(dialog()).getByRole('button', { name: 'Show 12 results' }))
 
@@ -225,14 +253,45 @@ describe('LocatorControls', () => {
       expect(countResults).toHaveBeenLastCalledWith({ ...DEFAULT_FILTERS, openNow: true, province: 'Gauteng' })
     })
 
-    it('applies chosen services', async () => {
-      const { onChange } = setup()
+    it('applies open 24 hours, chosen services and a sort by name', async () => {
+      const { onChange } = setup(DEFAULT_FILTERS, located)
       await userEvent.click(filtersButton())
 
-      await userEvent.click(within(dialog()).getByRole('checkbox', { name: 'SmartID Services' }))
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Open 24 hours' }))
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'SmartID Services' }))
+      await userEvent.click(within(dialog()).getByRole('radio', { name: 'Name' }))
       await userEvent.click(within(dialog()).getByRole('button', { name: 'Show 1 result' }))
 
-      expect(onChange).toHaveBeenCalledWith({ ...DEFAULT_FILTERS, services: ['SmartID Services'] })
+      expect(onChange).toHaveBeenCalledWith({
+        ...DEFAULT_FILTERS,
+        open24Hours: true,
+        services: ['SmartID Services'],
+        sort: 'name',
+      })
+    })
+
+    it('chooses one province at a time, and goes back to all when it is pressed again', async () => {
+      const { onChange } = setup()
+      await userEvent.click(filtersButton())
+      const province = (name: string) => within(dialog()).getByRole('button', { name })
+
+      await userEvent.click(province('Gauteng'))
+      await userEvent.click(province('Limpopo'))
+      expect(province('Gauteng')).toHaveAttribute('aria-pressed', 'false')
+      expect(province('Limpopo')).toHaveAttribute('aria-pressed', 'true')
+
+      await userEvent.click(province('Limpopo'))
+      await userEvent.click(within(dialog()).getByRole('button', { name: /^Show/ }))
+
+      expect(onChange).toHaveBeenCalledWith(DEFAULT_FILTERS)
+    })
+
+    it('cannot sort by distance without the location', async () => {
+      setup()
+      await userEvent.click(filtersButton())
+
+      expect(within(dialog()).getByRole('radio', { name: 'Distance' })).toBeDisabled()
+      expect(within(dialog()).getByRole('radio', { name: 'Name' })).toBeChecked()
     })
 
     it('cannot apply choices that leave nothing', async () => {
@@ -246,7 +305,7 @@ describe('LocatorControls', () => {
     it('changes nothing when the window is closed without applying', async () => {
       const { onChange } = setup()
       await userEvent.click(filtersButton())
-      await userEvent.click(within(dialog()).getByRole('switch', { name: 'Open now' }))
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Open now' }))
 
       await userEvent.click(within(dialog()).getByRole('button', { name: 'Close' }))
 
@@ -254,15 +313,15 @@ describe('LocatorControls', () => {
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
     })
 
-    it('starts from what is applied, and resets to nothing chosen', async () => {
+    it('starts from what is applied, and clears all of it', async () => {
       const { onChange } = setup({ ...DEFAULT_FILTERS, openNow: true, province: 'Gauteng' })
       await userEvent.click(filtersButton())
-      expect(within(dialog()).getByRole('switch', { name: 'Open now' })).toBeChecked()
-      expect(within(dialog()).getByRole('combobox', { name: 'Province' })).toHaveValue('Gauteng')
+      expect(within(dialog()).getByRole('button', { name: 'Open now' })).toHaveAttribute('aria-pressed', 'true')
+      expect(within(dialog()).getByRole('button', { name: 'Gauteng' })).toHaveAttribute('aria-pressed', 'true')
 
-      await userEvent.click(within(dialog()).getByRole('button', { name: 'Reset' }))
-      expect(within(dialog()).getByRole('switch', { name: 'Open now' })).not.toBeChecked()
-      expect(within(dialog()).getByRole('button', { name: 'Reset' })).toBeDisabled()
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Clear all' }))
+      expect(within(dialog()).getByRole('button', { name: 'Open now' })).toHaveAttribute('aria-pressed', 'false')
+      expect(within(dialog()).getByRole('button', { name: 'Clear all' })).toBeDisabled()
       await userEvent.click(within(dialog()).getByRole('button', { name: /^Show/ }))
 
       expect(onChange).toHaveBeenCalledWith(DEFAULT_FILTERS)
@@ -289,7 +348,7 @@ describe('LocatorControls', () => {
     await userEvent.click(search())
     await userEvent.click(screen.getByRole('option', { name: /^Sandton/ }))
 
-    expect(onChange).toHaveBeenLastCalledWith({ ...DEFAULT_FILTERS, query: 'Sandton' })
+    expect(onChange).toHaveBeenLastCalledWith({ ...DEFAULT_FILTERS, query: 'Sandton', radiusKm: null })
   })
 
   it('reports a chosen branch suggestion, so the page can open it', async () => {

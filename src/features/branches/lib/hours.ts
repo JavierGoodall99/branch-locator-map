@@ -37,6 +37,12 @@ function toMinutes(time: string): number {
   return hours * 60 + minutes
 }
 
+/** Whether a place is open around the clock, every day. A closed site is not, whatever its hours say. */
+export function isOpenAllDay(branch: Branch): boolean {
+  if (branch.status !== 'open' || !branch.hours) return false
+  return toMinutes(branch.hours.open) === 0 && toMinutes(branch.hours.close) === MINUTES_PER_DAY
+}
+
 /** Whether a branch is open at `now`, with a short label that is ready to display. */
 export function getOpenStatus(branch: Branch, now: Date): OpenStatus {
   if (branch.status === 'permanently-closed') {

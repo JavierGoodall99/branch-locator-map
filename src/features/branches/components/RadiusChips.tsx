@@ -30,7 +30,7 @@ export function RadiusChips({ radiusKm, onChange, located }: RadiusChipsProps) {
             <button
               key={km}
               type="button"
-              className="radius-chip"
+              className="chip chip--fill"
               aria-pressed={chosen}
               disabled={!located}
               onClick={() => onChange(chosen ? null : km)}

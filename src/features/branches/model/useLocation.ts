@@ -25,7 +25,7 @@ const PERMISSION_DENIED = 1
 // quicker and kinder to batteries than a high-accuracy fix.
 const OPTIONS: PositionOptions = { enableHighAccuracy: false, timeout: 10_000, maximumAge: 5 * 60_000 }
 
-/** The user's location, only ever requested when `request` is called. It is never stored or sent. */
+/** The user's location, requested when `request` is called (the page does so on arrival). It is never stored or sent. */
 export function useLocation(): UseLocationResult {
   const [state, setState] = useState<LocationState>({ status: 'idle' })
 

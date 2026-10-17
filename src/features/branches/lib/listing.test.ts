@@ -81,6 +81,26 @@ describe('listBranches with a location', () => {
     expect(result[0].distanceKm).toBeUndefined()
   })
 
+  describe('sorted by name', () => {
+    it('orders by name and keeps the distances', () => {
+      const result = listBranches([near, far], {}, now, johannesburg, null, 'name')
+
+      expect(result.map((item) => item.id)).toEqual(['far', 'near'])
+      expect(result.every((item) => item.distanceKm !== undefined)).toBe(true)
+    })
+
+    it('still drops what is outside the radius', () => {
+      expect(listBranches([near, far], {}, now, johannesburg, 25, 'name').map((item) => item.id)).toEqual(['near'])
+    })
+
+    it('has no distances without a location, whatever is asked for', () => {
+      const result = listBranches([near, far], {}, now, null, null, 'distance')
+
+      expect(result.map((item) => item.id)).toEqual(['far', 'near'])
+      expect(result[0].distanceKm).toBeUndefined()
+    })
+  })
+
   describe('within a distance', () => {
     it('drops everything farther away than the radius', () => {
       const result = listBranches([far, near], {}, now, johannesburg, 25)

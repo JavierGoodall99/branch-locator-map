@@ -37,6 +37,9 @@ async function scan(page: Page) {
 }
 
 test.describe('accessibility', () => {
+  // Scanning the whole list, which has about 190 cards, takes a while, more so with several browsers at once.
+  test.describe.configure({ timeout: 90_000 })
+
   test('the results list has no WCAG A or AA violations', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
@@ -56,10 +59,9 @@ test.describe('accessibility', () => {
     await context.grantPermissions(['geolocation'])
     await context.setGeolocation({ latitude: -33.9249, longitude: 18.4241 })
     await page.goto('/')
-    await expect(page.getByRole('article').first()).toBeVisible()
-    await page.getByRole('button', { name: 'Near me' }).click()
-    await page.getByRole('button', { name: '25 km' }).click()
+    // The page finds the location on arrival, which chooses 25 km.
     await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByRole('article').first()).toBeVisible()
 
     expect(await scan(page)).toEqual([])
   })
@@ -77,7 +79,7 @@ test.describe('accessibility', () => {
     await expect(page.getByRole('article').first()).toBeVisible()
     await page.getByRole('button', { name: 'Filters' }).click()
     await expect(page.getByRole('dialog', { name: 'Filters' })).toBeVisible()
-    await page.getByRole('combobox', { name: 'Province' }).selectOption('Gauteng')
+    await page.getByRole('dialog', { name: 'Filters' }).getByRole('button', { name: 'Gauteng' }).click()
 
     expect(await scan(page)).toEqual([])
   })

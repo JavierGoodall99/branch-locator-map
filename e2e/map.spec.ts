@@ -52,7 +52,7 @@ test.describe('the map', () => {
     await expect.poll(() => resultCount(page)).toBeLessThan(before)
 
     await restore()
-    await page.getByRole('button', { name: 'Try again', exact: true }).click()
+    await page.getByRole('region', { name: 'Map of branches and ATMs' }).getByRole('button', { name: 'Try again' }).click()
 
     await expect(page.getByRole('alert')).toHaveCount(0)
     await expect(page.locator('canvas.maplibregl-canvas')).toBeVisible()

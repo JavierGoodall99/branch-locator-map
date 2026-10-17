@@ -1,5 +1,5 @@
 import type { Branch } from '../types'
-import { formatOpeningHours, getOpenStatus, minutesSinceMidnightInSouthAfrica } from './hours'
+import { formatOpeningHours, getOpenStatus, isOpenAllDay, minutesSinceMidnightInSouthAfrica } from './hours'
 
 function branch(overrides: Partial<Branch> = {}): Branch {
   return {
@@ -97,5 +97,19 @@ describe('formatOpeningHours', () => {
 
   it('says so when hours are not available', () => {
     expect(formatOpeningHours(branch({ hours: null }))).toBe('Not available')
+  })
+})
+
+describe('isOpenAllDay', () => {
+  const always = { open: '00:00', close: '24:00' }
+
+  it('is true for a place open from midnight to midnight', () => {
+    expect(isOpenAllDay(branch({ hours: always }))).toBe(true)
+  })
+
+  it('is false for ordinary hours, for no hours, and for a site that is closed', () => {
+    expect(isOpenAllDay(branch({ hours: { open: '08:00', close: '17:00' } }))).toBe(false)
+    expect(isOpenAllDay(branch({ hours: null }))).toBe(false)
+    expect(isOpenAllDay(branch({ hours: always, status: 'temporarily-closed' }))).toBe(false)
   })
 })

@@ -11,27 +11,47 @@ vi.mock('./features/branches/components/BranchMap', () => ({
 // There are ~190 cards, and role queries compute an accessible name for each, which is slow
 // in jsdom and can time out on a busy machine. Counting cards with a plain selector keeps
 // these tests quick; each card's own accessibility is covered by the BranchCard tests.
+// The page starts on both branches and ATMs, so it is the longest list, and so gets more time.
+vi.setConfig({ testTimeout: 20_000 })
+
 const searchField = () => screen.getByRole('combobox', { name: 'Search by name, suburb, town or postcode' })
 const cardCount = () => document.querySelectorAll('article.branch-card').length
 const firstDetailsButton = () => document.querySelector<HTMLButtonElement>('[id^="details-"]')!
 
+const listed = sample.filter((branch) => branch.status !== 'permanently-closed').length
+const listedBranches = sample.filter(
+  (branch) => branch.status !== 'permanently-closed' && branch.type !== 'atm',
+).length
+
 const stubSample = () =>
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(sample))))
 
-describe('App', () => {
-  afterEach(() => vi.unstubAllGlobals())
+const capeTown = { coords: { latitude: -33.9249, longitude: 18.4241 } }
 
-  it('loads the sample data and lists the branches', async () => {
+function stubGeolocation(result: 'granted' | 'denied') {
+  const getCurrentPosition = vi.fn((success: (position: unknown) => void, failure: (error: unknown) => void) => {
+    if (result === 'granted') success(capeTown)
+    else failure({ code: 1 })
+  })
+  Object.defineProperty(navigator, 'geolocation', { value: { getCurrentPosition }, configurable: true })
+  return getCurrentPosition
+}
+
+describe('App', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    Object.defineProperty(navigator, 'geolocation', { value: undefined, configurable: true })
+  })
+
+  it('loads the sample data and lists branches and ATMs together', async () => {
     stubSample()
     render(<App />)
 
     expect(screen.getByText('Loading branches')).toBeInTheDocument()
 
-    const listed = sample.filter(
-      (branch) => branch.status !== 'permanently-closed' && branch.type !== 'atm',
-    ).length
     await waitFor(() => expect(cardCount()).toBe(listed))
     expect(screen.getByText(`${listed} locations, sorted by name`)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Both' })).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('recovers from a failed load when the user retries', async () => {
@@ -72,15 +92,22 @@ describe('App', () => {
     expect(searchField()).toHaveValue('')
   })
 
-  it('shows more locations when both branches and ATMs are selected', async () => {
+  it('shows Both first, and narrows to branches or to ATMs', async () => {
     stubSample()
     render(<App />)
     await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
-    const branchesOnly = cardCount()
+
+    const show = within(screen.getByRole('group', { name: 'Show' })).getAllByRole('button')
+    expect(show.map((button) => button.textContent)).toEqual(['Both', 'Branches', 'ATMs'])
+
+    await userEvent.click(screen.getByRole('button', { name: 'Branches' }))
+    expect(cardCount()).toBe(listedBranches)
+
+    await userEvent.click(screen.getByRole('button', { name: 'ATMs' }))
+    expect(cardCount()).toBe(listed - listedBranches)
 
     await userEvent.click(screen.getByRole('button', { name: 'Both' }))
-
-    expect(cardCount()).toBeGreaterThan(branchesOnly)
+    expect(cardCount()).toBe(listed)
   })
 
   describe('branch details', () => {
@@ -148,68 +175,75 @@ describe('App', () => {
 
   describe('the Filters window', () => {
     const filtersButton = () => screen.getByRole('button', { name: /^Filters/ })
+    const dialog = () => screen.getByRole('dialog', { name: 'Filters' })
+    const apply = () => within(dialog()).getByRole('button', { name: /^Show \d+ results?$/ })
 
-    it('narrows the list to a province, and says how many filters are in use', async () => {
+    async function load() {
       stubSample()
       render(<App />)
       await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+    }
+
+    it('narrows the list to a province, and says how many filters are in use', async () => {
+      await load()
       const before = cardCount()
 
       await userEvent.click(filtersButton())
-      const dialog = screen.getByRole('dialog', { name: 'Filters' })
-      await userEvent.selectOptions(within(dialog).getByRole('combobox', { name: 'Province' }), 'Gauteng')
-      await userEvent.click(within(dialog).getByRole('button', { name: /^Show \d+ results?$/ }))
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Gauteng' }))
+      await userEvent.click(apply())
 
       expect(cardCount()).toBeGreaterThan(0)
       expect(cardCount()).toBeLessThan(before)
       expect(filtersButton()).toHaveAccessibleName('Filters, 1 in use')
     })
 
+    it('narrows the list to places open around the clock', async () => {
+      await load()
+      const around = sample.filter((item) => item.status === 'open' && item.hours?.open === '00:00' && item.hours?.close === '24:00').length
+
+      await userEvent.click(filtersButton())
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Open 24 hours' }))
+      await userEvent.click(apply())
+
+      expect(cardCount()).toBe(around)
+      expect(cardCount()).toBeLessThan(listed)
+    })
+
     it('says how many places the choices leave before they are applied, and leaves the list alone until then', async () => {
-      stubSample()
-      render(<App />)
-      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await load()
       const before = cardCount()
 
       await userEvent.click(filtersButton())
-      const dialog = screen.getByRole('dialog', { name: 'Filters' })
-      await userEvent.selectOptions(within(dialog).getByRole('combobox', { name: 'Province' }), 'Northern Cape')
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Northern Cape' }))
 
-      const button = within(dialog).getByRole('button', { name: /^Show \d+ results?$/ })
-      const promised = Number(button.textContent!.match(/\d+/)![0])
+      const promised = Number(apply().textContent!.match(/\d+/)![0])
       expect(promised).toBeLessThan(before)
       expect(cardCount()).toBe(before)
 
-      await userEvent.click(button)
+      await userEvent.click(apply())
       expect(cardCount()).toBe(promised)
     })
 
     it('offers to clear the filters when they leave nothing, and clears them', async () => {
-      stubSample()
-      render(<App />)
-      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await load()
       await userEvent.click(filtersButton())
-      const dialog = screen.getByRole('dialog', { name: 'Filters' })
-      await userEvent.selectOptions(within(dialog).getByRole('combobox', { name: 'Province' }), 'Northern Cape')
-      await userEvent.click(within(dialog).getByRole('button', { name: /^Show/ }))
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Northern Cape' }))
+      await userEvent.click(apply())
       await userEvent.type(searchField(), 'zzzz nowhere{Enter}')
 
       expect(screen.getByRole('heading', { name: 'No matches found' })).toBeInTheDocument()
       await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
 
-      expect(cardCount()).toBeGreaterThan(0)
+      expect(cardCount()).toBe(listed)
       expect(filtersButton()).toHaveAccessibleName('Filters')
       expect(searchField()).toHaveValue('')
     })
 
     it('opening a branch from the suggestions clears the filters that might hide it', async () => {
-      stubSample()
-      render(<App />)
-      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await load()
       await userEvent.click(filtersButton())
-      const dialog = screen.getByRole('dialog', { name: 'Filters' })
-      await userEvent.selectOptions(within(dialog).getByRole('combobox', { name: 'Province' }), 'Northern Cape')
-      await userEvent.click(within(dialog).getByRole('button', { name: /^Show/ }))
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Northern Cape' }))
+      await userEvent.click(apply())
 
       await userEvent.type(searchField(), 'Alexandra Yarona')
       await userEvent.click(screen.getByRole('option', { name: /Capitec Bank Alexandra Yarona/ }))
@@ -217,6 +251,25 @@ describe('App', () => {
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Capitec Bank Alexandra Yarona')
       await userEvent.click(screen.getByRole('button', { name: 'Back to results' }))
       expect(filtersButton()).toHaveAccessibleName('Filters')
+    })
+
+    it('sorts by name instead of nearest first when asked, keeping the distances', async () => {
+      stubSample()
+      stubGeolocation('granted')
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      const nearestName = document.querySelector('article.branch-card h2')!.textContent
+      expect(screen.getByText(/nearest first$/)).toBeInTheDocument()
+
+      await userEvent.click(filtersButton())
+      await userEvent.click(within(dialog()).getByRole('radio', { name: 'Name' }))
+      await userEvent.click(apply())
+
+      expect(screen.getByText(/sorted by name$/)).toBeInTheDocument()
+      const names = [...document.querySelectorAll('article.branch-card h2')].map((heading) => heading.textContent!)
+      expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)))
+      expect(names[0]).not.toBe(nearestName)
+      expect(document.querySelector('.branch-card__meta')!.textContent).toContain(' away')
     })
   })
 
@@ -257,6 +310,7 @@ describe('App', () => {
       stubSample()
       render(<App />)
       await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await userEvent.click(screen.getByRole('button', { name: 'Branches' }))
       const atm = sample.find((item) => item.type === 'atm' && item.status !== 'permanently-closed')!
 
       await userEvent.type(searchField(), atm.name)
@@ -268,81 +322,88 @@ describe('App', () => {
   })
 
   describe('near me', () => {
-    const capeTown = { coords: { latitude: -33.9249, longitude: 18.4241 } }
+    it('asks for the location as soon as the page opens, without anyone pressing Near me', async () => {
+      stubSample()
+      const getCurrentPosition = stubGeolocation('granted')
+      render(<App />)
 
-    function stubGeolocation(result: 'granted' | 'denied') {
-      const getCurrentPosition = vi.fn((success: (position: unknown) => void, failure: (error: unknown) => void) => {
-        if (result === 'granted') success(capeTown)
-        else failure({ code: 1 })
-      })
-      Object.defineProperty(navigator, 'geolocation', { value: { getCurrentPosition }, configurable: true })
-      return getCurrentPosition
-    }
+      expect(getCurrentPosition).toHaveBeenCalledTimes(1)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      expect(screen.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'true')
+    })
 
-    afterEach(() => Object.defineProperty(navigator, 'geolocation', { value: undefined, configurable: true }))
+    it('lists the nearest first with distances, within 25 km, once the location is found', async () => {
+      stubSample()
+      stubGeolocation('granted')
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
 
-    it('does not ask for the location until Near me is pressed', async () => {
+      const nearest = document.querySelector('article.branch-card')!
+      // The nearest place to Cape Town is in Cape Town. The address itself is only on the details.
+      expect(nearest.textContent).toContain('Cape Town')
+      expect(nearest.querySelector('.branch-card__meta')!.textContent).toContain(' away')
+      expect(screen.getByText(/locations? within 25 km, nearest first$/)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'true')
+      expect(cardCount()).toBeLessThan(listed)
+      // 25 km is a way of looking, not a filter the user chose, so the Filters button has no count.
+      expect(screen.getByRole('button', { name: 'Filters' })).toBeInTheDocument()
+    })
+
+    it('turns off, back to the whole list by name, and does not ask again by itself', async () => {
       stubSample()
       const getCurrentPosition = stubGeolocation('granted')
       render(<App />)
       await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
 
-      expect(getCurrentPosition).not.toHaveBeenCalled()
-    })
-
-    it('sorts nearest first with distances once the location is shared, and turns off again', async () => {
-      stubSample()
-      stubGeolocation('granted')
-      render(<App />)
-      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
-      const byName = document.querySelector('article.branch-card')!.textContent
-
       await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
 
-      const nearest = document.querySelector('article.branch-card')!
-      // The nearest branch to Cape Town is in Cape Town. The address itself is only on the details.
-      expect(nearest.textContent).toContain('Cape Town')
-      expect(nearest.textContent).not.toBe(byName)
-      expect(nearest.querySelector('.branch-card__meta')!.textContent).toContain(' away')
-      expect(screen.getByText(/nearest first$/)).toBeInTheDocument()
-
-      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
-      expect(document.querySelector('article.branch-card')!.textContent).toBe(byName)
+      expect(cardCount()).toBe(listed)
+      expect(screen.getByText(`${listed} locations, sorted by name`)).toBeInTheDocument()
       expect(document.querySelector('.branch-card__meta')!.textContent).not.toContain(' away')
+      expect(screen.getByRole('button', { name: '25 km' })).toBeDisabled()
+      expect(getCurrentPosition).toHaveBeenCalledTimes(1)
     })
 
-    it('limits the list to a distance, and drops the limit when Near me is turned off', async () => {
+    it('changes the distance, and goes to any distance when the chosen one is pressed again', async () => {
       stubSample()
       stubGeolocation('granted')
       render(<App />)
       await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
-      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
-      const nearest = cardCount()
+      const within25 = cardCount()
 
       await userEvent.click(screen.getByRole('button', { name: '10 km' }))
-
       expect(cardCount()).toBeGreaterThan(0)
-      expect(cardCount()).toBeLessThan(nearest)
+      expect(cardCount()).toBeLessThan(within25)
       expect(screen.getByText(/locations? within 10 km, nearest first$/)).toBeInTheDocument()
 
-      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
-
-      expect(cardCount()).toBe(nearest)
-      expect(screen.getByRole('button', { name: '10 km' })).toBeDisabled()
+      await userEvent.click(screen.getByRole('button', { name: '10 km' }))
+      expect(cardCount()).toBe(listed)
+      expect(screen.getByText(`${listed} locations, nearest first`)).toBeInTheDocument()
     })
 
-    it('keeps the default list and explains how to carry on when location is refused', async () => {
+    it('keeps the whole list by name and explains how to carry on when location is refused', async () => {
       stubSample()
       stubGeolocation('denied')
       render(<App />)
       await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
-      const before = cardCount()
-
-      await userEvent.click(screen.getByRole('button', { name: 'Near me' }))
 
       expect(screen.getByText(/turned off for this site/)).toBeInTheDocument()
-      expect(cardCount()).toBe(before)
+      expect(cardCount()).toBe(listed)
       expect(document.querySelector('.branch-card__meta')!.textContent).not.toContain(' away')
+      expect(screen.getByRole('button', { name: '25 km' })).toBeDisabled()
+    })
+
+    it('tries again from the note, and then finds the nearest', async () => {
+      stubSample()
+      stubGeolocation('denied')
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+
+      stubGeolocation('granted')
+      await userEvent.click(screen.getByRole('button', { name: 'Try again', hidden: false }))
+
+      expect(screen.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'true')
+      expect(cardCount()).toBeLessThan(listed)
     })
   })
 })

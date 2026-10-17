@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LazyBranchMap } from './features/branches/components/LazyBranchMap'
 import { LocatorControls } from './features/branches/components/LocatorControls'
 import { LocatorLayout } from './features/branches/components/LocatorLayout'
@@ -19,6 +19,13 @@ function App() {
   const now = useNow()
   const location = useLocation()
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
+
+  // The page asks for the user's location as soon as it opens, so the list can start with what is
+  // near them. If they say no, or the browser cannot, the list stays by name and a note says so.
+  const requestLocation = location.request
+  useEffect(() => {
+    requestLocation()
+  }, [requestLocation])
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   // Changing the search or filters means the user wants a list again, so leave the detail view.
@@ -49,7 +56,7 @@ function App() {
 
   // The same list the results panel shows, so the map and the list never disagree.
   const visible =
-    branches.status === 'success' ? listBranches(branches.branches, toBranchFilters(view), now, origin, view.radiusKm) : []
+    branches.status === 'success' ? listBranches(branches.branches, toBranchFilters(view), now, origin, view.radiusKm, view.sort) : []
 
   // One branch is open, and it is in the list: its details take the whole sidebar.
   const detailOpen = selectedId !== null && visible.some((branch) => branch.id === selectedId)
@@ -66,7 +73,7 @@ function App() {
           onPickBranch={openBranch}
           countResults={(next) =>
             branches.status === 'success'
-              ? listBranches(branches.branches, toBranchFilters(next), now, origin, next.radiusKm).length
+              ? listBranches(branches.branches, toBranchFilters(next), now, origin, next.radiusKm, next.sort).length
               : 0
           }
         />

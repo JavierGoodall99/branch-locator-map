@@ -1,5 +1,5 @@
 import type { Branch, BranchType, Province } from '../types'
-import { getOpenStatus } from './hours'
+import { getOpenStatus, isOpenAllDay } from './hours'
 
 export interface BranchFilters {
   /** Free text. Every word must match the name, address, province or postal code. */
@@ -8,6 +8,8 @@ export interface BranchFilters {
   types?: BranchType[]
   province?: Province
   openNow?: boolean
+  /** Only places open around the clock. */
+  open24Hours?: boolean
   /** A branch that offers at least one of these. Empty or missing means any. */
   services?: string[]
 }
@@ -47,6 +49,8 @@ export function filterBranches(branches: Branch[], filters: BranchFilters, now: 
       const text = searchableText(branch)
       if (!words.every((word) => text.includes(word))) return false
     }
+
+    if (filters.open24Hours && !isOpenAllDay(branch)) return false
 
     if (filters.openNow) {
       const { kind } = getOpenStatus(branch, now)

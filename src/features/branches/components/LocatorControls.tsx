@@ -23,9 +23,9 @@ interface LocatorControlsProps {
 }
 
 const SHOW_OPTIONS: { value: ShowMode; label: string; icon?: IconName }[] = [
+  { value: 'both', label: 'Both' },
   { value: 'branches', label: 'Branches', icon: 'bank' },
   { value: 'atms', label: 'ATMs', icon: 'cash' },
-  { value: 'both', label: 'Both' },
 ]
 
 /** Brand, search with suggestions and Near me, the Filters button, the show switch and the distances. */
@@ -40,7 +40,9 @@ export function LocatorControls({ filters, onChange, location, branches, onPickB
       <div className="search-row">
         <SearchBox
           value={filters.query}
-          onSearch={(query) => set({ query })}
+          // Searching for a place means looking there, so the distance steps aside: a search for
+          // somewhere else would otherwise find nothing.
+          onSearch={(query) => set(query ? { query, radiusKm: null } : { query })}
           branches={branches}
           onPickBranch={onPickBranch}
           trailing={<LocateButton location={location} />}
@@ -70,6 +72,7 @@ export function LocatorControls({ filters, onChange, location, branches, onPickB
         onHide={() => setFiltersOpen(false)}
         filters={filters}
         branches={branches}
+        located={location.status === 'located'}
         onApply={(applied) => set(applied)}
         countResults={(window) => countResults({ ...filters, ...window })}
       />

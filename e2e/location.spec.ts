@@ -1,4 +1,4 @@
-import { expect, resultCount, test, openButton } from './fixtures'
+import { expect, resultCount, test, openButton, searchField } from './fixtures'
 
 /** Cape Town, so the nearest branches are in Cape Town and not the first ones by name. */
 const CAPE_TOWN = { latitude: -33.9249, longitude: 18.4241 }
@@ -6,45 +6,55 @@ const CAPE_TOWN = { latitude: -33.9249, longitude: 18.4241 }
 test.describe('near me when the browser allows it', () => {
   test.use({ geolocation: CAPE_TOWN, permissions: ['geolocation'] })
 
-  test('sorts the nearest first and shows how far away each is', async ({ page }) => {
+  test('finds the location by itself on arrival, and lists the nearest first within 25 km', async ({ page }) => {
     await page.goto('/')
-    const firstByName = page.getByRole('article').first()
-    await expect(firstByName).toBeVisible()
-    const nameBefore = await firstByName.getByRole('heading').textContent()
-    const countBefore = await resultCount(page)
 
-    await page.getByRole('button', { name: 'Near me' }).click()
-
-    await expect(page.getByRole('status').filter({ hasText: 'nearest first' }).first()).toBeVisible()
+    // Nobody presses Near me: the page asked as it opened.
+    await expect(page.getByRole('status').filter({ hasText: 'within 25 km, nearest first' }).first()).toBeAttached()
+    await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'true')
     const nearest = page.getByRole('article').first()
     await expect(nearest).toContainText('Cape Town')
-    await expect(nearest.getByRole('heading')).not.toHaveText(nameBefore!)
     await expect(nearest).toContainText(/\d+ (m|km) away/)
-    expect(await resultCount(page)).toBe(countBefore)
   })
 
-  test('limits the list to a chosen distance, and the distances wait for Near me', async ({ page }) => {
+  test('starts on Both, with Both first in the switch', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
-    await expect(page.getByRole('button', { name: '10 km' })).toBeDisabled()
 
-    await page.getByRole('button', { name: 'Near me' }).click()
-    await expect(page.getByRole('button', { name: '10 km' })).toBeEnabled()
-    const nearest = await resultCount(page)
+    const options = page.getByRole('group', { name: 'Show' }).getByRole('button')
+    await expect(options).toHaveText(['Both', 'Branches', 'ATMs'])
+    await expect(page.getByRole('button', { name: 'Both' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  test('changes the distance, and any distance comes back when the chosen one is pressed again', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'true')
+    const within25 = await resultCount(page)
+
     await page.getByRole('button', { name: '10 km' }).click()
-
-    await expect.poll(() => resultCount(page)).toBeLessThan(nearest)
+    await expect.poll(() => resultCount(page)).toBeLessThan(within25)
     expect(await resultCount(page)).toBeGreaterThan(0)
     await expect(page.getByRole('status').filter({ hasText: 'within 10 km' }).first()).toBeAttached()
-    await expect(page.getByRole('button', { name: '10 km' })).toHaveAttribute('aria-pressed', 'true')
 
     await page.getByRole('button', { name: '10 km' }).click()
-    await expect.poll(() => resultCount(page)).toBe(nearest)
+    await expect.poll(() => resultCount(page)).toBeGreaterThan(within25)
+  })
+
+  test('searching for a place elsewhere sets the distance aside, so it is found', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'true')
+
+    await searchField(page).fill('sandton')
+    await page.keyboard.press('Enter')
+
+    // Sandton is nowhere near Cape Town, so it only shows up once the distance steps aside.
+    await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'false')
+    await expect.poll(() => resultCount(page)).toBeGreaterThan(0)
   })
 
   test('shows the distance on a branch when it is opened, and can be turned off again', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Near me' }).click()
     await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'true')
 
     await openButton(page.getByRole('article').first()).click()
@@ -54,47 +64,23 @@ test.describe('near me when the browser allows it', () => {
     await page.getByRole('button', { name: 'Near me' }).click()
     await expect(page.getByRole('status').filter({ hasText: 'sorted by name' }).first()).toBeVisible()
     await expect(page.getByText(/\d+ (m|km) away/)).toHaveCount(0)
+    await expect(page.getByRole('button', { name: '25 km' })).toBeDisabled()
   })
 })
 
 test.describe('near me when the browser blocks it', () => {
   test.use({ permissions: [] })
 
-  test('keeps the list and explains how to carry on', async ({ page }) => {
+  test('keeps the whole list by name, and explains how to carry on', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('article').first()).toBeVisible()
-    const before = await resultCount(page)
-
-    await page.getByRole('button', { name: 'Near me' }).click()
 
     await expect(page.getByText(/turned off for this site/)).toBeVisible()
     await expect(page.getByText(/search by name, suburb or postcode/)).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible()
-    expect(await resultCount(page)).toBe(before)
-    await expect(page.getByText(/\d+ (m|km) away/)).toHaveCount(0)
-  })
-})
-
-test.describe('before anything is asked', () => {
-  test('does not ask for the location on load, and explains Near me on the button', async ({ page, context }) => {
-    let asked = false
-    await context.addInitScript(() => {
-      const original = navigator.geolocation?.getCurrentPosition?.bind(navigator.geolocation)
-      Object.defineProperty(window, '__geoAsked', { value: false, writable: true })
-      if (navigator.geolocation && original) {
-        navigator.geolocation.getCurrentPosition = (...args) => {
-          ;(window as unknown as { __geoAsked: boolean }).__geoAsked = true
-          return original(...args)
-        }
-      }
-    })
-
-    await page.goto('/')
-    await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('title', /stays on your device/)
+    await expect(page.getByRole('banner').getByRole('button', { name: 'Try again' })).toBeVisible()
     await expect(page.getByRole('article').first()).toBeVisible()
-
-    asked = await page.evaluate(() => (window as unknown as { __geoAsked: boolean }).__geoAsked)
-    expect(asked).toBe(false)
+    await expect(page.getByRole('status').filter({ hasText: 'sorted by name' }).first()).toBeAttached()
+    await expect(page.getByText(/\d+ (m|km) away/)).toHaveCount(0)
+    await expect(page.getByRole('button', { name: '25 km' })).toBeDisabled()
   })
 })
 
@@ -108,8 +94,8 @@ test.describe('where Near me is', () => {
     // The heading and count are kept for screen readers but not shown.
     await expect(page.getByRole('heading', { level: 1, name: 'Branches and ATMs' })).toHaveCount(1)
     await expect(page.getByText('Branches and ATMs', { exact: true })).not.toBeInViewport()
-    // The Open now and province filters are gone.
+    // Open now and the province are in the Filters window, not on the page.
     await expect(page.getByRole('button', { name: 'Open now' })).toHaveCount(0)
-    await expect(page.getByRole('combobox', { name: 'Province' })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Gauteng' })).toHaveCount(0)
   })
 })

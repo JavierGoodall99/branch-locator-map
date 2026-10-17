@@ -51,24 +51,26 @@ test.describe('finding a branch', () => {
     await expect(page.getByRole('article').first()).toBeVisible()
   })
 
-  test('switches between branches, ATMs and both', async ({ page }) => {
+  test('starts on both, and narrows to branches or to ATMs', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
-    const branches = await resultCount(page)
-
-    await page.getByRole('button', { name: 'Both' }).click()
-    await expect.poll(() => resultCount(page)).toBeGreaterThan(branches)
+    await expect(page.getByRole('button', { name: 'Both' })).toHaveAttribute('aria-pressed', 'true')
     const both = await resultCount(page)
+
+    await page.getByRole('button', { name: 'Branches' }).click()
+    await expect.poll(() => resultCount(page)).toBeLessThan(both)
+    const branches = await resultCount(page)
 
     await page.getByRole('button', { name: 'ATMs' }).click()
     await expect.poll(() => resultCount(page)).toBeLessThan(both)
     await expect(page.getByRole('button', { name: 'ATMs' })).toHaveAttribute('aria-pressed', 'true')
+    expect(await resultCount(page)).toBe(both - branches)
   })
 
 })
 
 test.describe('the Filters window', () => {
-  test('opens from the button beside the search, and applies province and open now together', async ({ page }) => {
+  test('opens from the button beside the search, and applies the choices together', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
     const all = await resultCount(page)
@@ -76,7 +78,7 @@ test.describe('the Filters window', () => {
     await page.getByRole('button', { name: 'Filters' }).click()
     const dialog = page.getByRole('dialog', { name: 'Filters' })
     await expect(dialog).toBeVisible()
-    await dialog.getByRole('combobox', { name: 'Province' }).selectOption('Northern Cape')
+    await dialog.getByRole('button', { name: 'Northern Cape' }).click()
     // The button says how many places this leaves before it is pressed, and the list waits for it.
     const apply = dialog.getByRole('button', { name: /^Show \d+ results?$/ })
     const promised = Number((await apply.textContent())!.match(/\d+/)![0])
@@ -95,7 +97,7 @@ test.describe('the Filters window', () => {
     const all = await resultCount(page)
 
     await page.getByRole('button', { name: 'Filters' }).click()
-    await page.getByRole('dialog', { name: 'Filters' }).getByRole('combobox', { name: 'Province' }).selectOption('Northern Cape')
+    await page.getByRole('dialog', { name: 'Filters' }).getByRole('button', { name: 'Northern Cape' }).click()
     await page.keyboard.press('Escape')
 
     await expect(page.getByRole('dialog')).toBeHidden()
@@ -110,6 +112,7 @@ test.describe('the Filters window', () => {
     const dialog = page.getByRole('dialog', { name: 'Filters' })
 
     await expect(dialog.getByRole('button', { name: 'Both' })).toHaveCount(0)
+    await expect(dialog.getByRole('button', { name: 'Branches' })).toHaveCount(0)
     await expect(dialog.getByRole('button', { name: /km$/ })).toHaveCount(0)
   })
 })

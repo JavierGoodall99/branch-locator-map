@@ -69,26 +69,26 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
   gap: 6px;
 }
 
-// A distance to choose, a pill as the design shows. The chosen one is tinted and outlined in blue.
-.radius-chip {
-  flex: 1 1 0;
-  min-width: 0;
+// A pill to choose: a distance on the page, or an option in the Filters window. The chosen one is
+// tinted and outlined in blue, and is also announced as pressed or checked.
+.chip {
   min-height: 44px;
-  padding: 0 4px;
+  padding: 0 $spacer;
   background: $white;
   border: 1px solid $control-hairline;
   border-radius: $border-radius-pill;
   color: $body-color;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 
-  &:hover:not(:disabled, [aria-pressed='true']) {
+  &:hover:not(:disabled, [aria-pressed='true'], [aria-checked='true']) {
     background: $blue-tint;
   }
 
-  &[aria-pressed='true'] {
+  &[aria-pressed='true'],
+  &[aria-checked='true'] {
     background: $blue-tint;
     border-color: $primary;
     color: $blue-deep;
@@ -101,6 +101,68 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
   &:focus-visible {
     outline: 2px solid #000;
     outline-offset: 2px;
+  }
+
+  // The distances share the row between them.
+  &--fill {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 4px;
+    font-size: 0.875rem;
+  }
+}
+
+// The Filters window, as a few titled groups of pills.
+.filters-modal {
+  .modal-content {
+    border-radius: $border-radius-xl * 1.5;
+  }
+
+  .modal-header,
+  .modal-footer {
+    border: 0;
+    padding: $spacer * 1.5 $spacer * 1.5 $spacer;
+  }
+
+  .modal-body {
+    padding: 0 $spacer * 1.5 $spacer;
+  }
+
+  .modal-footer {
+    border-top: 1px solid $border-color;
+    padding-top: $spacer;
+    flex-wrap: nowrap;
+    gap: $spacer;
+
+    .btn-link {
+      color: $body-secondary-color;
+      font-weight: 600;
+      padding-left: 0;
+    }
+
+    .btn-primary {
+      flex: 1;
+      min-height: 48px;
+      border-radius: $border-radius-pill;
+      font-weight: 700;
+    }
+  }
+
+  &__group + &__group {
+    margin-top: $spacer * 1.25;
+  }
+
+  &__heading {
+    margin: 0 0 $spacer * 0.75;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $body-color;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacer * 0.5;
   }
 }
 

@@ -23,7 +23,7 @@ export function ResultsPanel({ state, filters, now, origin, selectedId, onSelect
   // The list is only worked out here while a branch is open, to find it. In list mode BranchResults
   // does that work itself.
   const visible =
-    selectedId && state.status === 'success' ? listBranches(state.branches, toBranchFilters(filters), now, origin, filters.radiusKm) : []
+    selectedId && state.status === 'success' ? listBranches(state.branches, toBranchFilters(filters), now, origin, filters.radiusKm, filters.sort) : []
   const selected = selectedId ? (visible.find((branch) => branch.id === selectedId) ?? null) : null
 
   // When the user goes back, return focus to the Details button of the branch they were last

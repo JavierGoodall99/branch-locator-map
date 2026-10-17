@@ -95,6 +95,16 @@ describe('filterBranches', () => {
     expect(ids(filterBranches(list, { services: [] }, morning))).toEqual(['smart', 'cash', 'plain'])
   })
 
+  it('keeps only places open around the clock, and not a closed one that has those hours', () => {
+    const always = branch({ id: 'always', type: 'atm', hours: { open: '00:00', close: '24:00' } })
+    const closed = branch({ id: 'closed', status: 'temporarily-closed', hours: { open: '00:00', close: '24:00' } })
+    const noHours = branch({ id: 'none', hours: null })
+    const office = branch({ id: 'office' })
+
+    expect(ids(filterBranches([always, closed, noHours, office], { open24Hours: true }, morning))).toEqual(['always'])
+    expect(ids(filterBranches([always, office], { open24Hours: true }, evening))).toEqual(['always'])
+  })
+
   it('filters by province', () => {
     expect(ids(filterBranches(all, { province: 'Western Cape' }, morning))).toEqual(['paarl'])
   })
