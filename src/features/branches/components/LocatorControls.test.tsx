@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { DEFAULT_FILTERS, type LocatorFilters } from '@/features/branches/model/filters'
+import { DEFAULT_FILTERS, type LocatorFilters } from '@/features/branches/model/locatorFilters'
 import type { UseLocationResult } from '@/features/branches/model/useLocation'
 import type { Branch } from '@/features/branches/types'
 import { LocatorControls } from './LocatorControls'

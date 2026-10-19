@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { RADIUS_OPTIONS } from '@/features/branches/model/filters'
+import { RADIUS_OPTIONS } from '@/features/branches/model/locatorFilters'
 import type { UseLocationResult } from '@/features/branches/model/useLocation'
 
 interface RadiusChipsProps {

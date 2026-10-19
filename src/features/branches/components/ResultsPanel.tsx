@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { listBranches } from '@/features/branches/lib/listing'
 import type { Coordinates } from '@/features/branches/types'
-import { toBranchFilters, type LocatorFilters } from '@/features/branches/model/filters'
+import { toBranchFilters, type LocatorFilters } from '@/features/branches/model/locatorFilters'
 import type { UseBranchesResult } from '@/features/branches/model/useBranches'
 import { BranchDetail } from './BranchDetail'
 import { BranchResults } from './BranchResults'

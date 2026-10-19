@@ -4,7 +4,12 @@ import { LocatorControls } from '@/features/branches/components/LocatorControls'
 import { LocatorLayout } from '@/features/branches/components/LocatorLayout'
 import { ResultsPanel } from '@/features/branches/components/ResultsPanel'
 import { listBranches } from '@/features/branches/lib/listing'
-import { DEFAULT_FILTERS, clearFilters, toBranchFilters, type LocatorFilters } from '@/features/branches/model/filters'
+import {
+  DEFAULT_FILTERS,
+  clearFilters,
+  toBranchFilters,
+  type LocatorFilters,
+} from '@/features/branches/model/locatorFilters'
 import { useBranches } from '@/features/branches/model/useBranches'
 import { useLocation } from '@/features/branches/model/useLocation'
 import { useNow } from '@/shared/hooks/useNow'

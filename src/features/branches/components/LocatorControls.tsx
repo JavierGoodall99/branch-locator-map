@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Icon, type IconName } from '@/shared/ui/Icon'
-import { countWindowFilters, type LocatorFilters, type ShowMode } from '@/features/branches/model/filters'
+import { countWindowFilters, type LocatorFilters, type ShowMode } from '@/features/branches/model/locatorFilters'
 import type { UseLocationResult } from '@/features/branches/model/useLocation'
 import type { Branch } from '@/features/branches/types'
 import { BrandHeader } from './BrandHeader'

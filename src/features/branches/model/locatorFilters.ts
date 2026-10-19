@@ -1,4 +1,4 @@
-import type { BranchFilters } from '@/features/branches/lib/filter'
+import type { BranchFilters } from '@/features/branches/lib/filterBranches'
 import type { SortMode } from '@/features/branches/lib/listing'
 import type { BranchType, Province } from '@/features/branches/types'
 

@@ -5,7 +5,7 @@ import {
   hasChosenFilters,
   toBranchFilters,
   type LocatorFilters,
-} from '@/features/branches/model/filters'
+} from '@/features/branches/model/locatorFilters'
 import type { UseBranchesResult } from '@/features/branches/model/useBranches'
 import type { Coordinates } from '@/features/branches/types'
 import { BranchCard } from './BranchCard'

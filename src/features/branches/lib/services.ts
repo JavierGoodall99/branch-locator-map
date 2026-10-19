@@ -1,6 +1,6 @@
 import type { Branch, BranchType } from '@/features/branches/types'
 import { typeLabel } from './labels'
-import { normalise } from './filter'
+import { normalise } from './filterBranches'
 
 const TYPES: BranchType[] = ['branch', 'atm', 'business-centre']
 

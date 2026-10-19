@@ -1,6 +1,6 @@
 import type { Branch, Coordinates } from '@/features/branches/types'
 import { withDistanceFrom } from './distance'
-import { filterBranches, type BranchFilters } from './filter'
+import { filterBranches, type BranchFilters } from './filterBranches'
 
 /** A branch in the list. It has a distance only when the user's location is known. */
 export type ListedBranch = Branch & { distanceKm?: number }

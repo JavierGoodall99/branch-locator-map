@@ -1,5 +1,5 @@
 import type { Branch, BranchType } from '@/features/branches/types'
-import { normalise } from './filter'
+import { normalise } from './filterBranches'
 import { placeNamesOf, townOf } from './place'
 
 /** Suggestions start once the user has typed this much. One letter would match nearly everything. */

@@ -7,7 +7,7 @@ import {
   hasActiveFilters,
   hasChosenFilters,
   toBranchFilters,
-} from './filters'
+} from './locatorFilters'
 
 /** The defaults with no distance, which is how the page sees them until the location is known. */
 const QUIET: LocatorFilters = { ...DEFAULT_FILTERS, radiusKm: null }

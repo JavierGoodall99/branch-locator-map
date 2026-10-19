@@ -1,5 +1,5 @@
 import type { Branch } from '@/features/branches/types'
-import { filterBranches } from './filter'
+import { filterBranches } from './filterBranches'
 
 function branch(overrides: Partial<Branch> & { id: string }): Branch {
   return {

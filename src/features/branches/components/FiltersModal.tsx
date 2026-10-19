@@ -1,7 +1,7 @@
 import { useId, useState, type ReactNode } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { serviceOptions } from '@/features/branches/lib/services'
-import { DEFAULT_FILTERS, countWindowFilters, type WindowFilters } from '@/features/branches/model/filters'
+import { DEFAULT_FILTERS, countWindowFilters, type WindowFilters } from '@/features/branches/model/locatorFilters'
 import { PROVINCES, type Branch } from '@/features/branches/types'
 
 interface FiltersModalProps {
