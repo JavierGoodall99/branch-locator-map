@@ -1,5 +1,22 @@
 import { expect, resultCount, test, searchField, openButton } from './fixtures'
 
+test.describe('the page', () => {
+  test('has the Capitec title and icons', async ({ page }) => {
+    await page.goto('/')
+
+    await expect(page).toHaveTitle('Find a Branch, ATM or Smart ID Service Near You | Capitec')
+    await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/favicon.svg')
+    await expect(page.locator('link[rel="icon"][sizes="32x32"]')).toHaveAttribute('href', '/favicon-32.png')
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/apple-touch-icon.png')
+    // Every icon the page points to is really served, not a missing file.
+    for (const href of ['/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png']) {
+      const response = await page.request.get(href)
+      expect(response.ok(), href).toBe(true)
+      expect(response.headers()['content-type'], href).toMatch(/image\//)
+    }
+  })
+})
+
 test.describe('finding a branch', () => {
   test('lists the branches with a count', async ({ page }) => {
     await page.goto('/')

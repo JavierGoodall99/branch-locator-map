@@ -189,3 +189,7 @@ Source design: `design/branch-locator/` (exported from Claude Design; view the `
 | Layout | Below 768px: full-bleed map with a bottom sheet. From 768px: side panel (360px, 400px from 1200px) beside the map. |
 
 Everything cut or deferred can be added later without reworking the data layer.
+
+## Page title and icons
+
+The page title is "Find a Branch, ATM or Smart ID Service Near You | Capitec". The tab icon is the Capitec symbol (the red and navy shape from the logo in `src/assets/capitec-logo.svg`) on a white tile, so it reads on light and dark tab bars: `public/favicon.svg` for browsers that use SVG icons, `public/favicon-32.png` and `public/apple-touch-icon.png` (180 px) for Safari and iOS. The PNGs are drawn from the SVG by `node scripts/build-icons.mjs`. Like the logo in the header, the symbol is Capitec's trademark and is used here only for this assessment.
