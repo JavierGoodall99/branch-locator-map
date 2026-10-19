@@ -10,7 +10,7 @@ import {
   SELECTED_ZOOM,
   SOURCE_ID,
   USER_SOURCE_ID,
-} from '@/features/branches/map/config'
+} from './config'
 import {
   SOUTH_AFRICA_BOUNDS,
   boundsFor,
@@ -18,19 +18,13 @@ import {
   idsKey,
   toFeatureCollection,
   userLocationCollection,
-} from '@/features/branches/map/geo'
-import {
-  addBranchLayers,
-  addHoverLayers,
-  addUserLocationLayers,
-  readMapColors,
-  selectedFilters,
-} from '@/features/branches/map/layers'
-import { applyBasemapLook } from '@/features/branches/map/basemap'
-import { addPinImages } from '@/features/branches/map/pins'
-import { collapseAttribution } from '@/features/branches/map/attribution'
-import { isWideLayout, mapPadding, motionDuration } from '@/features/branches/map/view'
-import { isWebGLAvailable } from '@/features/branches/map/webgl'
+} from './geo'
+import { addBranchLayers, addHoverLayers, addUserLocationLayers, readMapColors, selectedFilters } from './layers'
+import { applyBasemapLook } from './basemap'
+import { addPinImages } from './pins'
+import { collapseAttribution } from './attribution'
+import { isWideLayout, mapPadding, motionDuration } from './view'
+import { isWebGLAvailable } from './webgl'
 import type { Branch, Coordinates } from '@/features/branches/types'
 
 // MapLibre finds its worker file relative to itself, which breaks once a bundler moves the

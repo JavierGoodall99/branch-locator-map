@@ -5,9 +5,9 @@ import { formatOpeningHours, getOpenStatus } from '@/features/branches/lib/hours
 import { directionsUrl, telUrl } from '@/features/branches/lib/links'
 import type { Branch } from '@/features/branches/types'
 import { DetailHero } from './DetailHero'
-import { ServiceList } from './ServiceList'
-import { StatusChip } from './StatusChip'
-import { TypeBadge } from './TypeBadge'
+import { ServiceList } from '@/features/branches/components/common/ServiceList'
+import { StatusChip } from '@/features/branches/components/common/StatusChip'
+import { TypeBadge } from '@/features/branches/components/common/TypeBadge'
 
 interface BranchDetailProps {
   branch: Branch

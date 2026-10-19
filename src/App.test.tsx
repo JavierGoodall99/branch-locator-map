@@ -4,7 +4,7 @@ import sample from '../public/branches.json'
 import App from './App'
 
 // The real map needs WebGL, which jsdom does not have. BranchMap has its own tests with a fake map.
-vi.mock('@/features/branches/components/BranchMap', () => ({
+vi.mock('@/features/branches/map/BranchMap', () => ({
   // It reports which place it was told to highlight, so the tests can see the list and the map agree.
   BranchMap: ({ hoveredId }: { hoveredId?: string | null }) => <div data-testid="map" data-hovered={hoveredId ?? ''} />,
 }))

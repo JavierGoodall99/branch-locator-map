@@ -131,9 +131,14 @@ The full record, with the reasons, is in [`design.md`](design.md). The ones to t
 src/
   features/branches/
     api/         fetching and validating the data
-    components/  the screens and controls
+    components/
+      controls/  search, Near me, the show switch, distances, the Filters window
+      list/      the results list and its cards
+      detail/    one place's details
+      common/    pieces the list and the details share: status, services, type badge
+      layout/    the page layout, and the panel that shows the list or the details
     lib/         pure logic: filtering, sorting, distance, hours, suggestions
-    map/         MapLibre: layers, pins, camera, attribution
+    map/         the map component, and MapLibre layers, pins, camera, attribution
     model/       filters and hooks: useBranches, useLocation
   shared/        hooks and UI used by more than one place
   styles/        Sass: Bootstrap theme variables and the app's own styles

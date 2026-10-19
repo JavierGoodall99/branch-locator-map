@@ -3,8 +3,8 @@ import { listBranches } from '@/features/branches/lib/listing'
 import type { Coordinates } from '@/features/branches/types'
 import { toBranchFilters, type LocatorFilters } from '@/features/branches/model/locatorFilters'
 import type { UseBranchesResult } from '@/features/branches/model/useBranches'
-import { BranchDetail } from './BranchDetail'
-import { BranchResults } from './BranchResults'
+import { BranchDetail } from '@/features/branches/components/detail/BranchDetail'
+import { BranchResults } from '@/features/branches/components/list/BranchResults'
 
 interface ResultsPanelProps {
   state: UseBranchesResult

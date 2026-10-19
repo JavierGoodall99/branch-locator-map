@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { LazyBranchMap } from '@/features/branches/components/LazyBranchMap'
-import { LocatorControls } from '@/features/branches/components/LocatorControls'
-import { LocatorLayout } from '@/features/branches/components/LocatorLayout'
-import { ResultsPanel } from '@/features/branches/components/ResultsPanel'
+import { LazyBranchMap } from '@/features/branches/map/LazyBranchMap'
+import { LocatorControls } from '@/features/branches/components/controls/LocatorControls'
+import { LocatorLayout } from '@/features/branches/components/layout/LocatorLayout'
+import { ResultsPanel } from '@/features/branches/components/layout/ResultsPanel'
 import { listBranches } from '@/features/branches/lib/listing'
 import {
   DEFAULT_FILTERS,

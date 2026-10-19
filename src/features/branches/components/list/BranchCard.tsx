@@ -6,9 +6,9 @@ import { typeLabel } from '@/features/branches/lib/labels'
 import { directionsUrl, telUrl } from '@/features/branches/lib/links'
 import { localityOf } from '@/features/branches/lib/place'
 import type { Branch } from '@/features/branches/types'
-import { ServiceList } from './ServiceList'
-import { StatusChip } from './StatusChip'
-import { TypeBadge } from './TypeBadge'
+import { ServiceList } from '@/features/branches/components/common/ServiceList'
+import { StatusChip } from '@/features/branches/components/common/StatusChip'
+import { TypeBadge } from '@/features/branches/components/common/TypeBadge'
 
 interface BranchCardProps {
   branch: Branch
