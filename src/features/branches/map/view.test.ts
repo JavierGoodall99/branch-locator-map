@@ -10,7 +10,7 @@ describe('viewPadding', () => {
   })
 
   it('keeps only the taller details sheet clear on a phone, because the controls are hidden then', () => {
-    expect(viewPadding(false, 800, true)).toEqual({ top: 24, right: 24, bottom: 544, left: 24 })
+    expect(viewPadding(false, 800, true)).toEqual({ top: 24, right: 24, bottom: 480, left: 24 })
   })
 
   it('does not change the wide layout for the details', () => {

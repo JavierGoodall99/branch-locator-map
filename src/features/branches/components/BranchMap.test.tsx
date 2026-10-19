@@ -304,9 +304,9 @@ describe('BranchMap', () => {
 
     update({ selectedId: 'a' })
 
-    // The container is 800px high in the fake, and the details sheet covers 68% of it.
+    // The container is 800px high in the fake, and the details sheet covers 60% of it.
     expect(currentMap().easeTo).toHaveBeenCalledWith(
-      expect.objectContaining({ padding: expect.objectContaining({ bottom: 544 }) }),
+      expect.objectContaining({ padding: expect.objectContaining({ bottom: 480 }) }),
     )
   })
 

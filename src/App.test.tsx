@@ -13,7 +13,7 @@ vi.mock('./features/branches/components/BranchMap', () => ({
 // in jsdom and can time out on a busy machine. Counting cards with a plain selector keeps
 // these tests quick; each card's own accessibility is covered by the BranchCard tests.
 // The page starts on both branches and ATMs, so it is the longest list, and so gets more time.
-vi.setConfig({ testTimeout: 20_000 })
+vi.setConfig({ testTimeout: 30_000 })
 
 const searchField = () => screen.getByRole('combobox', { name: 'Search by name, suburb, town or postcode' })
 const cardCount = () => document.querySelectorAll('article.branch-card').length

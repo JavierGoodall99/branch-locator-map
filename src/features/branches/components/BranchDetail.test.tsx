@@ -18,6 +18,18 @@ const branch: Branch = {
   hours: { open: '08:00', close: '17:00' },
 }
 
+/** Pretends the window is, or is not, wide enough for the side panel. */
+const stubWide = (wide: boolean) =>
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn((query: string) => ({
+      matches: wide && query === '(min-width: 768px)',
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })),
+  )
+
 /** 10:00 in South Africa (UTC+2). */
 const morning = new Date('2026-10-14T08:00:00Z')
 
@@ -52,15 +64,49 @@ describe('BranchDetail', () => {
     expect(summary.querySelector('.type-badge--atm')).not.toBeNull()
   })
 
-  it('has a photo that is decoration, with sources in modern formats and a size to reserve space', () => {
-    setup()
-    const image = document.querySelector('.detail-hero img') as HTMLImageElement
+  describe('beside the map', () => {
+    beforeEach(() => stubWide(true))
+    afterEach(() => vi.unstubAllGlobals())
 
-    expect(image).toHaveAttribute('alt', '')
-    expect(image).toHaveAttribute('width')
-    expect(image).toHaveAttribute('height')
-    expect(image).toHaveAttribute('decoding', 'async')
-    expect(document.querySelectorAll('.detail-hero source').length).toBeGreaterThan(0)
+    it('has a photo that is decoration, with sources in modern formats and a size to reserve space', () => {
+      setup()
+      const image = document.querySelector('.detail-hero img') as HTMLImageElement
+
+      expect(image).toHaveAttribute('alt', '')
+      expect(image).toHaveAttribute('width')
+      expect(image).toHaveAttribute('height')
+      expect(image).toHaveAttribute('decoding', 'async')
+      expect(document.querySelectorAll('.detail-hero source').length).toBeGreaterThan(0)
+    })
+
+    it('puts the way back over the photo', () => {
+      setup()
+
+      expect(document.querySelector('.detail-hero')).toContainElement(screen.getByRole('button', { name: 'Back to results' }))
+    })
+  })
+
+  describe('on a phone', () => {
+    beforeEach(() => stubWide(false))
+    afterEach(() => vi.unstubAllGlobals())
+
+    it('has no photo, and does not download one, only a slim bar with the way back', () => {
+      setup()
+
+      expect(document.querySelector('img')).toBeNull()
+      expect(document.querySelector('picture')).toBeNull()
+      expect(document.querySelector('.detail-bar')).toContainElement(screen.getByRole('button', { name: 'Back to results' }))
+    })
+
+    it('still goes back, and keeps the name, address and buttons', async () => {
+      const { onBack } = setup()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Back to results' }))
+
+      expect(onBack).toHaveBeenCalledTimes(1)
+      expect(screen.getByRole('heading', { level: 1, name: 'Capitec Bank Sandton City' })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: /Get directions/ })).toBeInTheDocument()
+    })
   })
 
   it('puts the way back first, so it is the first stop for the keyboard', () => {

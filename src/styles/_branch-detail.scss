@@ -126,9 +126,7 @@
     display: block;
     width: 100%;
     height: auto;
-    // On a phone the photo gives way to the name and the buttons, which matter more: it is about a
-    // fifth of the screen, never less than 120px or more than 200px.
-    height: clamp(120px, 22vh, 200px);
+    aspect-ratio: 4 / 3;
     object-fit: cover;
     // Keeps the machine and the people in frame when the photo is cropped.
     object-position: center 40%;
@@ -143,9 +141,81 @@
   }
 }
 
-@include media-breakpoint-up(md) {
-  .branch-detail .detail-hero__image {
-    height: auto;
-    aspect-ratio: 4 / 3;
+// On a phone there is no photo: a slim bar with the way back, so the sheet is all name, address and buttons.
+.detail-bar {
+  display: flex;
+  align-items: center;
+  padding: $spacer * 0.25 $spacer * 0.5;
+}
+
+// Phone: everything on the details is a step smaller, since the sheet is short and there is no photo.
+@include media-breakpoint-down(md) {
+  .branch-detail {
+    &__summary {
+      gap: $spacer * 0.5;
+      padding: $spacer * 0.75 $spacer $spacer;
+    }
+
+    &__identity {
+      gap: $spacer * 0.5;
+    }
+
+    .type-badge {
+      width: 32px;
+      height: 32px;
+
+      .icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    h1 {
+      font-size: 1rem;
+    }
+
+    &__address,
+    &__distance,
+    &__note {
+      font-size: 0.8125rem;
+    }
+
+    .status-chip {
+      min-height: 24px;
+      font-size: 0.8125rem;
+    }
+
+    &__actions .btn {
+      --bs-btn-padding-y: 0.375rem;
+      --bs-btn-font-size: 0.875rem;
+      min-height: 40px;
+    }
+
+    &__body {
+      padding: 0 $spacer $spacer;
+
+      > :first-child {
+        margin-top: $spacer;
+      }
+    }
+
+    &__section {
+      margin-top: $spacer;
+      padding-top: $spacer * 0.75;
+
+      h2 {
+        font-size: 0.9375rem;
+        margin-bottom: $spacer * 0.25;
+      }
+
+      p {
+        margin-bottom: $spacer * 0.25;
+        font-size: 0.875rem;
+      }
+    }
+
+    .branch-card__services {
+      font-size: 0.8125rem;
+    }
   }
 }

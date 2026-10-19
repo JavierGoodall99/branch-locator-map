@@ -1,19 +1,33 @@
 import hero from '../../../assets/capitec-atm.jpg?w=480;800;1200&format=avif;webp;jpg&as=picture'
+import { useMediaQuery } from '../../../shared/hooks/useMediaQuery'
 import { Icon } from '../../../shared/ui/Icon'
+import { WIDE_LAYOUT_QUERY } from '../map/view'
 
 interface DetailHeroProps {
   onBack: () => void
 }
 
-// The sidebar is at most 440px wide, and the full width of a phone below that.
-const SIZES = '(min-width: 768px) 440px, 100vw'
+// The sidebar is at most 440px wide. The photo is only used beside the map, so this is its only size.
+const SIZES = '440px'
 
 /**
- * The photo at the top of the details, with the way back over its top left. The photo is decoration,
- * so it has no description; the button is the content. It comes first in the page, so it is the
- * first stop for the keyboard.
+ * The top of the details. Beside the map it is a photo with the way back over its top left. The
+ * photo is decoration, so it has no description; the button is the content. On a phone there is
+ * no photo, because the sheet is short and the name, address and buttons matter more, so it is
+ * not even downloaded: only a slim bar with the way back. Either way the button comes first in
+ * the page, so it is the first stop for the keyboard.
  */
 export function DetailHero({ onBack }: DetailHeroProps) {
+  const wide = useMediaQuery(WIDE_LAYOUT_QUERY)
+
+  const back = (className: string) => (
+    <button type="button" className={`icon-button ${className}`} aria-label="Back to results" onClick={onBack}>
+      <Icon name="arrowLeft" />
+    </button>
+  )
+
+  if (!wide) return <div className="detail-bar">{back('detail-bar__back')}</div>
+
   return (
     <div className="detail-hero">
       <picture>
@@ -30,10 +44,7 @@ export function DetailHero({ onBack }: DetailHeroProps) {
           decoding="async"
         />
       </picture>
-
-      <button type="button" className="icon-button detail-hero__back" aria-label="Back to results" onClick={onBack}>
-        <Icon name="arrowLeft" />
-      </button>
+      {back('detail-hero__back')}
     </div>
   )
 }

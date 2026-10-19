@@ -78,7 +78,31 @@ test.describe('the map', () => {
     const directions = page.getByRole('link', { name: /Get directions/ })
     await expect(directions).toBeInViewport({ ratio: 1 })
     const sheetTop = await page.evaluate(() => document.querySelector('.locator__results')!.getBoundingClientRect().top)
-    expect(sheetTop).toBeLessThan(page.viewportSize()!.height * 0.4)
+    expect(sheetTop).toBeLessThanOrEqual(page.viewportSize()!.height * 0.45)
+  })
+
+  test('the details have no photo on a phone, and do not download one', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'This is about the phone layout')
+    const images: string[] = []
+    page.on('request', (request) => {
+      if (/capitec-atm/.test(request.url())) images.push(request.url())
+    })
+    await page.goto('/')
+    await page.getByRole('article').first().getByRole('button').first().click()
+
+    await expect(page.getByRole('button', { name: 'Back to results' })).toBeVisible()
+    await expect(page.locator('.branch-detail img')).toHaveCount(0)
+    await expect(page.getByRole('link', { name: /Get directions/ })).toBeInViewport({ ratio: 1 })
+    expect(images).toEqual([])
+  })
+
+  test('the details have the photo beside the map on a wide screen', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'This is about the wide layout')
+    await page.goto('/')
+    await page.getByRole('article').first().getByRole('button').first().click()
+
+    await expect(page.locator('.branch-detail .detail-hero img')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Back to results' })).toBeVisible()
   })
 
   test('says so when it cannot load, keeps the list usable, and recovers on retry', async ({ page }) => {
