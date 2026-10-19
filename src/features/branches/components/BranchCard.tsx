@@ -34,6 +34,9 @@ export function BranchCard({ branch, now, distanceKm, onSelect, onHover }: Branc
   ]
 
   return (
+    // These handlers only highlight this place on the map, they do not act, and the keyboard does the
+    // same through focus; every action on the card is a real button or link.
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <article
       className="branch-card"
       aria-labelledby={headingId}

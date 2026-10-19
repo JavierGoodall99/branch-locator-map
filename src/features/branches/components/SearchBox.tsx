@@ -122,6 +122,9 @@ export function SearchBox({ value, onSearch, branches, onPickBranch, trailing }:
       option.kind === 'place' ? `place-${option.place.label}-${option.place.kind}` : `branch-${option.branch.id}`
     const isPlace = option.kind === 'place'
     return (
+      // The ARIA combobox pattern: focus stays in the field, which moves the highlight with the arrow keys
+      // and chooses with Enter, so an option is clicked but is never focused.
+      // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
       <div
         key={key}
         id={optionId(index)}
