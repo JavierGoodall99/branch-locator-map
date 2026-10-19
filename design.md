@@ -169,6 +169,12 @@ Components come from `react-bootstrap`; Bootstrap's own JavaScript is not loaded
 
 - Dark mode: skipped for now (Bootstrap's `data-bs-theme` can be added later).
 - Which of the three assessment projects this system is applied to.
+## Code structure
+
+The app is one feature, `src/features/branches/`, split by what each part does: `api/` (fetch and validate the data), `lib/` (pure logic: filtering, sorting, distance, hours, suggestions), `model/` (the page's filter state and the hooks), `components/` (grouped by the part of the page: `controls/`, `list/`, `detail/`, `layout/`, and `common/` for pieces the list and the details share), `map/` and `styles/`. Code used beyond the feature lives in `src/shared/` (`ui/` and `hooks/`). Imports from another folder use the `@/` alias.
+
+One place bends the rule that components go in `components/`: the map component (`map/BranchMap.tsx` and `map/LazyBranchMap.tsx`) sits in `map/`, beside the MapLibre code it drives (layers, pins, camera, the base map's colours, attribution). The map is a self-contained subsystem with one way in (a list of branches, the chosen and hovered ones, the user's position, and a callback), and its component and logic change together, so keeping them in one folder keeps the subsystem in one place. The rest of the page uses `LazyBranchMap` and nothing else from `map/`, apart from the 768px breakpoint (`WIDE_LAYOUT_QUERY` in `map/view.ts`), which the details also use to decide whether to show the photo.
+
 ## Branch locator: scope and decisions
 
 The layout started from a Claude Design prototype (screens at 375, 834 and 1440px), which has been built and has since moved on, so it is no longer kept in the repository. This file describes what the app does now.
