@@ -1,8 +1,13 @@
 import { Button } from 'react-bootstrap'
-import { listBranches } from '../lib/listing'
-import { hasActiveFilters, hasChosenFilters, toBranchFilters, type LocatorFilters } from '../model/filters'
-import type { UseBranchesResult } from '../model/useBranches'
-import type { Coordinates } from '../types'
+import { listBranches } from '@/features/branches/lib/listing'
+import {
+  hasActiveFilters,
+  hasChosenFilters,
+  toBranchFilters,
+  type LocatorFilters,
+} from '@/features/branches/model/filters'
+import type { UseBranchesResult } from '@/features/branches/model/useBranches'
+import type { Coordinates } from '@/features/branches/types'
 import { BranchCard } from './BranchCard'
 
 interface BranchResultsProps {

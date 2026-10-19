@@ -1,4 +1,4 @@
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 import {
   SOUTH_AFRICA_BOUNDS,
   boundsFor,

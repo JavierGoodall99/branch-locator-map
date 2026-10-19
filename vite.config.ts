@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { imagetools } from 'vite-imagetools'
@@ -5,6 +6,10 @@ import { imagetools } from 'vite-imagetools'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), imagetools()],
+  resolve: {
+    // "@/features/..." means src/features/..., the same as `paths` in tsconfig.app.json.
+    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+  },
   build: {
     // MapLibre is about 1 MB (280 KB gzipped) and is loaded on its own after the page, so the
     // default 500 KB warning does not apply to it.

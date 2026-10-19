@@ -1,4 +1,4 @@
-import type { Branch, BranchType, Coordinates } from '../types'
+import type { Branch, BranchType, Coordinates } from '@/features/branches/types'
 
 /** [[west, south], [east, north]] in degrees, the order MapLibre expects. */
 export type Bounds = [[number, number], [number, number]]

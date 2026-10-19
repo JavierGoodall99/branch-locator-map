@@ -1,5 +1,5 @@
-import { Icon } from '../../../shared/ui/Icon'
-import type { UseLocationResult } from '../model/useLocation'
+import { Icon } from '@/shared/ui/Icon'
+import type { UseLocationResult } from '@/features/branches/model/useLocation'
 
 const EXPLANATION = 'Near me sorts by distance. Your location stays on your device.'
 

@@ -1,4 +1,4 @@
-import type { Branch, BranchWithDistance, Coordinates } from '../types'
+import type { Branch, BranchWithDistance, Coordinates } from '@/features/branches/types'
 
 const EARTH_RADIUS_KM = 6371.0088
 

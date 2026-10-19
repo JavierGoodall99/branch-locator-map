@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import type { OpenStatus } from '../lib/hours'
+import type { OpenStatus } from '@/features/branches/lib/hours'
 import { StatusChip } from './StatusChip'
 
 describe('StatusChip', () => {

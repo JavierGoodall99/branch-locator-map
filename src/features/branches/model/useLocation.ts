@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Coordinates } from '../types'
+import type { Coordinates } from '@/features/branches/types'
 
 export type LocationState =
   | { status: 'idle' }

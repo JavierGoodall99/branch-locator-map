@@ -1,4 +1,4 @@
-import type { Branch, BranchType } from '../types'
+import type { Branch, BranchType } from '@/features/branches/types'
 import { typeLabel } from './labels'
 import { normalise } from './filter'
 

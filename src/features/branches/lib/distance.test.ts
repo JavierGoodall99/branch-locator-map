@@ -1,4 +1,4 @@
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 import { formatDistance, haversineKm, withDistanceFrom } from './distance'
 
 const johannesburg = { lat: -26.2041, lng: 28.0473 }

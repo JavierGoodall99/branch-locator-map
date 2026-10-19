@@ -1,4 +1,4 @@
-import type { Branch, Coordinates } from '../types'
+import type { Branch, Coordinates } from '@/features/branches/types'
 import { withDistanceFrom } from './distance'
 import { filterBranches, type BranchFilters } from './filter'
 

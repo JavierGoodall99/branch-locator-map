@@ -1,4 +1,4 @@
-import { Icon, type IconName } from '../../../shared/ui/Icon'
+import { Icon, type IconName } from '@/shared/ui/Icon'
 
 const SERVICE_ICONS: Record<string, IconName> = {
   Branch: 'bank',

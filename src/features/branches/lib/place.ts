@@ -1,4 +1,4 @@
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 
 // Addresses mix streets and shopping centres in with the suburb and town. This keeps the places
 // people would actually search for: nothing with a number in it, and nothing that names a road or

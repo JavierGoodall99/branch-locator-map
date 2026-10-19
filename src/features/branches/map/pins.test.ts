@@ -1,4 +1,4 @@
-import { ATM_ICON, BRANCH_ICON } from '../../../shared/ui/typeIcons'
+import { ATM_ICON, BRANCH_ICON } from '@/shared/ui/typeIcons'
 import { PIN_IMAGES } from './config'
 import type { MapColors } from './layers'
 import { addPinImages, PIN_PIXEL_RATIO, PIN_SCALE, pinTipOffset } from './pins'

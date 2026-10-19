@@ -1,5 +1,5 @@
-import { Icon } from '../../../shared/ui/Icon'
-import type { BranchType } from '../types'
+import { Icon } from '@/shared/ui/Icon'
+import type { BranchType } from '@/features/branches/types'
 
 /**
  * The badge that shows what kind of site this is: a blue square with a building for a branch, and a

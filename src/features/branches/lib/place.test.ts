@@ -1,4 +1,4 @@
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 import { isPlaceName, localityOf, townOf } from './place'
 
 function at(address: string, province: Branch['province'] = 'Gauteng'): Branch {

@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 import { useBranches } from './useBranches'
 
 const branch: Branch = {

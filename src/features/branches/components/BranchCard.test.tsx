@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 import { BranchCard } from './BranchCard'
 
 const branch: Branch = {

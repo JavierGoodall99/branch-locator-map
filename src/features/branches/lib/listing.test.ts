@@ -1,4 +1,4 @@
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 import { listBranches } from './listing'
 
 function branch(id: string, name: string, overrides: Partial<Branch> = {}): Branch {

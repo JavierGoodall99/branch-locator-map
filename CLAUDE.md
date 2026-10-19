@@ -40,6 +40,7 @@ Run `npm run lint`, `npm run format:check` and `npm run build` (and the tests) b
 
 - Function components and hooks only (the one exception is `ErrorBoundary`, because React has no hook for it); keep TypeScript strict, no `any`.
 - Theme through Sass variables in `_variables.scss` first, then `--bs-*` CSS variables, then `_custom.scss`. Never edit `node_modules` and avoid `!important`.
+- Import from another folder with the `@/` alias, which means `src/` (for example `@/shared/ui/Icon`); use `./` only for a file in the same folder. The alias is set in `tsconfig.app.json` and `vite.config.ts`.
 - Use `react-bootstrap` components. Do not import Bootstrap's JavaScript bundle or use `window.bootstrap`.
 - For links that look like buttons, use a plain `<a className="btn ...">`, not react-bootstrap's `Button as="a"`, which sets `role="button"` on anchors.
 - When a new Bootstrap component is used, add its module to `main.scss`.

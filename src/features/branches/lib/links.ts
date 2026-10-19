@@ -1,4 +1,4 @@
-import type { Coordinates } from '../types'
+import type { Coordinates } from '@/features/branches/types'
 
 /** Opens turn-by-turn directions to a point in the user's maps app. */
 export function directionsUrl({ lat, lng }: Coordinates): string {

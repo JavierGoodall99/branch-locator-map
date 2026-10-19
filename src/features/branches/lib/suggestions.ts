@@ -1,4 +1,4 @@
-import type { Branch, BranchType } from '../types'
+import type { Branch, BranchType } from '@/features/branches/types'
 import { normalise } from './filter'
 import { placeNamesOf, townOf } from './place'
 

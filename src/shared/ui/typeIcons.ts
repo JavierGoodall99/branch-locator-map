@@ -1,5 +1,5 @@
-import atmSvg from '../../assets/atm-icon.svg?raw'
-import branchSvg from '../../assets/branch-icon.svg?raw'
+import atmSvg from '@/assets/atm-icon.svg?raw'
+import branchSvg from '@/assets/branch-icon.svg?raw'
 
 /** What is needed to draw one of the line icons, wherever it is drawn: in the page or on a canvas. */
 export interface IconShape {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { BranchesApiError, fetchBranches } from '../api/branchesApi'
-import type { Branch } from '../types'
+import { BranchesApiError, fetchBranches } from '@/features/branches/api/branchesApi'
+import type { Branch } from '@/features/branches/types'
 
 export type BranchesState =
   { status: 'loading' } | { status: 'success'; branches: Branch[] } | { status: 'error'; message: string }

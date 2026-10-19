@@ -1,8 +1,8 @@
 import { useId, useMemo, useRef, useState, type FocusEvent, type KeyboardEvent, type ReactNode } from 'react'
-import { Icon } from '../../../shared/ui/Icon'
-import { buildPlaceIndex, suggest, type BranchSuggestion, type PlaceEntry } from '../lib/suggestions'
-import { typeLabel } from '../lib/labels'
-import type { Branch } from '../types'
+import { Icon } from '@/shared/ui/Icon'
+import { buildPlaceIndex, suggest, type BranchSuggestion, type PlaceEntry } from '@/features/branches/lib/suggestions'
+import { typeLabel } from '@/features/branches/lib/labels'
+import type { Branch } from '@/features/branches/types'
 
 interface SearchBoxProps {
   /** The search that is applied to the list and the map. What is being typed is kept separately. */

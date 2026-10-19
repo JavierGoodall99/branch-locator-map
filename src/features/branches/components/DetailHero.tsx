@@ -1,7 +1,7 @@
-import hero from '../../../assets/capitec-atm.jpg?w=480;800;1200&format=avif;webp;jpg&as=picture'
-import { useMediaQuery } from '../../../shared/hooks/useMediaQuery'
-import { Icon } from '../../../shared/ui/Icon'
-import { WIDE_LAYOUT_QUERY } from '../map/view'
+import hero from '@/assets/capitec-atm.jpg?w=480;800;1200&format=avif;webp;jpg&as=picture'
+import { useMediaQuery } from '@/shared/hooks/useMediaQuery'
+import { Icon } from '@/shared/ui/Icon'
+import { WIDE_LAYOUT_QUERY } from '@/features/branches/map/view'
 
 interface DetailHeroProps {
   onBack: () => void

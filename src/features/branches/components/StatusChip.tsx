@@ -1,5 +1,5 @@
-import { Icon, type IconName } from '../../../shared/ui/Icon'
-import type { OpenStatus, OpenStatusKind } from '../lib/hours'
+import { Icon, type IconName } from '@/shared/ui/Icon'
+import type { OpenStatus, OpenStatusKind } from '@/features/branches/lib/hours'
 
 const APPEARANCE: Record<OpenStatusKind, { tone: 'open' | 'soon' | 'closed'; icon: IconName }> = {
   open: { tone: 'open', icon: 'check' },

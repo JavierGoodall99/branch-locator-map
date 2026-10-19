@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react'
-import type { Branch, Coordinates } from '../types'
+import type { Branch, Coordinates } from '@/features/branches/types'
 
 // The map library is large, so it loads on its own after the page is up. The results list works
 // without it.

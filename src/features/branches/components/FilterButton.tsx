@@ -1,4 +1,4 @@
-import { Icon } from '../../../shared/ui/Icon'
+import { Icon } from '@/shared/ui/Icon'
 
 interface FilterButtonProps {
   /** How many choices in the Filters window are in use. */

@@ -1,4 +1,4 @@
-import type { BranchType } from '../types'
+import type { BranchType } from '@/features/branches/types'
 
 const TYPE_LABELS: Record<BranchType, string> = {
   branch: 'Branch',

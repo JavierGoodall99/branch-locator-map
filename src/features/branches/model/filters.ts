@@ -1,6 +1,6 @@
-import type { BranchFilters } from '../lib/filter'
-import type { SortMode } from '../lib/listing'
-import type { BranchType, Province } from '../types'
+import type { BranchFilters } from '@/features/branches/lib/filter'
+import type { SortMode } from '@/features/branches/lib/listing'
+import type { BranchType, Province } from '@/features/branches/types'
 
 /** Which kinds of location the list shows. Business centres count as branches. */
 export type ShowMode = 'branches' | 'atms' | 'both'

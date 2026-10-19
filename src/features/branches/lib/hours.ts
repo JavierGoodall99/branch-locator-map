@@ -1,4 +1,4 @@
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 
 const TIME_ZONE = 'Africa/Johannesburg'
 const CLOSING_SOON_MINUTES = 60

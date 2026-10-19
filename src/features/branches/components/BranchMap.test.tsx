@@ -9,12 +9,12 @@ import {
   SOURCE_ID,
   USER_LAYERS,
   USER_SOURCE_ID,
-} from '../map/config'
-import { applyBasemapLook } from '../map/basemap'
-import { selectedFilters } from '../map/layers'
-import { addPinImages } from '../map/pins'
-import { isWebGLAvailable } from '../map/webgl'
-import type { Branch, Coordinates } from '../types'
+} from '@/features/branches/map/config'
+import { applyBasemapLook } from '@/features/branches/map/basemap'
+import { selectedFilters } from '@/features/branches/map/layers'
+import { addPinImages } from '@/features/branches/map/pins'
+import { isWebGLAvailable } from '@/features/branches/map/webgl'
+import type { Branch, Coordinates } from '@/features/branches/types'
 import { BranchMap } from './BranchMap'
 
 // jsdom has no WebGL, so MapLibre is replaced by a fake that records what the component asks of it.
@@ -74,12 +74,12 @@ vi.mock('maplibre-gl', () => ({
   NavigationControl: class {},
   setWorkerUrl: mocks.setWorkerUrl,
 }))
-vi.mock('../map/webgl', () => ({ isWebGLAvailable: vi.fn(() => true) }))
+vi.mock('@/features/branches/map/webgl', () => ({ isWebGLAvailable: vi.fn(() => true) }))
 // The base map's recolouring has its own tests, against the real layer list.
-vi.mock('../map/basemap', () => ({ applyBasemapLook: vi.fn() }))
+vi.mock('@/features/branches/map/basemap', () => ({ applyBasemapLook: vi.fn() }))
 // Pins are drawn on a canvas, which jsdom cannot do; pins.ts has its own tests.
-vi.mock('../map/pins', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../map/pins')>()),
+vi.mock('@/features/branches/map/pins', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/features/branches/map/pins')>()),
   addPinImages: vi.fn(),
 }))
 

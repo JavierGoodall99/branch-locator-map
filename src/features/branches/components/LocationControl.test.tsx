@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { LocationState, UseLocationResult } from '../model/useLocation'
+import type { LocationState, UseLocationResult } from '@/features/branches/model/useLocation'
 import { LocateButton, LocationNote } from './LocationControl'
 
 function withActions(state: LocationState): UseLocationResult {

@@ -1,4 +1,4 @@
-import logoUrl from '../../../assets/capitec-logo.svg'
+import logoUrl from '@/assets/capitec-logo.svg'
 
 /**
  * The page's name: Capitec's logo, a thin divider and "Branch finder". It is shown beside the map

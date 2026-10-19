@@ -1,8 +1,8 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { DEFAULT_FILTERS, type LocatorFilters } from '../model/filters'
-import type { UseLocationResult } from '../model/useLocation'
-import type { Branch } from '../types'
+import { DEFAULT_FILTERS, type LocatorFilters } from '@/features/branches/model/filters'
+import type { UseLocationResult } from '@/features/branches/model/useLocation'
+import type { Branch } from '@/features/branches/types'
 import { LocatorControls } from './LocatorControls'
 
 const idleLocation: UseLocationResult = { status: 'idle', request: vi.fn(), clear: vi.fn() }

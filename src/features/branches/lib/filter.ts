@@ -1,4 +1,4 @@
-import type { Branch, BranchType, Province } from '../types'
+import type { Branch, BranchType, Province } from '@/features/branches/types'
 import { getOpenStatus, isOpenAllDay } from './hours'
 
 export interface BranchFilters {

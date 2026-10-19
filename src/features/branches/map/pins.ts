@@ -1,5 +1,5 @@
 import type { Map as MapLibreMap } from 'maplibre-gl'
-import { ATM_ICON, BRANCH_ICON, type IconShape } from '../../../shared/ui/typeIcons'
+import { ATM_ICON, BRANCH_ICON, type IconShape } from '@/shared/ui/typeIcons'
 import { PIN_IMAGES } from './config'
 import type { MapColors } from './layers'
 

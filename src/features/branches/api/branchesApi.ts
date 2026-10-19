@@ -1,4 +1,4 @@
-import { PROVINCES, type Branch, type BranchType, type TradingStatus } from '../types'
+import { PROVINCES, type Branch, type BranchType, type TradingStatus } from '@/features/branches/types'
 
 const BRANCH_TYPES: readonly BranchType[] = ['branch', 'atm', 'business-centre']
 const STATUSES: readonly TradingStatus[] = ['open', 'temporarily-closed', 'permanently-closed']

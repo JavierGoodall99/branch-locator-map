@@ -1,4 +1,4 @@
-import libertyLayers from './fixtures/liberty-layers.json'
+import libertyLayers from '@/features/branches/map/fixtures/liberty-layers.json'
 import { BASEMAP_HIDDEN, BASEMAP_PAINT_RULES, applyBasemapLook, planBasemapChanges } from './basemap'
 
 const layers = libertyLayers as { id: string; type: string }[]

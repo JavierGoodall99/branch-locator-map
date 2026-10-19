@@ -1,4 +1,4 @@
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 import { formatOpeningHours, getOpenStatus, isOpenAllDay, minutesSinceMidnightInSouthAfrica } from './hours'
 
 function branch(overrides: Partial<Branch> = {}): Branch {

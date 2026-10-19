@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { listBranches } from '../lib/listing'
-import type { Coordinates } from '../types'
-import { toBranchFilters, type LocatorFilters } from '../model/filters'
-import type { UseBranchesResult } from '../model/useBranches'
+import { listBranches } from '@/features/branches/lib/listing'
+import type { Coordinates } from '@/features/branches/types'
+import { toBranchFilters, type LocatorFilters } from '@/features/branches/model/filters'
+import type { UseBranchesResult } from '@/features/branches/model/useBranches'
 import { BranchDetail } from './BranchDetail'
 import { BranchResults } from './BranchResults'
 

@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 import { SearchBox } from './SearchBox'
 
 function branch(id: string, name: string, address: string, overrides: Partial<Branch> = {}): Branch {

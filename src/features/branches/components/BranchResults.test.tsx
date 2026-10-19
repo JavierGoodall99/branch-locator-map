@@ -1,9 +1,9 @@
 import { render, screen, within } from '@testing-library/react'
 import type { ComponentProps } from 'react'
 import userEvent from '@testing-library/user-event'
-import type { UseBranchesResult } from '../model/useBranches'
-import type { Branch } from '../types'
-import { DEFAULT_FILTERS as APP_DEFAULTS, type LocatorFilters } from '../model/filters'
+import type { UseBranchesResult } from '@/features/branches/model/useBranches'
+import type { Branch } from '@/features/branches/types'
+import { DEFAULT_FILTERS as APP_DEFAULTS, type LocatorFilters } from '@/features/branches/model/filters'
 import { BranchResults } from './BranchResults'
 
 // The page starts on both kinds within 25 km; these tests start from branches only, with any distance.

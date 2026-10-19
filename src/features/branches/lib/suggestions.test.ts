@@ -1,4 +1,4 @@
-import type { Branch } from '../types'
+import type { Branch } from '@/features/branches/types'
 import { MIN_QUERY_LENGTH, buildPlaceIndex, suggest } from './suggestions'
 
 function branch(id: string, name: string, address: string, overrides: Partial<Branch> = {}): Branch {
