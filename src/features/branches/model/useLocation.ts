@@ -5,8 +5,11 @@ export type LocationState =
   | { status: 'idle' }
   | { status: 'locating' }
   | { status: 'located'; position: Coordinates }
-  /** The user, or their browser settings, refused. */
-  | { status: 'denied' }
+  /**
+   * The user, or their browser settings, refused. `blocked` means the browser will not ask again,
+   * so only changing the site's setting helps; otherwise asking again opens the permission prompt.
+   */
+  | { status: 'denied'; blocked?: boolean }
   /** The browser has no geolocation at all. */
   | { status: 'unavailable' }
   /** Allowed, but no position came back in time. Worth trying again. */
@@ -20,6 +23,18 @@ export type UseLocationResult = LocationState & {
 }
 
 const PERMISSION_DENIED = 1
+
+/**
+ * The browser's own record of what the user has decided for this site, where it keeps one (the
+ * Permissions API), or null where it does not or cannot say. Reading it never shows a prompt.
+ */
+async function geolocationPermission(): Promise<PermissionStatus | null> {
+  try {
+    return (await navigator.permissions?.query({ name: 'geolocation' })) ?? null
+  } catch {
+    return null
+  }
+}
 
 // A coarse, recently cached position is plenty for sorting branches by distance, and it is
 // quicker and kinder to batteries than a high-accuracy fix.
@@ -54,11 +69,43 @@ export function useLocation(): UseLocationResult {
       },
       (error) => {
         if (id !== latestRequest.current) return
-        setState({ status: error.code === PERMISSION_DENIED ? 'denied' : 'failed' })
+        if (error.code !== PERMISSION_DENIED) {
+          setState({ status: 'failed' })
+          return
+        }
+        setState({ status: 'denied' })
+        // A browser that has blocked the site will not show its prompt again, so asking again cannot
+        // help; find out, so the message can say what does.
+        void geolocationPermission().then((permission) => {
+          if (permission?.state === 'denied' && id === latestRequest.current) {
+            setState({ status: 'denied', blocked: true })
+          }
+        })
       },
       OPTIONS,
     )
   }, [])
+
+  // After a refusal, if the user changes their mind in the browser's site settings (the lock icon
+  // beside the address), find them straight away: no need to come back and press anything.
+  const refused = state.status === 'denied'
+  useEffect(() => {
+    if (!refused) return
+    let cancelled = false
+    let permission: PermissionStatus | null = null
+    const onChange = () => {
+      if (permission && permission.state !== 'denied') request()
+    }
+    void geolocationPermission().then((found) => {
+      if (cancelled || !found) return
+      permission = found
+      found.addEventListener('change', onChange)
+    })
+    return () => {
+      cancelled = true
+      permission?.removeEventListener('change', onChange)
+    }
+  }, [refused, request])
 
   const clear = useCallback(() => {
     latestRequest.current += 1

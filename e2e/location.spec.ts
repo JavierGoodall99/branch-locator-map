@@ -87,16 +87,34 @@ test.describe('near me when the browser blocks it', () => {
   test('keeps the whole list by name, and explains how to carry on', async ({ page }) => {
     await page.goto('/')
 
-    await expect(page.getByText(/turned off for this site/)).toBeVisible()
+    // The browser has said no for good, so it would not show its prompt again: the message says what helps.
+    await expect(page.getByText('Location is blocked. Allow it in your browser.')).toBeVisible()
     // What to do next is always on the page for a screen reader, and shown beside the map; a phone keeps it short.
+    await expect(page.getByText(/lock icon beside the web address/)).toBeAttached()
     await expect(page.getByText(/search by name, suburb or postcode/)).toBeAttached()
-    await expect(page.getByRole('banner').getByRole('button', { name: 'Try again' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Try again' })).toHaveCount(0)
     await expect(page.getByRole('article').first()).toBeVisible()
     await expect(page.getByRole('status').filter({ hasText: 'sorted by name' }).first()).toBeAttached()
     await expect(page.getByText(/\d+ (m|km) away/)).toHaveCount(0)
     // The distances stay on: choosing one asks again, which is the way back after a refusal.
     await expect(page.getByRole('button', { name: '25 km' })).toBeEnabled()
     await expect(page.getByRole('button', { name: '25 km' })).toHaveAttribute('aria-pressed', 'false')
+  })
+})
+
+test.describe('allowing location after it was blocked', () => {
+  test.use({ permissions: [], geolocation: CAPE_TOWN })
+
+  test('finds the location by itself when the browser setting is changed, with no button pressed', async ({ page, context }) => {
+    await page.goto('/')
+    await expect(page.getByText('Location is blocked. Allow it in your browser.')).toBeVisible()
+
+    // The user opens the site settings (the lock icon) and allows location.
+    await context.grantPermissions(['geolocation'], { origin: new URL(page.url()).origin })
+
+    await expect(page.getByRole('button', { name: 'Near me' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByRole('status').filter({ hasText: 'nearest first' }).first()).toBeAttached()
+    await expect(page.getByText('Location is blocked. Allow it in your browser.')).toHaveCount(0)
   })
 })
 

@@ -21,9 +21,17 @@ function note(location: UseLocationResult): Note {
     case 'locating':
       return { summary: 'Finding your location…', more: '' }
     case 'denied':
+      // Blocked: the browser will not ask again, so pressing Try again could not open its prompt. Say
+      // what does help, and that we will notice (see useLocation).
+      if (location.blocked) {
+        return {
+          summary: 'Location is blocked. Allow it in your browser.',
+          more: 'Use the lock icon beside the web address, and we’ll find you as soon as you do. Or search by name, suburb or postcode.',
+        }
+      }
       return {
         summary: 'Location is turned off for this site.',
-        more: 'Turn it on in your browser settings, or search by name, suburb or postcode.',
+        more: 'Allow it when your browser asks, or search by name, suburb or postcode.',
       }
     case 'failed':
       return {
@@ -78,7 +86,8 @@ export function LocationNote({ location }: { location: UseLocationResult }) {
   const { summary, more } = note(location)
   // The spinning icon already shows progress, so that message is announced but not displayed.
   const shown = Boolean(summary) && location.status !== 'locating'
-  const canRetry = location.status === 'denied' || location.status === 'failed'
+  // A blocked site cannot be asked again, so there is nothing to retry until the user allows it.
+  const canRetry = (location.status === 'denied' && !location.blocked) || location.status === 'failed'
 
   return (
     <p className={shown ? 'location-note' : 'visually-hidden'} role="status">

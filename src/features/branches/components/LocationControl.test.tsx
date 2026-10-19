@@ -120,9 +120,9 @@ describe('LocationNote', () => {
 
     const note = screen.getByRole('status')
     expect(note.querySelector('.location-note__summary')).toHaveTextContent('Location is turned off for this site.')
-    expect(note.querySelector('.location-note__more')).toHaveTextContent('Turn it on in your browser settings')
+    expect(note.querySelector('.location-note__more')).toHaveTextContent('Allow it when your browser asks')
     // A screen reader still hears all of it, in order, with a space between the parts.
-    expect(note).toHaveTextContent(/^Location is turned off for this site\. Turn it on in your browser settings, or search by name, suburb or postcode\.\s*Try again$/)
+    expect(note).toHaveTextContent(/^Location is turned off for this site\. Allow it when your browser asks, or search by name, suburb or postcode\.\s*Try again$/)
   })
 
   it('tells the user how to fix a refusal, and lets them try again', async () => {
@@ -133,6 +133,25 @@ describe('LocationNote', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
 
     expect(location.request).toHaveBeenCalledTimes(1)
+  })
+
+  describe('when the browser has blocked the site', () => {
+    const blocked = { status: 'denied' as const, blocked: true }
+
+    it('says what helps, short on a phone, and that it will notice', () => {
+      setup(blocked)
+
+      const note = screen.getByRole('status')
+      expect(note.querySelector('.location-note__summary')).toHaveTextContent('Location is blocked. Allow it in your browser.')
+      expect(note.querySelector('.location-note__more')).toHaveTextContent('lock icon beside the web address')
+      expect(note.querySelector('.location-note__more')).toHaveTextContent('we’ll find you as soon as you do')
+    })
+
+    it('has no Try again, because the browser would not show its prompt', () => {
+      setup(blocked)
+
+      expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument()
+    })
   })
 
   it('offers a retry when no position came back', async () => {

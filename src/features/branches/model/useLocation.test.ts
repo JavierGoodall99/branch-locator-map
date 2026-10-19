@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { useLocation } from './useLocation'
 
 type Success = (position: GeolocationPosition) => void
@@ -125,5 +125,115 @@ describe('useLocation', () => {
     unmount()
 
     expect(() => late.success(position(-26.2, 28.05))).not.toThrow()
+  })
+})
+
+/** A stand-in for the browser's record of the user's decision, which tests can change. */
+function stubPermission(initial: PermissionState) {
+  const listeners = new Set<() => void>()
+  const status = {
+    state: initial,
+    addEventListener: (_type: string, listener: () => void) => listeners.add(listener),
+    removeEventListener: (_type: string, listener: () => void) => listeners.delete(listener),
+  }
+  const query = vi.fn().mockResolvedValue(status)
+  Object.defineProperty(navigator, 'permissions', { value: { query }, configurable: true })
+  return {
+    query,
+    listeners,
+    change(state: PermissionState) {
+      status.state = state
+      listeners.forEach((listener) => listener())
+    },
+  }
+}
+
+describe('useLocation after a refusal', () => {
+  beforeEach(() => {
+    getCurrentPosition.mockReset()
+    stubGeolocation({ getCurrentPosition })
+  })
+
+  afterEach(() => {
+    stubGeolocation(undefined)
+    Object.defineProperty(navigator, 'permissions', { value: undefined, configurable: true })
+  })
+
+  async function refuse() {
+    const hook = renderHook(() => useLocation())
+    act(() => hook.result.current.request())
+    await act(async () => lastRequest().fail(failure(1)))
+    return hook
+  }
+
+  it('is not blocked when the browser will still ask, so asking again opens its prompt', async () => {
+    stubPermission('prompt')
+
+    const { result } = await refuse()
+
+    expect(result.current).toMatchObject({ status: 'denied' })
+    expect((result.current as { blocked?: boolean }).blocked).toBeFalsy()
+  })
+
+  it('is blocked when the browser has said no for good, so only its settings help', async () => {
+    stubPermission('denied')
+
+    const { result } = await refuse()
+
+    await waitFor(() => expect(result.current).toMatchObject({ status: 'denied', blocked: true }))
+  })
+
+  it('is not blocked, and does not break, where the browser cannot say', async () => {
+    Object.defineProperty(navigator, 'permissions', { value: undefined, configurable: true })
+
+    const { result } = await refuse()
+
+    expect(result.current.status).toBe('denied')
+    expect((result.current as { blocked?: boolean }).blocked).toBeFalsy()
+  })
+
+  it('does not break when reading the decision throws', async () => {
+    Object.defineProperty(navigator, 'permissions', {
+      value: { query: vi.fn().mockRejectedValue(new Error('nope')) },
+      configurable: true,
+    })
+
+    const { result } = await refuse()
+
+    expect(result.current.status).toBe('denied')
+  })
+
+  it('looks for the user again by itself when they allow location in the browser settings', async () => {
+    const permission = stubPermission('denied')
+    const { result } = await refuse()
+    await waitFor(() => expect(permission.listeners.size).toBe(1))
+    expect(getCurrentPosition).toHaveBeenCalledTimes(1)
+
+    act(() => permission.change('granted'))
+
+    expect(getCurrentPosition).toHaveBeenCalledTimes(2)
+    expect(result.current.status).toBe('locating')
+    act(() => lastRequest().success(position(-26.2, 28.05)))
+    expect(result.current.status).toBe('located')
+  })
+
+  it('does not look again while the site is still blocked', async () => {
+    const permission = stubPermission('denied')
+    await refuse()
+    await waitFor(() => expect(permission.listeners.size).toBe(1))
+
+    act(() => permission.change('denied'))
+
+    expect(getCurrentPosition).toHaveBeenCalledTimes(1)
+  })
+
+  it('stops watching once it is looking again, or is removed', async () => {
+    const permission = stubPermission('denied')
+    const { unmount } = await refuse()
+    await waitFor(() => expect(permission.listeners.size).toBe(1))
+
+    unmount()
+
+    expect(permission.listeners.size).toBe(0)
   })
 })
