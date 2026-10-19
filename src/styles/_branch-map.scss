@@ -29,13 +29,13 @@
   text-align: center;
 }
 
-// On a phone the results sheet covers the bottom 45% of the map, so lift the zoom buttons and
+// On a phone the results sheet covers the bottom 42% of the map, so lift the zoom buttons and
 // the attribution above it (the attribution has to stay visible), and keep status messages in
 // the strip of map that is left between the controls and the sheet.
 @include media-breakpoint-down(md) {
   .branch-map .maplibregl-ctrl-bottom-left,
   .branch-map .maplibregl-ctrl-bottom-right {
-    bottom: 45%;
+    bottom: 42%;
   }
 
   // A lowered sheet is only its handle, so they drop with it.
@@ -56,7 +56,7 @@
 
   .map-status {
     top: auto;
-    bottom: calc(45% + #{$spacer * 0.75});
+    bottom: calc(42% + #{$spacer * 0.75});
     left: $spacer * 0.75;
     max-width: calc(100% - 5rem); // stay clear of the zoom buttons on the right
     transform: none;

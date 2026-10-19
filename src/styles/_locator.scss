@@ -3,9 +3,10 @@
 
 $panel-width-md: 400px;
 $panel-width-xl: 440px;
-// The results sheet covers the bottom 45% of the screen on a phone, leaving the most room for
-// the map that still shows a couple of cards. view.ts and _branch-map.scss use the same 45%.
-$sheet-top: 55%;
+// The results sheet covers the bottom 42% of the screen on a phone: the cards are compact there, so
+// it still shows a card and the start of the next, and the rest is map. view.ts and _branch-map.scss
+// use the same 42%.
+$sheet-top: 58%;
 // While one place is open the controls are gone, so its details get a taller sheet: 60% of a phone
 // screen. view.ts uses the same 60%.
 $detail-sheet-top: 40%;
@@ -43,8 +44,8 @@ body {
   z-index: 20;
   display: flex;
   flex-direction: column;
-  gap: $spacer * 0.75;
-  padding: $spacer $spacer 0;
+  gap: $spacer * 0.5;
+  padding: $spacer * 0.75 $spacer * 0.75 0;
   pointer-events: none; // let the map take drags between controls
 
   > * {
@@ -89,7 +90,7 @@ body {
   justify-content: center;
   gap: 2px;
   width: calc(100% + #{$spacer * 2});
-  min-height: 44px;
+  min-height: 40px;
   margin: 0 (-$spacer);
   padding: 0;
   background: $white;

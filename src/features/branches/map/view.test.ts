@@ -6,7 +6,7 @@ describe('viewPadding', () => {
   })
 
   it('keeps the top controls and the results sheet clear on a phone', () => {
-    expect(viewPadding(false, 800)).toEqual({ top: 272, right: 24, bottom: 360, left: 24 })
+    expect(viewPadding(false, 800)).toEqual({ top: 208, right: 24, bottom: 336, left: 24 })
   })
 
   it('keeps only the taller details sheet clear on a phone, because the controls are hidden then', () => {
@@ -83,8 +83,9 @@ describe('measuredPhonePadding', () => {
     expect(measuredPhonePadding(canvas)).toEqual({ top: 206, right: 24, bottom: 396, left: 24 })
   })
 
-  it('leaves more of the map than the fixed shares did, which kept 34% and 45%', () => {
-    const canvas = phonePage({ map: [390, 844], controls: [0, 190], sheetTop: 464 })
+  it('leaves more of the map than the fixed shares did, which kept 26% and 42%', () => {
+    // The real phone layout: controls about 148px high (more with a note), and the sheet from 58%.
+    const canvas = phonePage({ map: [390, 844], controls: [0, 148], sheetTop: 490 })
     const measured = measuredPhonePadding(canvas)!
     const fixed = viewPadding(false, 844)
 

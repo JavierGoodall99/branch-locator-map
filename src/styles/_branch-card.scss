@@ -195,3 +195,62 @@
 .branch-card__actions .btn-primary {
   flex: 1 1 7rem;
 }
+
+// Phone: a tighter card, so the sheet shows more of the list in less room and leaves the map more.
+@include media-breakpoint-down(md) {
+  .results-list {
+    gap: $spacer * 0.5;
+  }
+
+  .branch-card {
+    padding: $spacer * 0.75;
+
+    .h4 {
+      font-size: 1rem;
+    }
+
+    &__header {
+      gap: $spacer * 0.5;
+    }
+
+    &__meta {
+      font-size: 0.8125rem;
+    }
+
+    &__services {
+      margin-top: 6px;
+
+      li {
+        font-size: 0.8125rem;
+      }
+    }
+
+    &__actions {
+      margin-top: $spacer * 0.5;
+
+      .btn {
+        --bs-btn-padding-y: 0.3125rem;
+        --bs-btn-font-size: 0.875rem;
+      }
+    }
+
+    .mt-2 {
+      margin-top: $spacer * 0.375 !important; // Bootstrap's utility is !important, so this has to be too
+    }
+
+    .type-badge {
+      width: 32px;
+      height: 32px;
+
+      .icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .status-chip {
+      min-height: 24px;
+      font-size: 0.8125rem;
+    }
+  }
+}
