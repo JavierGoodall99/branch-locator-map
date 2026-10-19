@@ -1,0 +1,16 @@
+# Build output and generated files
+dist
+node_modules
+test-results
+playwright-report
+.playwright-mcp
+package-lock.json
+
+# Data and the design hand-off, which are not code
+data
+design
+public/branches.json
+src/features/branches/map/fixtures
+
+# Prose with long table rows, which Prettier would only make harder to read
+*.md
