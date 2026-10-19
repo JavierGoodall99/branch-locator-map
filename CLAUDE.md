@@ -23,7 +23,7 @@ Production React + TypeScript single-page app built with Vite and styled with Bo
 - `npm run typecheck` – type-check without building
 - `npm test` / `npm run test:e2e` – unit tests (Vitest) / end-to-end tests (Playwright)
 - `npm run preview` – serve the production build locally
-- `docker build -t branch-locator .` – the production image (nginx, port 8080); `docker build --target test .` runs lint, formatting and unit tests inside the build; `e2e/container.spec.ts` checks a running container (see the README)
+- `docker build -t branch-locator .` – the production image (nginx, port 8080); `docker build --target test .` runs lint, formatting and unit tests inside the build; `CONTAINER_URL=http://localhost:8080 npx playwright test --project=container` checks a running container (see the README)
 
 Run `npm run lint`, `npm run format:check` and `npm run build` (and the tests) before considering a change done. CI (`.github/workflows/ci.yml`) runs all of them.
 

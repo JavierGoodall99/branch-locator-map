@@ -214,8 +214,7 @@ test.describe('opening a card', () => {
     await expect(page.getByRole('group', { name: 'Show' })).toBeVisible()
   })
 
-  test('on a desktop the details fill the sidebar from top to bottom', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'The sidebar is a sheet on a phone')
+  test('on a desktop the details fill the sidebar from top to bottom', { tag: '@desktop' }, async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
 

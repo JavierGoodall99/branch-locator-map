@@ -1,16 +1,15 @@
 import { expect, test } from '@playwright/test'
 
 // Checks the production container, the way a browser meets it: the real headers, the real worker file and
-// the real map tiles. It only runs when CONTAINER_URL is set, because the other tests use `vite preview`
-// and cannot see mistakes in the nginx configuration. For example:
+// the real map tiles. The other tests use `vite preview`, which cannot see mistakes in the nginx
+// configuration. These run in their own Playwright project, which exists only when CONTAINER_URL is set
+// (see playwright.config.ts):
 //
 //   docker run -d -p 8080:8080 branch-locator
-//   CONTAINER_URL=http://localhost:8080 npx playwright test e2e/container.spec.ts --project=desktop
-const url = process.env.CONTAINER_URL
+//   CONTAINER_URL=http://localhost:8080 npx playwright test --project=container
 
 test.describe('the production container', () => {
-  test.skip(!url, 'Set CONTAINER_URL to the running container to check it')
-  test.use({ baseURL: url, geolocation: { latitude: -26.1076, longitude: 28.0567 }, permissions: ['geolocation'] })
+  test.use({ geolocation: { latitude: -26.1076, longitude: 28.0567 }, permissions: ['geolocation'] })
 
   test('serves the app with no policy violations, a map worker that loads and vector tiles', async ({ page }) => {
     const violations: string[] = []

@@ -74,7 +74,7 @@ jobs:
       # Opens the running container in a browser: headers, caching, compression, the map worker and tiles.
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npx playwright test e2e/container.spec.ts --project=desktop
+      - run: npx playwright test --project=container
         env:
           CONTAINER_URL: http://localhost:8080
 

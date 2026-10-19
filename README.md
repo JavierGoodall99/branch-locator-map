@@ -53,7 +53,7 @@ Two optional checks:
 ```bash
 docker build --target test .                    # lint, formatting and unit tests, inside the build
 docker run -d -p 8080:8080 branch-locator
-CONTAINER_URL=http://localhost:8080 npx playwright test e2e/container.spec.ts --project=desktop
+CONTAINER_URL=http://localhost:8080 npx playwright test --project=container
 ```
 
 The second opens the running container in a browser and checks the headers, caching, compression, that
