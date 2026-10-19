@@ -12,16 +12,19 @@ Production React + TypeScript single-page app built with Vite and styled with Bo
 - Bootstrap 5.3.x (stable). Do not upgrade to Bootstrap 6 until it has a stable release; only alphas exist.
 - `react-bootstrap` for components (no Bootstrap JavaScript, no jQuery)
 - Sass (`sass`) for theming; Nunito Sans self-hosted via `@fontsource-variable/nunito-sans`
-- Lint: oxlint
+- Lint: oxlint (with the jsx-a11y rules); format: Prettier
 
 ## Commands
 
 - `npm run dev` – start the dev server
 - `npm run build` – type-check (`tsc -b`) and build for production
 - `npm run lint` – run oxlint
+- `npm run format` / `npm run format:check` – format with Prettier, or only check
+- `npm run typecheck` – type-check without building
+- `npm test` / `npm run test:e2e` – unit tests (Vitest) / end-to-end tests (Playwright)
 - `npm run preview` – serve the production build locally
 
-Run `npm run lint` and `npm run build` before considering a change done.
+Run `npm run lint`, `npm run format:check` and `npm run build` (and the tests) before considering a change done. CI (`.github/workflows/ci.yml`) runs all of them.
 
 ## Structure
 
