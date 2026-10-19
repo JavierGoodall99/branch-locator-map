@@ -42,3 +42,42 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Proves the Dockerfile builds, by building it: the production image, and the optional test stage.
+      - run: docker build -t branch-locator .
+      - run: docker build --target test .
+
+      - name: Start the container and wait for its health check
+        run: |
+          docker run -d --name branch-locator -p 8080:8080 branch-locator
+          for i in $(seq 1 30); do
+            status=$(docker inspect --format '{{.State.Health.Status}}' branch-locator)
+            echo "health: $status"
+            [ "$status" = "healthy" ] && exit 0
+            sleep 2
+          done
+          docker logs branch-locator
+          exit 1
+
+      # Opens the running container in a browser: headers, caching, compression, the map worker and tiles.
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test e2e/container.spec.ts --project=desktop
+        env:
+          CONTAINER_URL: http://localhost:8080
+
+      - name: Show the container's log if something failed
+        if: failure()
+        run: docker logs branch-locator
