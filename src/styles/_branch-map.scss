@@ -48,12 +48,6 @@
     bottom: calc(#{$sheet-lowered-height} + #{$spacer * 0.75});
   }
 
-  // The taller details sheet pushes them up with it.
-  .locator--detail .branch-map .maplibregl-ctrl-bottom-left,
-  .locator--detail .branch-map .maplibregl-ctrl-bottom-right {
-    bottom: 60%;
-  }
-
   .map-status {
     top: auto;
     bottom: calc(42% + #{$spacer * 0.75});

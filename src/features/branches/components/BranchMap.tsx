@@ -186,7 +186,7 @@ export function BranchMap({ branches, selectedId, hoveredId, userLocation, onSel
       map.easeTo({
         center: [branch.location.lng, branch.location.lat],
         zoom: Math.max(map.getZoom(), SELECTED_ZOOM),
-        // Its details are open, so on a phone they have the taller sheet.
+        // Its details are open, so there are no controls on a phone, only the sheet.
         padding: mapPadding(map.getContainer(), true),
         duration: motionDuration(),
       })

@@ -299,15 +299,15 @@ describe('BranchMap', () => {
     )
   })
 
-  it('keeps the taller details sheet clear when it moves to the selected branch, on a phone', async () => {
+  it('keeps the details sheet clear when it moves to the selected branch, on a phone', async () => {
     const { update } = setup([branch('a', -26.2, 28.05)])
     await loadMap()
 
     update({ selectedId: 'a' })
 
-    // The container is 800px high in the fake, and the details sheet covers 60% of it.
+    // The container is 800px high in the fake, and the details sheet covers 42% of it.
     expect(currentMap().easeTo).toHaveBeenCalledWith(
-      expect.objectContaining({ padding: expect.objectContaining({ bottom: 480 }) }),
+      expect.objectContaining({ padding: expect.objectContaining({ bottom: 336 }) }),
     )
   })
 

@@ -70,15 +70,20 @@ test.describe('the map', () => {
     await expect(page.getByRole('button', { name: 'Hide results' })).toBeHidden()
   })
 
-  test('the details take a taller sheet on a phone, with Get directions in view', async ({ page, isMobile }) => {
+  test('the details keep the same sheet as the list on a phone, so nothing jumps, with Get directions in view', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'This is about the phone layout')
     await page.goto('/')
+    await expect(page.getByRole('article').first()).toBeVisible()
+    const sheet = () => page.evaluate(() => {
+      const box = document.querySelector('.locator__results')!.getBoundingClientRect()
+      return { top: Math.round(box.top), height: Math.round(box.height) }
+    })
+    const list = await sheet()
+
     await page.getByRole('article').first().getByRole('button').first().click()
 
-    const directions = page.getByRole('link', { name: /Get directions/ })
-    await expect(directions).toBeInViewport({ ratio: 1 })
-    const sheetTop = await page.evaluate(() => document.querySelector('.locator__results')!.getBoundingClientRect().top)
-    expect(sheetTop).toBeLessThanOrEqual(page.viewportSize()!.height * 0.45)
+    await expect(page.getByRole('link', { name: /Get directions/ })).toBeInViewport({ ratio: 1 })
+    expect(await sheet()).toEqual(list)
   })
 
   test('the details have no photo on a phone, and do not download one', async ({ page, isMobile }) => {

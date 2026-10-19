@@ -7,9 +7,6 @@ $panel-width-xl: 440px;
 // it still shows a card and the start of the next, and the rest is map. view.ts and _branch-map.scss
 // use the same 42%.
 $sheet-top: 58%;
-// While one place is open the controls are gone, so its details get a taller sheet: 60% of a phone
-// screen. view.ts uses the same 60%.
-$detail-sheet-top: 40%;
 // A lowered sheet is only its handle: a strip along the bottom, so the whole map shows.
 $sheet-lowered-height: 56px;
 $control-grab: #c9d3d8; // the little bar on the handle
@@ -57,10 +54,6 @@ body {
 // step aside. They are hidden, not removed, so the search keeps what was typed.
 .locator--detail .locator__controls {
   display: none;
-}
-
-.locator--detail .locator__results {
-  inset-block-start: $detail-sheet-top;
 }
 
 .locator__results {

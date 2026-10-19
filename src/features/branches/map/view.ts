@@ -12,12 +12,12 @@ export const WIDE_LAYOUT_QUERY = '(min-width: 768px)'
  * Space to keep clear when moving the map. On a phone the controls cover the top and the
  * results sheet covers the bottom 42%, so the visible map is a band in between; on wider
  * screens the panel sits beside the map and only a small margin is needed. While a place is open
- * on a phone its details take a taller sheet (60%) and the controls are gone, so the visible map
- * is the strip above the sheet.
+ * on a phone the sheet is the same height as the list's (so nothing jumps when a place is opened)
+ * and the controls are gone, so the visible map is the strip above the sheet.
  */
 export function viewPadding(isWide: boolean, height: number, detail = false): Padding {
   if (isWide) return { top: 48, right: 48, bottom: 48, left: 48 }
-  if (detail) return { top: 24, right: 24, bottom: Math.round(height * 0.6), left: 24 }
+  if (detail) return { top: 24, right: 24, bottom: Math.round(height * 0.42), left: 24 }
   return { top: Math.round(height * 0.26), right: 24, bottom: Math.round(height * 0.42), left: 24 }
 }
 
