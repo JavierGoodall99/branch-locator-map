@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
     "lint": "oxlint",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -37,5 +38,8 @@
     "vite": "^8.3.0",
     "vite-imagetools": "^12.0.1",
     "vitest": "^5.0.4"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }
