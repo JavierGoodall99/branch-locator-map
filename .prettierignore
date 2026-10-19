@@ -6,9 +6,8 @@ playwright-report
 .playwright-mcp
 package-lock.json
 
-# Data and the design hand-off, which are not code
+# Data, which is not code
 data
-design
 public/branches.json
 src/features/branches/map/fixtures
 

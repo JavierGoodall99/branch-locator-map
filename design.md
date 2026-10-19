@@ -169,7 +169,7 @@ Components come from `react-bootstrap`; Bootstrap's own JavaScript is not loaded
 - Which of the three assessment projects this system is applied to.
 ## Branch locator: scope and decisions
 
-Source design: `design/branch-locator/` (exported from Claude Design; view the `.dc.html` files there for layouts at 375, 834 and 1440px). It is a reference for layout and behavior. Where it differs from this file, this file wins.
+The layout started from a Claude Design prototype (screens at 375, 834 and 1440px), which has been built and has since moved on, so it is no longer kept in the repository. This file describes what the app does now.
 
 | Topic | Decision |
 | --- | --- |
