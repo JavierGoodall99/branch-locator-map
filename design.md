@@ -161,6 +161,8 @@ Implemented in `src/styles/`:
 - `main.scss`: imports only the Bootstrap modules in use.
 - `_custom.scss`: button hover lift (disabled under `prefers-reduced-motion`), `tabular-nums`, and the extra brand CSS variables.
 
+The branch locator's own styles are partials in `src/features/branches/styles/` (layout, controls, cards, details, map). `main.scss` imports them after Bootstrap, in order, so they can use Bootstrap's variables and mixins; components do not import stylesheets themselves.
+
 Components come from `react-bootstrap`; Bootstrap's own JavaScript is not loaded. The source site themes with override classes (`btn button--v2`); this app gets the same look from variables instead, so no second class is needed on buttons.
 
 ## Open questions

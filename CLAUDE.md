@@ -33,7 +33,8 @@ Run `npm run lint`, `npm run format:check` and `npm run build` (and the tests) b
 - `src/App.tsx` – root component
 - `src/styles/_variables.scss` – theme overrides (Sass variables, imported before Bootstrap); tokens are documented in `design.md`
 - `src/styles/_custom.scss` – small app-level additions, loaded after Bootstrap
-- `src/styles/main.scss` – entry; imports only the Bootstrap modules the app uses
+- `src/styles/main.scss` – entry; imports only the Bootstrap modules the app uses, then the feature's styles in order
+- `src/features/branches/styles/` – the branch locator's own Sass partials, imported by `main.scss` after Bootstrap (not by components, because they rely on Bootstrap's variables, mixins and load order)
 - `vite.config.ts` – silences Bootstrap 5.3's own Sass deprecation warnings only
 - `postcss.config.js` – intentionally empty. It stops Vite from picking up an unrelated `postcss.config.mjs` in the parent folder (`D:\Coding Projects`). Do not delete it.
 
