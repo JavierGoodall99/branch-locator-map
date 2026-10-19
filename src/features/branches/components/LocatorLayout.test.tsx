@@ -4,11 +4,7 @@ import { LocatorLayout } from './LocatorLayout'
 
 function renderLayout() {
   return render(
-    <LocatorLayout
-      controls={<input aria-label="Search" />}
-      results={<h1>Results</h1>}
-      map={<p>Map content</p>}
-    />,
+    <LocatorLayout controls={<input aria-label="Search" />} results={<h1>Results</h1>} map={<p>Map content</p>} />,
   )
 }
 
@@ -84,7 +80,9 @@ describe('LocatorLayout sheet handle', () => {
     const handle = screen.getByRole('button', { name: 'Hide results' })
     expect(screen.getByRole('main').firstElementChild).toBe(handle)
     expect(handle).toHaveAttribute('aria-controls', 'results-content')
-    expect(document.getElementById('results-content')).toContainElement(screen.getByRole('heading', { name: 'Results' }))
+    expect(document.getElementById('results-content')).toContainElement(
+      screen.getByRole('heading', { name: 'Results' }),
+    )
   })
 
   it('lowers the sheet, and raises it again, and its name follows', async () => {

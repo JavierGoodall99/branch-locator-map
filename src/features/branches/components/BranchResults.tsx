@@ -53,7 +53,9 @@ export function BranchResults({ state, filters, now, origin, onClearFilters, onS
       {/* Not shown, but still the page heading and a live count for screen reader users. */}
       <div className="visually-hidden">
         <h1>Branches and ATMs</h1>
-        <p role="status">{countLabel(state, branches.length, Boolean(origin) && filters.sort === 'distance', filters.radiusKm)}</p>
+        <p role="status">
+          {countLabel(state, branches.length, Boolean(origin) && filters.sort === 'distance', filters.radiusKm)}
+        </p>
       </div>
 
       {state.status === 'loading' && <SkeletonList />}

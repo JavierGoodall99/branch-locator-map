@@ -20,12 +20,9 @@ const cardCount = () => document.querySelectorAll('article.branch-card').length
 const firstDetailsButton = () => document.querySelector<HTMLButtonElement>('[id^="details-"]')!
 
 const listed = sample.filter((branch) => branch.status !== 'permanently-closed').length
-const listedBranches = sample.filter(
-  (branch) => branch.status !== 'permanently-closed' && branch.type !== 'atm',
-).length
+const listedBranches = sample.filter((branch) => branch.status !== 'permanently-closed' && branch.type !== 'atm').length
 
-const stubSample = () =>
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(sample))))
+const stubSample = () => vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(sample))))
 
 const capeTown = { coords: { latitude: -33.9249, longitude: 18.4241 } }
 
@@ -63,9 +60,7 @@ describe('App', () => {
     vi.stubGlobal('fetch', fetchMock)
     render(<App />)
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Branch service responded with status 503.',
-    )
+    expect(await screen.findByRole('alert')).toHaveTextContent('Branch service responded with status 503.')
 
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
 
@@ -242,7 +237,9 @@ describe('App', () => {
 
     it('narrows the list to places open around the clock', async () => {
       await load()
-      const around = sample.filter((item) => item.status === 'open' && item.hours?.open === '00:00' && item.hours?.close === '24:00').length
+      const around = sample.filter(
+        (item) => item.status === 'open' && item.hours?.open === '00:00' && item.hours?.close === '24:00',
+      ).length
 
       await userEvent.click(filtersButton())
       await userEvent.click(within(dialog()).getByRole('button', { name: 'Open 24 hours' }))

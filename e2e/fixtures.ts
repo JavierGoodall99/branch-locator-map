@@ -53,14 +53,19 @@ export const test = base.extend({
 export { expect }
 
 /** The search field. It is a combobox, because it offers suggestions as the user types. */
-export const searchField = (page: Page) => page.getByRole('combobox', { name: 'Search by name, suburb, town or postcode' })
+export const searchField = (page: Page) =>
+  page.getByRole('combobox', { name: 'Search by name, suburb, town or postcode' })
 
 /** The button on a card that opens its details: the name, which is stretched over the whole card. */
 export const openButton = (card: Locator) => card.getByRole('heading').getByRole('button')
 
 /** The number in the results count, for example 128 from "128 locations, sorted by name". */
 export async function resultCount(page: Page): Promise<number> {
-  const text = await page.getByRole('status').filter({ hasText: /^\d+ locations?/ }).first().textContent()
+  const text = await page
+    .getByRole('status')
+    .filter({ hasText: /^\d+ locations?/ })
+    .first()
+    .textContent()
   const match = text?.match(/^(\d+)/)
   if (!match) throw new Error(`No result count found in: ${text}`)
   return Number(match[1])

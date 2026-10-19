@@ -58,8 +58,7 @@ export function BranchDetail({ branch, now, distanceKm, onBack }: BranchDetailPr
             rel="noopener noreferrer"
           >
             <Icon name="navigation" />
-            Get directions{' '}
-            <span className="visually-hidden">(opens in a new tab)</span>
+            Get directions <span className="visually-hidden">(opens in a new tab)</span>
           </a>
           {branch.phone && (
             <a className="btn btn-link" href={telUrl(branch.phone)}>

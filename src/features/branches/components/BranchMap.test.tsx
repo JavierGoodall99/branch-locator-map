@@ -332,7 +332,10 @@ describe('BranchMap', () => {
     })
 
     it('is left as MapLibre opens it on a wide screen, where there is room', async () => {
-      vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: query === '(min-width: 768px)', media: query })))
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn((query: string) => ({ matches: query === '(min-width: 768px)', media: query })),
+      )
       setup()
       const credit = addCredit()
 
@@ -353,7 +356,10 @@ describe('BranchMap', () => {
   })
 
   describe('the place under the pointer in the list', () => {
-    const drawn = () => currentMap().hoverSetData.mock.lastCall![0].features.map((feature: { properties: { id: string } }) => feature.properties.id)
+    const drawn = () =>
+      currentMap().hoverSetData.mock.lastCall![0].features.map(
+        (feature: { properties: { id: string } }) => feature.properties.id,
+      )
 
     it('is drawn on the map, without moving it', async () => {
       const { update } = setup([branch('a'), branch('b', -33.9, 18.4)])

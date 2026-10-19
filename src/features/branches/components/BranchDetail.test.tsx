@@ -82,7 +82,9 @@ describe('BranchDetail', () => {
     it('puts the way back over the photo', () => {
       setup()
 
-      expect(document.querySelector('.detail-hero')).toContainElement(screen.getByRole('button', { name: 'Back to results' }))
+      expect(document.querySelector('.detail-hero')).toContainElement(
+        screen.getByRole('button', { name: 'Back to results' }),
+      )
     })
   })
 
@@ -95,7 +97,9 @@ describe('BranchDetail', () => {
 
       expect(document.querySelector('img')).toBeNull()
       expect(document.querySelector('picture')).toBeNull()
-      expect(document.querySelector('.detail-bar')).toContainElement(screen.getByRole('button', { name: 'Back to results' }))
+      expect(document.querySelector('.detail-bar')).toContainElement(
+        screen.getByRole('button', { name: 'Back to results' }),
+      )
     })
 
     it('still goes back, and keeps the name, address and buttons', async () => {

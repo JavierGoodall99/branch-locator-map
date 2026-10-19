@@ -62,7 +62,8 @@ function stubCanvas() {
 function register() {
   const map = { addImage: vi.fn() }
   addPinImages(map as never, colors)
-  const image = (name: string) => map.addImage.mock.calls.find((call) => call[0] === name)![1] as { width: number; height: number }
+  const image = (name: string) =>
+    map.addImage.mock.calls.find((call) => call[0] === name)![1] as { width: number; height: number }
   return { map, image }
 }
 

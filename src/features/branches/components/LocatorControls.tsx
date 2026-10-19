@@ -29,7 +29,14 @@ const SHOW_OPTIONS: { value: ShowMode; label: string; icon?: IconName }[] = [
 ]
 
 /** Brand, search with suggestions and Near me, the Filters button, the show switch and the distances. */
-export function LocatorControls({ filters, onChange, location, branches, onPickBranch, countResults }: LocatorControlsProps) {
+export function LocatorControls({
+  filters,
+  onChange,
+  location,
+  branches,
+  onPickBranch,
+  countResults,
+}: LocatorControlsProps) {
   const [filtersOpen, setFiltersOpen] = useState(false)
   const set = (change: Partial<LocatorFilters>) => onChange({ ...filters, ...change })
 

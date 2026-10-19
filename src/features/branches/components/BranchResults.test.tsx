@@ -33,7 +33,9 @@ const clear = vi.fn()
 const select = vi.fn()
 
 /** BranchResults with sensible defaults, so each test only states what it cares about. */
-function Results(props: Partial<ComponentProps<typeof BranchResults>> & Pick<ComponentProps<typeof BranchResults>, 'state'>) {
+function Results(
+  props: Partial<ComponentProps<typeof BranchResults>> & Pick<ComponentProps<typeof BranchResults>, 'state'>,
+) {
   return <BranchResults filters={DEFAULT_FILTERS} now={now} onClearFilters={clear} onSelect={select} {...props} />
 }
 
@@ -60,11 +62,7 @@ describe('BranchResults', () => {
   })
 
   it('lists branches sorted by name and announces the count', () => {
-    render(
-      <Results
-        state={success([branch('b', 'Capitec Bank Paarl'), branch('a', 'Capitec Bank Durban')])}
-      />,
-    )
+    render(<Results state={success([branch('b', 'Capitec Bank Paarl'), branch('a', 'Capitec Bank Durban')])} />)
 
     const cards = screen.getAllByRole('article')
     expect(cards.map((card) => within(card).getByRole('heading').textContent)).toEqual([
@@ -103,11 +101,7 @@ describe('BranchResults', () => {
   })
 
   it('shows an error as an alert with a working retry', async () => {
-    render(
-      <Results
-        state={{ status: 'error', message: 'Could not reach the branch service.', retry }}
-      />,
-    )
+    render(<Results state={{ status: 'error', message: 'Could not reach the branch service.', retry }} />)
 
     expect(screen.getByRole('alert')).toHaveTextContent('Could not reach the branch service.')
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }))

@@ -35,7 +35,14 @@ export function pinTipOffset(kind: PinKind): number {
 }
 
 /** Draws one of the line icons, given its path data, centred on a point. */
-function drawIcon(context: CanvasRenderingContext2D, icon: IconShape, size: number, centreX: number, centreY: number, color: string) {
+function drawIcon(
+  context: CanvasRenderingContext2D,
+  icon: IconShape,
+  size: number,
+  centreX: number,
+  centreY: number,
+  color: string,
+) {
   context.save()
   context.translate(centreX - size / 2, centreY - size / 2)
   context.scale(size / 24, size / 24) // the icon paths are drawn in a 24 by 24 box

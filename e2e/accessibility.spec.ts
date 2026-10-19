@@ -23,17 +23,19 @@ function isKnownBrandBlueNearMiss(data: ContrastData | undefined): boolean {
 async function scan(page: Page) {
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
 
-  return results.violations
-    .map((violation) => ({
-      rule: violation.id,
-      impact: violation.impact,
-      help: violation.help,
-      nodes: violation.nodes
-        .filter((node) => violation.id !== 'color-contrast' || !isKnownBrandBlueNearMiss(node.any[0]?.data))
-        .map((node) => node.target.join(' ')),
-    }))
-    // Show what failed in the test report, not just that something did.
-    .filter((violation) => violation.nodes.length > 0)
+  return (
+    results.violations
+      .map((violation) => ({
+        rule: violation.id,
+        impact: violation.impact,
+        help: violation.help,
+        nodes: violation.nodes
+          .filter((node) => violation.id !== 'color-contrast' || !isKnownBrandBlueNearMiss(node.any[0]?.data))
+          .map((node) => node.target.join(' ')),
+      }))
+      // Show what failed in the test report, not just that something did.
+      .filter((violation) => violation.nodes.length > 0)
+  )
 }
 
 test.describe('accessibility', () => {

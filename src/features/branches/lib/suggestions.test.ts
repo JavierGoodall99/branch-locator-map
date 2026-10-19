@@ -21,8 +21,15 @@ function branch(id: string, name: string, address: string, overrides: Partial<Br
 
 const branches = [
   branch('1', 'Capitec Bank Sandton City', 'Sandton City, Rivonia Road, Sandton, Gauteng, 2196'),
-  branch('2', 'Capitec Bank Fourways Crossing', 'Shop G35, Fourways Crossing, Twilight Avenue, Lone Hill, Sandton, Gauteng, 2062'),
-  branch('3', 'Capitec Bank ATM Sandton Station', 'Sandton Station, Rivonia Road, Sandton, Gauteng, 2196', { type: 'atm', services: ['ATM'] }),
+  branch(
+    '2',
+    'Capitec Bank Fourways Crossing',
+    'Shop G35, Fourways Crossing, Twilight Avenue, Lone Hill, Sandton, Gauteng, 2062',
+  ),
+  branch('3', 'Capitec Bank ATM Sandton Station', 'Sandton Station, Rivonia Road, Sandton, Gauteng, 2196', {
+    type: 'atm',
+    services: ['ATM'],
+  }),
   branch('4', 'Capitec Bank Paarl', 'Lady Grey Street, Paarl, Western Cape, 7646'),
   branch('5', 'Capitec Bank Cavendish Square', '1 Dreyer Street, Claremont, Cape Town, Western Cape, 7708'),
   branch('6', 'Capitec Bank Café Plaza', 'Station Drive, Durban, KwaZulu-Natal, 4001'),
@@ -70,7 +77,9 @@ describe('buildPlaceIndex', () => {
       branch('c', 'C', 'Long Street, Pretória, Gauteng, 0003'),
     ])
 
-    expect(merged.filter((place) => place.kind === 'place' && place.label.toLowerCase().startsWith('pretor'))).toHaveLength(1)
+    expect(
+      merged.filter((place) => place.kind === 'place' && place.label.toLowerCase().startsWith('pretor')),
+    ).toHaveLength(1)
   })
 })
 

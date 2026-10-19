@@ -102,7 +102,10 @@ describe('LocatorControls', () => {
   it('explains Near me in its tooltip, not as text on the page', () => {
     setup()
 
-    expect(screen.getByRole('button', { name: 'Near me' })).toHaveAttribute('title', expect.stringContaining('stays on your device'))
+    expect(screen.getByRole('button', { name: 'Near me' })).toHaveAttribute(
+      'title',
+      expect.stringContaining('stays on your device'),
+    )
     expect(screen.queryByText(/sorts by distance/)).not.toBeInTheDocument()
   })
 
@@ -244,12 +247,15 @@ describe('LocatorControls', () => {
       const window = within(dialog())
       const when = within(window.getByRole('group', { name: 'When' }))
       expect(when.getAllByRole('button').map((chip) => chip.textContent)).toEqual(['Open now', 'Open 24 hours'])
-      expect(within(window.getByRole('group', { name: 'Services' })).getByRole('button', { name: 'SmartID Services' })).toBeInTheDocument()
+      expect(
+        within(window.getByRole('group', { name: 'Services' })).getByRole('button', { name: 'SmartID Services' }),
+      ).toBeInTheDocument()
       expect(within(window.getByRole('group', { name: 'Province' })).getAllByRole('button')).toHaveLength(9)
-      expect(within(window.getByRole('radiogroup', { name: 'Sort by' })).getAllByRole('radio').map((chip) => chip.textContent)).toEqual([
-        'Distance',
-        'Name',
-      ])
+      expect(
+        within(window.getByRole('radiogroup', { name: 'Sort by' }))
+          .getAllByRole('radio')
+          .map((chip) => chip.textContent),
+      ).toEqual(['Distance', 'Name'])
     })
 
     it('offers no days of the week, because the data has one set of hours for every day', async () => {

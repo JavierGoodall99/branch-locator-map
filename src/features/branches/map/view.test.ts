@@ -118,7 +118,10 @@ describe('mapPadding', () => {
   })
 
   const stubWide = (wide: boolean) =>
-    vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: wide && query === '(min-width: 768px)', media: query })))
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn((query: string) => ({ matches: wide && query === '(min-width: 768px)', media: query })),
+    )
 
   it('uses an even margin beside the side panel on a wide screen', () => {
     stubWide(true)

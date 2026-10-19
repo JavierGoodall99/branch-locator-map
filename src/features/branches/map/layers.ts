@@ -33,16 +33,8 @@ export function readMapColors(): MapColors {
 }
 
 const isCluster: ExpressionSpecification = ['has', 'point_count']
-const isBranchPin: ExpressionSpecification = [
-  'all',
-  ['!', ['has', 'point_count']],
-  ['!=', ['get', 'type'], 'atm'],
-]
-const isAtmPin: ExpressionSpecification = [
-  'all',
-  ['!', ['has', 'point_count']],
-  ['==', ['get', 'type'], 'atm'],
-]
+const isBranchPin: ExpressionSpecification = ['all', ['!', ['has', 'point_count']], ['!=', ['get', 'type'], 'atm']]
+const isAtmPin: ExpressionSpecification = ['all', ['!', ['has', 'point_count']], ['==', ['get', 'type'], 'atm']]
 
 /**
  * Layout for a pin layer. A branch pin is held by the tip of its tail, an ATM pin by its centre. Pins

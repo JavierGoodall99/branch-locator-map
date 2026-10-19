@@ -1,5 +1,12 @@
 import type { Branch } from '../types'
-import { SOUTH_AFRICA_BOUNDS, boundsFor, boundsOfPoints, idsKey, toFeatureCollection, userLocationCollection } from './geo'
+import {
+  SOUTH_AFRICA_BOUNDS,
+  boundsFor,
+  boundsOfPoints,
+  idsKey,
+  toFeatureCollection,
+  userLocationCollection,
+} from './geo'
 
 function branch(id: string, lat: number, lng: number, overrides: Partial<Branch> = {}): Branch {
   return {

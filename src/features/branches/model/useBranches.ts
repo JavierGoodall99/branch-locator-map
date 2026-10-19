@@ -3,9 +3,7 @@ import { BranchesApiError, fetchBranches } from '../api/branchesApi'
 import type { Branch } from '../types'
 
 export type BranchesState =
-  | { status: 'loading' }
-  | { status: 'success'; branches: Branch[] }
-  | { status: 'error'; message: string }
+  { status: 'loading' } | { status: 'success'; branches: Branch[] } | { status: 'error'; message: string }
 
 export type UseBranchesResult = BranchesState & { retry: () => void }
 

@@ -1,5 +1,12 @@
 import { HOVER_SOURCE_ID, LAYERS, PIN_IMAGES, SOURCE_ID, USER_LAYERS, USER_SOURCE_ID } from './config'
-import { addBranchLayers, addHoverLayers, addUserLocationLayers, readMapColors, selectedFilters, type MapColors } from './layers'
+import {
+  addBranchLayers,
+  addHoverLayers,
+  addUserLocationLayers,
+  readMapColors,
+  selectedFilters,
+  type MapColors,
+} from './layers'
 
 const colors: MapColors = {
   primary: '#111111',
@@ -59,7 +66,10 @@ describe('addBranchLayers', () => {
     expect(layers[LAYERS.branches]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.branch } })
     expect(layers[LAYERS.atms]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.atm } })
     expect(layers[LAYERS.selected]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.selected } })
-    expect(layers[LAYERS.selectedAtm]).toMatchObject({ type: 'symbol', layout: { 'icon-image': PIN_IMAGES.selectedAtm } })
+    expect(layers[LAYERS.selectedAtm]).toMatchObject({
+      type: 'symbol',
+      layout: { 'icon-image': PIN_IMAGES.selectedAtm },
+    })
   })
 
   it('holds a branch pin by the tip of its tail and an ATM pin by its centre, so each sits exactly on its branch', () => {
@@ -141,7 +151,10 @@ describe('addHoverLayers', () => {
     const { layers } = setupHover()
 
     expect(Object.keys(layers)).toEqual([LAYERS.hovered, LAYERS.hoveredAtm])
-    expect(layers[LAYERS.hovered]).toMatchObject({ source: HOVER_SOURCE_ID, layout: { 'icon-image': PIN_IMAGES.selected } })
+    expect(layers[LAYERS.hovered]).toMatchObject({
+      source: HOVER_SOURCE_ID,
+      layout: { 'icon-image': PIN_IMAGES.selected },
+    })
     expect(layers[LAYERS.hoveredAtm]).toMatchObject({
       source: HOVER_SOURCE_ID,
       layout: { 'icon-image': PIN_IMAGES.selectedAtm },

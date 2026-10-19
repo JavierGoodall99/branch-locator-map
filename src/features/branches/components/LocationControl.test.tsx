@@ -122,7 +122,9 @@ describe('LocationNote', () => {
     expect(note.querySelector('.location-note__summary')).toHaveTextContent('Location is turned off for this site.')
     expect(note.querySelector('.location-note__more')).toHaveTextContent('Allow it when your browser asks')
     // A screen reader still hears all of it, in order, with a space between the parts.
-    expect(note).toHaveTextContent(/^Location is turned off for this site\. Allow it when your browser asks, or search by name, suburb or postcode\.\s*Try again$/)
+    expect(note).toHaveTextContent(
+      /^Location is turned off for this site\. Allow it when your browser asks, or search by name, suburb or postcode\.\s*Try again$/,
+    )
   })
 
   it('tells the user how to fix a refusal, and lets them try again', async () => {
@@ -142,7 +144,9 @@ describe('LocationNote', () => {
       setup(blocked)
 
       const note = screen.getByRole('status')
-      expect(note.querySelector('.location-note__summary')).toHaveTextContent('Location is blocked. Allow it in your browser.')
+      expect(note.querySelector('.location-note__summary')).toHaveTextContent(
+        'Location is blocked. Allow it in your browser.',
+      )
       expect(note.querySelector('.location-note__more')).toHaveTextContent('lock icon beside the web address')
       expect(note.querySelector('.location-note__more')).toHaveTextContent('we’ll find you as soon as you do')
     })

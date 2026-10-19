@@ -137,9 +137,7 @@ describe('SearchBox', () => {
     })
 
     it('follows the applied search when it changes from outside', () => {
-      const { rerender } = render(
-        <SearchBox value="" onSearch={vi.fn()} branches={branches} onPickBranch={vi.fn()} />,
-      )
+      const { rerender } = render(<SearchBox value="" onSearch={vi.fn()} branches={branches} onPickBranch={vi.fn()} />)
 
       rerender(<SearchBox value="Capitec Bank Paarl" onSearch={vi.fn()} branches={branches} onPickBranch={vi.fn()} />)
 
@@ -178,8 +176,12 @@ describe('SearchBox', () => {
       expect(within(list).getByRole('group', { name: 'Places' })).toBeInTheDocument()
       expect(within(list).getByRole('group', { name: 'Branches and ATMs' })).toBeInTheDocument()
       expect(within(list).getByRole('option', { name: /^Sandton/ })).toHaveTextContent('2 locations')
-      expect(within(list).getByRole('option', { name: /Capitec Bank Sandton City/ })).toHaveTextContent('Branch, Sandton')
-      expect(within(list).getByRole('option', { name: /Capitec Bank ATM Sandton Station/ })).toHaveTextContent('ATM, Sandton')
+      expect(within(list).getByRole('option', { name: /Capitec Bank Sandton City/ })).toHaveTextContent(
+        'Branch, Sandton',
+      )
+      expect(within(list).getByRole('option', { name: /Capitec Bank ATM Sandton Station/ })).toHaveTextContent(
+        'ATM, Sandton',
+      )
     })
 
     it('announces how many suggestions there are', async () => {

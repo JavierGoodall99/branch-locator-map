@@ -4,12 +4,7 @@ import { LocatorControls } from './features/branches/components/LocatorControls'
 import { LocatorLayout } from './features/branches/components/LocatorLayout'
 import { ResultsPanel } from './features/branches/components/ResultsPanel'
 import { listBranches } from './features/branches/lib/listing'
-import {
-  DEFAULT_FILTERS,
-  clearFilters,
-  toBranchFilters,
-  type LocatorFilters,
-} from './features/branches/model/filters'
+import { DEFAULT_FILTERS, clearFilters, toBranchFilters, type LocatorFilters } from './features/branches/model/filters'
 import { useBranches } from './features/branches/model/useBranches'
 import { useLocation } from './features/branches/model/useLocation'
 import { useNow } from './shared/hooks/useNow'
@@ -58,7 +53,9 @@ function App() {
 
   // The same list the results panel shows, so the map and the list never disagree.
   const visible =
-    branches.status === 'success' ? listBranches(branches.branches, toBranchFilters(view), now, origin, view.radiusKm, view.sort) : []
+    branches.status === 'success'
+      ? listBranches(branches.branches, toBranchFilters(view), now, origin, view.radiusKm, view.sort)
+      : []
 
   // One branch is open, and it is in the list: its details take the whole sidebar.
   const detailOpen = selectedId !== null && visible.some((branch) => branch.id === selectedId)
@@ -93,14 +90,16 @@ function App() {
           onClearFilters={() => changeFilters(clearFilters(view))}
         />
       }
-      map={<LazyBranchMap
+      map={
+        <LazyBranchMap
           branches={visible}
           selectedId={selectedId}
           // The list is gone while a branch is open, so nothing in it can be hovered.
           hoveredId={detailOpen ? null : hoveredId}
           userLocation={origin}
           onSelect={setSelectedId}
-        />}
+        />
+      }
     />
   )
 }

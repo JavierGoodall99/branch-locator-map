@@ -80,7 +80,11 @@ function FiltersForm({ onHide, filters, branches, located, onApply, countResults
 
       <Modal.Body>
         <Group title="When">
-          <Chip label="Open now" pressed={draft.openNow} onClick={() => setDraft({ ...draft, openNow: !draft.openNow })} />
+          <Chip
+            label="Open now"
+            pressed={draft.openNow}
+            onClick={() => setDraft({ ...draft, openNow: !draft.openNow })}
+          />
           <Chip
             label="Open 24 hours"
             pressed={draft.open24Hours}

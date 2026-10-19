@@ -36,5 +36,8 @@ export function localityOf(branch: Branch): string {
 export function placeNamesOf(branch: Branch): string[] {
   const { parts, provinceAt } = split(branch)
   if (provinceAt <= 0) return []
-  return [provinceAt - 1, provinceAt - 2].filter((at) => at >= 0).map((at) => parts[at]).filter(isPlaceName)
+  return [provinceAt - 1, provinceAt - 2]
+    .filter((at) => at >= 0)
+    .map((at) => parts[at])
+    .filter(isPlaceName)
 }

@@ -85,14 +85,12 @@ export function BranchCard({ branch, now, distanceKm, onSelect, onHover }: Branc
           rel="noopener noreferrer"
         >
           <Icon name="navigation" />
-          Directions{' '}
-          <span className="visually-hidden">to {branch.name} (opens in a new tab)</span>
+          Directions <span className="visually-hidden">to {branch.name} (opens in a new tab)</span>
         </a>
         {branch.phone && (
           <a className="btn btn-link btn-sm" href={telUrl(branch.phone)}>
             <Icon name="phone" />
-            Call{' '}
-            <span className="visually-hidden">{branch.name}</span>
+            Call <span className="visually-hidden">{branch.name}</span>
           </a>
         )}
       </div>

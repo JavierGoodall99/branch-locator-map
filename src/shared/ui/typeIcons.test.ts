@@ -2,7 +2,10 @@ import { ATM_ICON, BRANCH_ICON, parseIconSvg } from './typeIcons'
 
 describe('parseIconSvg', () => {
   it('reads the path and the stroke width', () => {
-    expect(parseIconSvg('<svg stroke-width="2.25"><path d="M1 1h2"/></svg>')).toEqual({ path: 'M1 1h2', strokeWidth: 2.25 })
+    expect(parseIconSvg('<svg stroke-width="2.25"><path d="M1 1h2"/></svg>')).toEqual({
+      path: 'M1 1h2',
+      strokeWidth: 2.25,
+    })
   })
 
   it('defaults to a stroke width of 2 when the file does not say', () => {

@@ -17,9 +17,7 @@ interface SearchBoxProps {
   trailing?: ReactNode
 }
 
-type Option =
-  | { kind: 'place'; place: PlaceEntry }
-  | { kind: 'branch'; branch: BranchSuggestion }
+type Option = { kind: 'place'; place: PlaceEntry } | { kind: 'branch'; branch: BranchSuggestion }
 
 const count = (n: number) => `${n} ${n === 1 ? 'location' : 'locations'}`
 
@@ -120,7 +118,8 @@ export function SearchBox({ value, onSearch, branches, onPickBranch, trailing }:
   }
 
   const renderOption = (option: Option, index: number) => {
-    const key = option.kind === 'place' ? `place-${option.place.label}-${option.place.kind}` : `branch-${option.branch.id}`
+    const key =
+      option.kind === 'place' ? `place-${option.place.label}-${option.place.kind}` : `branch-${option.branch.id}`
     const isPlace = option.kind === 'place'
     return (
       <div

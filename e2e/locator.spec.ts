@@ -83,7 +83,6 @@ test.describe('finding a branch', () => {
     await expect(page.getByRole('button', { name: 'ATMs' })).toHaveAttribute('aria-pressed', 'true')
     expect(await resultCount(page)).toBe(both - branches)
   })
-
 })
 
 test.describe('the Filters window', () => {
@@ -153,7 +152,6 @@ test.describe('branch details', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Branches and ATMs' })).toBeVisible()
     await expect(openButton(firstCard)).toBeFocused()
   })
-
 })
 
 test.describe('opening a card', () => {

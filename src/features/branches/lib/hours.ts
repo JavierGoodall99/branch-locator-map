@@ -5,12 +5,7 @@ const CLOSING_SOON_MINUTES = 60
 const MINUTES_PER_DAY = 24 * 60
 
 export type OpenStatusKind =
-  | 'open'
-  | 'closing-soon'
-  | 'closed'
-  | 'no-hours'
-  | 'temporarily-closed'
-  | 'permanently-closed'
+  'open' | 'closing-soon' | 'closed' | 'no-hours' | 'temporarily-closed' | 'permanently-closed'
 
 export interface OpenStatus {
   kind: OpenStatusKind

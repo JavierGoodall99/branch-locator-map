@@ -150,20 +150,36 @@ const branchCounts = Object.fromEntries(
 )
 const branchQuota = allocate(branchCounts, QUOTA.branch, MIN_BRANCHES_PER_PROVINCE)
 for (const province of PROVINCES) {
-  take(branches.filter((record) => record.province === province), branchQuota[province])
+  take(
+    branches.filter((record) => record.province === province),
+    branchQuota[province],
+  )
 }
 
-take(open.filter((record) => record.type === 'atm' && hasHours(record)), QUOTA.atm)
-take(open.filter((record) => record.type === 'business-centre' && hasHours(record)), QUOTA['business-centre'])
+take(
+  open.filter((record) => record.type === 'atm' && hasHours(record)),
+  QUOTA.atm,
+)
+take(
+  open.filter((record) => record.type === 'business-centre' && hasHours(record)),
+  QUOTA['business-centre'],
+)
 
 // Edge cases the UI and filters must handle.
-take(records.filter((record) => record.status === 'temporarily-closed'), QUOTA.temporarilyClosed)
-take(records.filter((record) => record.status === 'permanently-closed'), QUOTA.permanentlyClosed)
-take(open.filter((record) => !hasHours(record)), QUOTA.noHours)
-
-const sample = [...chosen.values()].sort(
-  (a, b) => a.province.localeCompare(b.province) || a.name.localeCompare(b.name),
+take(
+  records.filter((record) => record.status === 'temporarily-closed'),
+  QUOTA.temporarilyClosed,
 )
+take(
+  records.filter((record) => record.status === 'permanently-closed'),
+  QUOTA.permanentlyClosed,
+)
+take(
+  open.filter((record) => !hasHours(record)),
+  QUOTA.noHours,
+)
+
+const sample = [...chosen.values()].sort((a, b) => a.province.localeCompare(b.province) || a.name.localeCompare(b.name))
 
 // One record per line keeps diffs readable.
 writeFileSync(output, `[\n${sample.map((record) => `  ${JSON.stringify(record)}`).join(',\n')}\n]\n`)

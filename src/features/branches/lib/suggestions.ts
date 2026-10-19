@@ -106,7 +106,10 @@ export function suggest(
     .map((branch) => ({ branch, rank: nameRank(normalise(branch.name), words) }))
     .filter((item): item is { branch: Branch; rank: number } => item.rank !== null)
     // Among equally good matches the shorter name is the closer one.
-    .sort((a, b) => a.rank - b.rank || a.branch.name.length - b.branch.name.length || a.branch.name.localeCompare(b.branch.name))
+    .sort(
+      (a, b) =>
+        a.rank - b.rank || a.branch.name.length - b.branch.name.length || a.branch.name.localeCompare(b.branch.name),
+    )
     .slice(0, branchLimit)
     .map(({ branch }) => ({ id: branch.id, name: branch.name, type: branch.type, place: townOf(branch) }))
 

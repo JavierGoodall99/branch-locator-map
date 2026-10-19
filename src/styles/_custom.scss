@@ -10,12 +10,10 @@ body {
   font-variant-numeric: lining-nums;
 }
 
-
 h2,
 .h2 {
   font-weight: 700;
 }
-
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
@@ -44,7 +42,6 @@ h2,
   --bs-btn-active-bg: #{$blue-strong};
   --bs-btn-active-border-color: #{$blue-strong};
 }
-
 
 // Buttons and links get a black keyboard-focus outline, as on capitecbank.co.za. Form fields keep
 // Bootstrap's own focus (a blue border and soft glow), because stacking a black outline on top of

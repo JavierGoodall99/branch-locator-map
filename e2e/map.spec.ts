@@ -39,7 +39,10 @@ test.describe('the map', () => {
     expect(strip).toBeGreaterThanOrEqual(120)
   })
 
-  test('the handle lowers the results sheet to a strip, and raises it again, on a phone', async ({ page, isMobile }) => {
+  test('the handle lowers the results sheet to a strip, and raises it again, on a phone', async ({
+    page,
+    isMobile,
+  }) => {
     test.skip(!isMobile, 'The handle is only on the phone layout')
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
@@ -70,14 +73,18 @@ test.describe('the map', () => {
     await expect(page.getByRole('button', { name: 'Hide results' })).toBeHidden()
   })
 
-  test('the details keep the same sheet as the list on a phone, so nothing jumps, with Get directions in view', async ({ page, isMobile }) => {
+  test('the details keep the same sheet as the list on a phone, so nothing jumps, with Get directions in view', async ({
+    page,
+    isMobile,
+  }) => {
     test.skip(!isMobile, 'This is about the phone layout')
     await page.goto('/')
     await expect(page.getByRole('article').first()).toBeVisible()
-    const sheet = () => page.evaluate(() => {
-      const box = document.querySelector('.locator__results')!.getBoundingClientRect()
-      return { top: Math.round(box.top), height: Math.round(box.height) }
-    })
+    const sheet = () =>
+      page.evaluate(() => {
+        const box = document.querySelector('.locator__results')!.getBoundingClientRect()
+        return { top: Math.round(box.top), height: Math.round(box.height) }
+      })
     const list = await sheet()
 
     await page.getByRole('article').first().getByRole('button').first().click()
@@ -86,7 +93,10 @@ test.describe('the map', () => {
     expect(await sheet()).toEqual(list)
   })
 
-  test('the details fit the sheet on a phone, hours and services included, with nothing to scroll to', async ({ page, isMobile }) => {
+  test('the details fit the sheet on a phone, hours and services included, with nothing to scroll to', async ({
+    page,
+    isMobile,
+  }) => {
     test.skip(!isMobile, 'This is about the phone layout')
     await page.goto('/')
     await page.getByRole('article').first().getByRole('button').first().click()
@@ -135,7 +145,10 @@ test.describe('the map', () => {
     expect((await back.boundingBox())!.y).toBeCloseTo(box.y, 0)
   })
 
-  test('the map credit starts closed on a phone, behind its info button, and can be opened', async ({ page, isMobile }) => {
+  test('the map credit starts closed on a phone, behind its info button, and can be opened', async ({
+    page,
+    isMobile,
+  }) => {
     test.skip(!isMobile, 'This is about the phone layout')
     await page.goto('/')
     await expect(page.locator('canvas.maplibregl-canvas')).toBeVisible()
@@ -164,7 +177,10 @@ test.describe('the map', () => {
     await expect.poll(() => resultCount(page)).toBeLessThan(before)
 
     await restore()
-    await page.getByRole('region', { name: 'Map of branches and ATMs' }).getByRole('button', { name: 'Try again' }).click()
+    await page
+      .getByRole('region', { name: 'Map of branches and ATMs' })
+      .getByRole('button', { name: 'Try again' })
+      .click()
 
     await expect(page.getByRole('alert')).toHaveCount(0)
     await expect(page.locator('canvas.maplibregl-canvas')).toBeVisible()

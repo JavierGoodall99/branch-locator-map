@@ -59,7 +59,9 @@ export function toBranchFilters(filters: LocatorFilters): BranchFilters {
 
 /** How many filters in the Filters window are in use, for the badge on the Filters button. The sort order is not a filter. */
 export function countWindowFilters(filters: Omit<WindowFilters, 'sort'>): number {
-  return Number(filters.openNow) + Number(filters.open24Hours) + Number(filters.province !== null) + filters.services.length
+  return (
+    Number(filters.openNow) + Number(filters.open24Hours) + Number(filters.province !== null) + filters.services.length
+  )
 }
 
 /** Whether the user has narrowed the list, by searching, by distance or in the Filters window. The show switch is a view choice, not a filter. */

@@ -105,7 +105,10 @@ test.describe('near me when the browser blocks it', () => {
 test.describe('allowing location after it was blocked', () => {
   test.use({ permissions: [], geolocation: CAPE_TOWN })
 
-  test('finds the location by itself when the browser setting is changed, with no button pressed', async ({ page, context }) => {
+  test('finds the location by itself when the browser setting is changed, with no button pressed', async ({
+    page,
+    context,
+  }) => {
     await page.goto('/')
     await expect(page.getByText('Location is blocked. Allow it in your browser.')).toBeVisible()
 
