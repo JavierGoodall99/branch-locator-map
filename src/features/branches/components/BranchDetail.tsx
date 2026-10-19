@@ -77,7 +77,7 @@ export function BranchDetail({ branch, now, distanceKm, onBack }: BranchDetailPr
             Opening hours
           </h2>
           <p className="tabular-nums">{formatOpeningHours(branch)}</p>
-          <p className="branch-detail__note">Hours can differ on public holidays, so check before you travel.</p>
+          <p className="branch-detail__note">Hours can differ on public holidays.</p>
         </section>
 
         <section className="branch-detail__section" aria-labelledby="detail-services">

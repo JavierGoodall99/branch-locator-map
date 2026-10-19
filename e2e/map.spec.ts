@@ -86,6 +86,16 @@ test.describe('the map', () => {
     expect(await sheet()).toEqual(list)
   })
 
+  test('the details fit the sheet on a phone, hours and services included, with nothing to scroll to', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'This is about the phone layout')
+    await page.goto('/')
+    await page.getByRole('article').first().getByRole('button').first().click()
+
+    await expect(page.getByRole('heading', { level: 2, name: 'Services' })).toBeInViewport({ ratio: 1 })
+    const scrolls = await page.locator('.locator__results').evaluate((sheet) => sheet.scrollHeight > sheet.clientHeight)
+    expect(scrolls).toBe(false)
+  })
+
   test('the details have no photo on a phone, and do not download one', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'This is about the phone layout')
     const images: string[] = []

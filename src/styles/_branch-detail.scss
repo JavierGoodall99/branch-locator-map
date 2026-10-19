@@ -195,29 +195,42 @@
     }
 
     &__body {
-      padding: 0 $spacer $spacer;
+      padding: 0 $spacer $spacer * 0.25;
 
       > :first-child {
-        margin-top: $spacer;
+        margin-top: $spacer * 0.75;
       }
     }
 
+    // Each section is a heading with its content beside it, not under it, so the hours and the services
+    // fit in the sheet (42% of the screen, even on a 640px-high phone) without scrolling.
     &__section {
-      margin-top: $spacer;
-      padding-top: $spacer * 0.75;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      column-gap: $spacer * 0.75;
+      row-gap: 2px;
+      margin-top: $spacer * 0.5;
+      padding-top: $spacer * 0.5;
 
       h2 {
+        flex: none;
+        margin: 0;
         font-size: 0.9375rem;
-        margin-bottom: $spacer * 0.25;
       }
 
       p {
-        margin-bottom: $spacer * 0.25;
+        margin: 0;
         font-size: 0.875rem;
       }
     }
 
+    &__note {
+      flex-basis: 100%;
+    }
+
     .branch-card__services {
+      margin: 0;
       font-size: 0.8125rem;
     }
   }
