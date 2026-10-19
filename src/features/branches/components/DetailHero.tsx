@@ -14,7 +14,7 @@ const SIZES = '440px'
  * The top of the details. Beside the map it is a photo with the way back over its top left. The
  * photo is decoration, so it has no description; the button is the content. On a phone there is
  * no photo, because the sheet is short and the name, address and buttons matter more, so it is
- * not even downloaded: only a slim bar with the way back. Either way the button comes first in
+ * not even downloaded: only the way back, which sits in the top left corner of the screen. Either way the button comes first in
  * the page, so it is the first stop for the keyboard.
  */
 export function DetailHero({ onBack }: DetailHeroProps) {

@@ -22,7 +22,8 @@ import {
 import { addBranchLayers, addHoverLayers, addUserLocationLayers, readMapColors, selectedFilters } from '../map/layers'
 import { applyBasemapLook } from '../map/basemap'
 import { addPinImages } from '../map/pins'
-import { isWideLayout, motionDuration, viewPadding } from '../map/view'
+import { collapseAttribution } from '../map/attribution'
+import { isWideLayout, mapPadding, motionDuration } from '../map/view'
 import { isWebGLAvailable } from '../map/webgl'
 import type { Branch, Coordinates } from '../types'
 
@@ -80,12 +81,15 @@ export function BranchMap({ branches, selectedId, hoveredId, userLocation, onSel
     mapRef.current = map
 
     let loaded = false
+    let stopWatchingCredit = () => {}
 
     map.on('load', () => {
       loaded = true
       const colors = readMapColors()
       // Recolour the base map first, so our own layers are never touched by it.
       applyBasemapLook(map)
+      // On a phone the credit starts closed, behind its info button, so it does not cover the map.
+      if (!isWideLayout()) stopWatchingCredit = collapseAttribution(container)
       addPinImages(map, colors)
       addBranchLayers(map, toFeatureCollection(latest.current.branches), colors)
       addHoverLayers(map)
@@ -124,6 +128,7 @@ export function BranchMap({ branches, selectedId, hoveredId, userLocation, onSel
     })
 
     return () => {
+      stopWatchingCredit()
       map.remove()
       mapRef.current = null
       appliedKey.current = null
@@ -141,7 +146,7 @@ export function BranchMap({ branches, selectedId, hoveredId, userLocation, onSel
     const bounds = boundsFor(branches)
     if (bounds) {
       map.fitBounds(bounds, {
-        padding: viewPadding(isWideLayout(), map.getContainer().clientHeight),
+        padding: mapPadding(map.getContainer()),
         maxZoom: SELECTED_ZOOM,
         duration: motionDuration(),
       })
@@ -161,7 +166,7 @@ export function BranchMap({ branches, selectedId, hoveredId, userLocation, onSel
     const bounds = boundsOfPoints([userLocation, ...nearest])
     if (bounds) {
       map.fitBounds(bounds, {
-        padding: viewPadding(isWideLayout(), map.getContainer().clientHeight),
+        padding: mapPadding(map.getContainer()),
         maxZoom: SELECTED_ZOOM,
         duration: motionDuration(),
       })
@@ -182,7 +187,7 @@ export function BranchMap({ branches, selectedId, hoveredId, userLocation, onSel
         center: [branch.location.lng, branch.location.lat],
         zoom: Math.max(map.getZoom(), SELECTED_ZOOM),
         // Its details are open, so on a phone they have the taller sheet.
-        padding: viewPadding(isWideLayout(), map.getContainer().clientHeight, true),
+        padding: mapPadding(map.getContainer(), true),
         duration: motionDuration(),
       })
     }

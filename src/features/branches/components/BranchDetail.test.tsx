@@ -90,7 +90,7 @@ describe('BranchDetail', () => {
     beforeEach(() => stubWide(false))
     afterEach(() => vi.unstubAllGlobals())
 
-    it('has no photo, and does not download one, only a slim bar with the way back', () => {
+    it('has no photo, and does not download one, only the way back in the corner', () => {
       setup()
 
       expect(document.querySelector('img')).toBeNull()

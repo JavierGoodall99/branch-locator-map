@@ -8,9 +8,15 @@ import { test as base, expect, type Locator, type Page, type Route } from '@play
 const STUB_STYLE = {
   version: 8,
   name: 'test',
-  sources: {},
+  // One empty source with a credit, so the map has an attribution to show, as the real style has.
+  sources: {
+    credit: { type: 'geojson', data: { type: 'FeatureCollection', features: [] }, attribution: 'Test map data' },
+  },
   glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
-  layers: [{ id: 'background', type: 'background', paint: { 'background-color': '#e8ecef' } }],
+  layers: [
+    { id: 'background', type: 'background', paint: { 'background-color': '#e8ecef' } },
+    { id: 'credit-layer', type: 'circle', source: 'credit' },
+  ],
 }
 
 const MAP_HOST = '**/tiles.openfreemap.org/**'

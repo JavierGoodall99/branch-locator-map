@@ -141,11 +141,14 @@
   }
 }
 
-// On a phone there is no photo: a slim bar with the way back, so the sheet is all name, address and buttons.
-.detail-bar {
-  display: flex;
-  align-items: center;
-  padding: $spacer * 0.25 $spacer * 0.5;
+// On a phone there is no photo, and the way back sits in the top left corner of the screen, over the
+// map (the controls are hidden while the details are open), so the sheet is all name, address and buttons.
+.detail-bar__back {
+  position: fixed;
+  top: $spacer * 0.75;
+  left: $spacer * 0.75;
+  z-index: 25; // above the sheet and the map
+  box-shadow: 0 2px 8px rgba($black, 0.25);
 }
 
 // Phone: everything on the details is a step smaller, since the sheet is short and there is no photo.

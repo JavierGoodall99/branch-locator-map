@@ -105,6 +105,37 @@ test.describe('the map', () => {
     await expect(page.getByRole('button', { name: 'Back to results' })).toBeVisible()
   })
 
+  test('the way back is in the top left corner of the screen on a phone', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'This is about the phone layout')
+    await page.goto('/')
+    await page.getByRole('article').first().getByRole('button').first().click()
+
+    const back = page.getByRole('button', { name: 'Back to results' })
+    await expect(back).toBeVisible()
+    const box = (await back.boundingBox())!
+    expect(box.x).toBeLessThanOrEqual(16)
+    expect(box.y).toBeLessThanOrEqual(16)
+    // It stays put while the details scroll.
+    await page.locator('.locator__results').evaluate((sheet) => sheet.scrollBy(0, 200))
+    expect((await back.boundingBox())!.y).toBeCloseTo(box.y, 0)
+  })
+
+  test('the map credit starts closed on a phone, behind its info button, and can be opened', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'This is about the phone layout')
+    await page.goto('/')
+    await expect(page.locator('canvas.maplibregl-canvas')).toBeVisible()
+    const credit = page.locator('.maplibregl-ctrl-attrib')
+    // MapLibre shows the credit's text while the control has this class.
+    await expect(credit).toHaveClass(/maplibregl-compact(?!-show)/)
+    await expect(credit).not.toHaveClass(/maplibregl-compact-show/)
+    await expect(credit.locator('.maplibregl-ctrl-attrib-inner')).toBeHidden()
+    await expect(page.locator('.maplibregl-ctrl-attrib-button')).toBeVisible()
+
+    await page.locator('.maplibregl-ctrl-attrib-button').click()
+    await expect(credit).toHaveClass(/maplibregl-compact-show/)
+    await expect(credit.locator('.maplibregl-ctrl-attrib-inner')).toBeVisible()
+  })
+
   test('says so when it cannot load, keeps the list usable, and recovers on retry', async ({ page }) => {
     const restore = await breakMap(page)
 

@@ -44,7 +44,8 @@ const mocks = vi.hoisted(() => {
     fitBounds = vi.fn()
     easeTo = vi.fn()
     getZoom = vi.fn(() => 8)
-    getContainer = () => ({ clientHeight: 800 })
+    // A real element, as MapLibre gives, that is 800px high; jsdom does no layout, so nothing else has a size.
+    getContainer = () => Object.defineProperty(document.createElement('div'), 'clientHeight', { value: 800 })
     getCanvas = () => this.canvas
     remove = vi.fn()
 
@@ -308,6 +309,37 @@ describe('BranchMap', () => {
     expect(currentMap().easeTo).toHaveBeenCalledWith(
       expect.objectContaining({ padding: expect.objectContaining({ bottom: 480 }) }),
     )
+  })
+
+  describe('the credit', () => {
+    const addCredit = () => {
+      const container = currentMap().options.container as HTMLElement
+      const credit = document.createElement('details')
+      credit.className = 'maplibregl-ctrl-attrib maplibregl-compact maplibregl-compact-show'
+      container.append(credit)
+      return credit
+    }
+
+    afterEach(() => vi.unstubAllGlobals())
+
+    it('starts closed on a phone, behind its info button', async () => {
+      setup()
+      const credit = addCredit()
+
+      await loadMap()
+
+      expect(credit).not.toHaveClass('maplibregl-compact-show')
+    })
+
+    it('is left as MapLibre opens it on a wide screen, where there is room', async () => {
+      vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: query === '(min-width: 768px)', media: query })))
+      setup()
+      const credit = addCredit()
+
+      await loadMap()
+
+      expect(credit).toHaveClass('maplibregl-compact-show')
+    })
   })
 
   it('removes the highlight when nothing is selected any more', async () => {
