@@ -88,7 +88,8 @@ test.describe('near me when the browser blocks it', () => {
     await page.goto('/')
 
     await expect(page.getByText(/turned off for this site/)).toBeVisible()
-    await expect(page.getByText(/search by name, suburb or postcode/)).toBeVisible()
+    // What to do next is always on the page for a screen reader, and shown beside the map; a phone keeps it short.
+    await expect(page.getByText(/search by name, suburb or postcode/)).toBeAttached()
     await expect(page.getByRole('banner').getByRole('button', { name: 'Try again' })).toBeVisible()
     await expect(page.getByRole('article').first()).toBeVisible()
     await expect(page.getByRole('status').filter({ hasText: 'sorted by name' }).first()).toBeAttached()

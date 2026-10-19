@@ -377,18 +377,78 @@ $control-hairline: #c9d3d8; // decorative edge, as in the locator design
   }
 }
 
+// On a phone the second part of the note is for screen readers only. (Bootstrap's mixin marks every
+// property !important, so it is applied only below 768px, not undone above it.)
+@include media-breakpoint-down(md) {
+  .location-note__more {
+    @include visually-hidden;
+  }
+}
+
+// A note for when Near me has not worked. On a phone, where it floats over the map, it is a slim pill
+// with the short part and Try again, so it does not take the map's room; the rest of the message
+// is kept for screen readers. Beside the map (below) it is plain text with all of it.
 .location-note {
+  display: flex;
+  align-items: center;
+  gap: $spacer * 0.5;
+  width: fit-content;
+  max-width: 100%;
   margin: 0;
-  font-size: 0.75rem;
+  padding: 4px 12px;
+  background: $white;
+  border: 1px solid $control-hairline;
+  border-radius: $border-radius-pill;
+  box-shadow: $box-shadow-lg;
+  font-size: 0.8125rem;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.3;
   color: $body-secondary-color;
+
+  &__retry {
+    flex: none;
+    padding: 4px 0;
+    background: none;
+    border: 0;
+    color: $blue-strong; // the brand blue is 4.5:1 on white, this is a step darker for small text
+    font-weight: 700;
+    line-height: inherit;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #000;
+      outline-offset: 2px;
+    }
+  }
 }
 
 @include media-breakpoint-up(md) {
   // In the side panel nothing floats, so drop the shadow.
   .search-box {
     box-shadow: none;
+  }
+
+  // Plain text again, with the whole message.
+  .location-note {
+    display: block;
+    width: auto;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 0.75rem;
+    line-height: 1.4;
+
+    &__retry {
+      display: inline;
+      padding: 0;
+      margin-left: 0.25rem;
+    }
   }
 }
 

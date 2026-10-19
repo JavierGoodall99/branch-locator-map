@@ -115,6 +115,16 @@ describe('LocationNote', () => {
     expect(screen.getByRole('status')).toBeEmptyDOMElement()
   })
 
+  it('splits a message into a short part, which a phone shows, and what to do next, which it keeps for screen readers', () => {
+    setup({ status: 'denied' })
+
+    const note = screen.getByRole('status')
+    expect(note.querySelector('.location-note__summary')).toHaveTextContent('Location is turned off for this site.')
+    expect(note.querySelector('.location-note__more')).toHaveTextContent('Turn it on in your browser settings')
+    // A screen reader still hears all of it, in order, with a space between the parts.
+    expect(note).toHaveTextContent(/^Location is turned off for this site\. Turn it on in your browser settings, or search by name, suburb or postcode\.\s*Try again$/)
+  })
+
   it('tells the user how to fix a refusal, and lets them try again', async () => {
     const location = setup({ status: 'denied' })
 
