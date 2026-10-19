@@ -1,0 +1,17 @@
+# Only what the build needs goes into the image build; the rest would make it slow and leak files.
+.git
+.github
+.claude
+.playwright-mcp
+node_modules
+dist
+test-results
+playwright-report
+
+# Raw source data is large and is not redistributed (see scripts/build-sample-data.mjs).
+data
+
+# Not needed to build or serve the app (the e2e folder stays, because `tsc -b` type-checks it too)
+*.md
+Dockerfile
+.dockerignore
