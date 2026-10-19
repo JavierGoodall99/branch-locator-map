@@ -4,6 +4,10 @@ $blue-deep: #0033a0;
 $blue-soft: #557fdb;
 $blue-tint: #cfdefb;
 $text-subtle: #5d737e;
+// "Closing soon": a pale amber with dark brown text (about 7:1), so it reads as a status and cannot be
+// mistaken for a button, which a solid blue pill is.
+$status-soon-bg: #fff1cc;
+$status-soon-text: #6b4200;
 
 // Color
 $min-contrast-ratio: 4.4;

@@ -21,8 +21,8 @@
   }
 
   &--soon {
-    background: $primary;
-    color: $white;
+    background: $status-soon-bg;
+    color: $status-soon-text;
   }
 
   // Outline, so closed reads differently from open even in greyscale.
