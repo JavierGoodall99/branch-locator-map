@@ -31,6 +31,11 @@ npm run dev          # http://localhost:5173
 The first time you run the end-to-end tests, install the browser: `npx playwright install chromium`.
 They build the app and test the production build, not the dev server.
 
+Unit tests sit next to the code they test (`BranchCard.test.tsx` beside `BranchCard.tsx`). A few small leaf
+components have no test file of their own because the component that renders them covers them: `ServiceList`
+through `BranchCard`, `DetailHero` through `BranchDetail`, `FilterButton` through `LocatorControls`, and
+`LazyBranchMap` through the end-to-end tests.
+
 ## Run it in Docker
 
 ```bash
