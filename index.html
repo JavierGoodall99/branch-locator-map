@@ -20,6 +20,8 @@
       crossorigin
       href="/node_modules/@fontsource-variable/nunito-sans/files/nunito-sans-latin-wght-normal.woff2"
     />
+    <!-- The list is built from this file, and the page only asks for it once its script has run; asking now takes that wait out of the first paint. -->
+    <link rel="preload" as="fetch" crossorigin href="/branches.json" />
     <!-- The map style, tiles and glyphs all come from here; opening the connection early saves a round trip. -->
     <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin />
   </head>
