@@ -1,4 +1,6 @@
-$brand-blue: #2f70ef;
+// Capitec's blue (#2f70ef) is 4.48:1 on white, just under the 4.5:1 AA minimum for small text. This is one
+// step darker (4.55:1), which looks the same and passes for white button labels and for links.
+$brand-blue: #2f6fed;
 $blue-strong: #2259d0;
 $blue-deep: #0033a0;
 $blue-soft: #557fdb;
@@ -10,7 +12,6 @@ $status-soon-bg: #fff1cc;
 $status-soon-text: #6b4200;
 
 // Color
-$min-contrast-ratio: 4.4;
 $blue: $brand-blue;
 $primary: $brand-blue;
 $body-color: #3a3a3a;

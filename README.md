@@ -117,9 +117,8 @@ The full record, with the reasons, is in [`design.md`](design.md). The ones to t
 - **Accessibility is part of the design, not a pass at the end.** The search is an ARIA combobox, the
   whole card opens its details through one real button (a stretched link, so keyboard and screen reader
   users get one stop), focus is managed when details open and close, status and counts are announced, and
-  the Playwright suite scans every main screen with axe. The brand blue is 4.48:1 on white, a hair under
-  4.5:1; that is a known trade-off to match the brand's blue, which `design.md` records, and the scans allow
-  only that exact case.
+  the Playwright suite scans every main screen with axe. The primary blue is 4.55:1 on white, a step darker than
+  Capitec's own 4.48:1 so that it passes AA (see `design.md`), and the scans allow no exceptions.
 - **Asking for the location on arrival.** It saves a tap, but it is a prompt before the user has chosen
   anything. The page never stores or sends the location, falls back to the whole list by name, and treats a
   refusal as a normal state, not an error.

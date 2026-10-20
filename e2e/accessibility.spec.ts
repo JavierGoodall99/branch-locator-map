@@ -4,22 +4,6 @@ import { expect, test, searchField, openButton } from './fixtures'
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
-/**
- * Capitec's brand blue (#2f70ef) is 4.48:1 against white, just under the 4.5:1 WCAG AA threshold
- * for text this size. We match their palette on purpose and document the trade-off in design.md,
- * so this one colour pair at this ratio is allowed. Any other contrast problem, or this pair
- * getting worse, still fails.
- */
-const BRAND_BLUE = '#2f70ef'
-const BRAND_BLUE_MIN_RATIO = 4.4
-
-type ContrastData = { fgColor?: string; bgColor?: string; contrastRatio?: number }
-
-function isKnownBrandBlueNearMiss(data: ContrastData | undefined): boolean {
-  if (!data || data.contrastRatio === undefined) return false
-  return data.contrastRatio >= BRAND_BLUE_MIN_RATIO && [data.fgColor, data.bgColor].includes(BRAND_BLUE)
-}
-
 async function scan(page: Page) {
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze()
 
@@ -29,9 +13,7 @@ async function scan(page: Page) {
         rule: violation.id,
         impact: violation.impact,
         help: violation.help,
-        nodes: violation.nodes
-          .filter((node) => violation.id !== 'color-contrast' || !isKnownBrandBlueNearMiss(node.any[0]?.data))
-          .map((node) => node.target.join(' ')),
+        nodes: violation.nodes.map((node) => node.target.join(' ')),
       }))
       // Show what failed in the test report, not just that something did.
       .filter((violation) => violation.nodes.length > 0)

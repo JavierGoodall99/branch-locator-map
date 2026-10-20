@@ -22,7 +22,7 @@ function cssVariable(name: string, fallback: string): string {
 /** Map colours come from the theme's CSS variables, so the map and the page never drift apart. */
 export function readMapColors(): MapColors {
   return {
-    primary: cssVariable('--bs-primary', '#2f70ef'),
+    primary: cssVariable('--bs-primary', '#2f6fed'),
     strong: cssVariable('--app-primary-strong', '#2259d0'),
     deep: cssVariable('--app-primary-deep', '#0033a0'),
     ink: '#000000',

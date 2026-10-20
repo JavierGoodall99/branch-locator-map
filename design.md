@@ -10,7 +10,7 @@ Notes on provenance:
 
 | Token | Hex | Use |
 | --- | --- | --- |
-| `--app-primary` | `#2f70ef` | Primary actions, links, active states, focus ring accent |
+| `--app-primary` | `#2f6fed` | Primary actions, links, active states, focus ring accent |
 | `--app-primary-strong` | `#2259d0` | Pressed state, high-emphasis text on light backgrounds |
 | `--app-primary-deep` | `#0033a0` | Headings on tint, chart anchor color |
 | `--app-primary-soft` | `#557fdb` | Secondary chart series, icons |
@@ -26,9 +26,9 @@ Extracted but unused by default: `#4d5c65`, `#495057` (near-duplicates of muted 
 
 Rules:
 - Blue is the only brand hue. Status colors (success, warning, danger) are **decided**, not extracted: use Bootstrap's defaults, adjusted only to pass contrast.
-- The palette is Capitec's own, unchanged, and the component behavior below was verified on the live site (capitecbank.co.za, October 2026).
-- Known accessibility trade-off inherited from Capitec: `#2f70ef` is 4.48:1 on white, a hair under the 4.5:1 AA threshold for small text. This applies to white 16px button labels and to links. Other measured pairs on white: `#3a3a3a` 11.4, `#4e6066` 6.6, `#5d737e` 5.0, `#565656` 7.3, `#2259d0` 6.2.
-- For new body copy that is not a button or link, do not use `#2f70ef`; use `#3a3a3a` or `#4e6066`.
+- The palette is Capitec's own, except that the primary blue is one step darker (below), and the component behavior below was verified on the live site (capitecbank.co.za, October 2026).
+- Capitec's blue is `#2f70ef`, 4.48:1 on white, a hair under the 4.5:1 AA threshold for small text (white 16px button labels and links). Lighthouse flagged it, so the primary is one step darker, `#2f6fed`, 4.55:1, which looks the same. Other measured pairs on white: `#2f6fed` 4.55, `#3a3a3a` 11.4, `#4e6066` 6.6, `#5d737e` 5.0, `#565656` 7.3, `#2259d0` 6.2.
+- For new body copy that is not a button or link, do not use `#2f6fed`; use `#3a3a3a` or `#4e6066`.
 - Never rely on color alone for meaning (for example, over/under budget needs an icon or label as well).
 
 ## Typography
@@ -77,7 +77,7 @@ Radius is large and soft, which is the strongest visual signature of the source.
 
 Rules:
 - Radius follows hierarchy: bigger containers get bigger radius. Do not apply one radius to everything.
-- Borders are rare. When used: `1px solid #ededed` on cards, `1px solid #2f70ef` on outline buttons. White 2–4px borders on the source are decorative over imagery, so skip them.
+- Borders are rare. When used: `1px solid #ededed` on cards, `1px solid #2f6fed` on outline buttons. White 2–4px borders on the source are decorative over imagery, so skip them.
 
 ## Elevation
 
@@ -91,7 +91,7 @@ Measured live on capitecbank.co.za (`.btn.button--v2`):
 
 | State | Style |
 | --- | --- |
-| Default | bg `#2f70ef`, text `#ffffff`, 48px tall, min-width 144px, padding 14px 24px, radius 24px, 1.5px solid `#2f70ef`, Nunito Sans 16px / 600 |
+| Default | bg `#2f6fed`, text `#ffffff`, 48px tall, min-width 144px, padding 14px 24px, radius 24px, 1.5px solid `#2f6fed`, Nunito Sans 16px / 600 |
 | Hover and pressed | bg and border `#2259d0`, white text. No lift, no opacity change |
 | Focus-visible | 2px solid `#000000` outline, 2px offset |
 | Disabled | 50% opacity, `aria-disabled` |
@@ -109,7 +109,7 @@ The extraction found no styled inputs, so this is **decided**:
 
 ### Links
 
-- Default `#2f70ef`, no underline (measured live).
+- Default `#2f6fed`, no underline (measured live).
 - Hover `#565656`, no underline.
 - Because links are not underlined, never style plain text in the same blue, so links stay distinguishable.
 - Visible focus ring same as buttons.
@@ -141,7 +141,7 @@ The source declares 32 breakpoints, which is too many to maintain. Use Bootstrap
 ## Data visualization
 
 Applies if the chosen project includes charts (spending insights especially).
-- Series colors, in order: `#2f70ef`, `#0033a0`, `#557fdb`, `#cfdefb`, then neutral greys. With more than 5 categories, group the tail into "Other".
+- Series colors, in order: `#2f6fed`, `#0033a0`, `#557fdb`, `#cfdefb`, then neutral greys. With more than 5 categories, group the tail into "Other".
 - Every chart has a text or table alternative and labelled axes. Do not depend on color alone to tell series apart (use direct labels or patterns).
 - Money values are right-aligned, tabular, and in rand.
 
@@ -184,7 +184,7 @@ The layout started from a Claude Design prototype (screens at 375, 834 and 1440p
 
 | Topic | Decision |
 | --- | --- |
-| Button color | Our theme: `#2f70ef` default, `#2259d0` hover and pressed, white label. The design's `#2259d0` default is not used. |
+| Button color | Our theme: `#2f6fed` default, `#2259d0` hover and pressed, white label. The design's `#2259d0` default is not used. |
 | Services | Only what the sample data has: Branch, ATM, SmartID Services, Cash Accepting ATM, Business Banking Centre. No wheelchair, parking or forex until the data has them. |
 | Hours | One daily open and close time per site, computed in South African time. No weekly schedules or holiday overrides yet. |
 | Cut from scope | Saved and home branch, language switcher, offline caching, "report incorrect info". |
