@@ -79,6 +79,10 @@ GitHub Pages cannot send HTTP headers, so the live demo does **not** have the Co
 other security headers. The Docker image is the production artifact: it has them, and the container tests
 check them. Behind a real host, run that image.
 
+For the same reason the demo's files are cached for only 10 minutes (Pages sets that, and it cannot be changed), so
+Lighthouse's "efficient cache lifetimes" finding applies to the demo only. The Docker image caches the build's
+hash-named files for a year (see `docker/nginx.conf`).
+
 ## What it does
 
 - A map and a list that always agree. Pins cluster; a branch is a blue square with a building, an ATM is a
