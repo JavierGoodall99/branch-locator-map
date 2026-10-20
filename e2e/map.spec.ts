@@ -125,6 +125,32 @@ test.describe('the map', () => {
     expect(images).toEqual([])
   })
 
+  test(
+    'the photo is fetched before a place is opened, so it is there in the first frame',
+    { tag: '@desktop' },
+    async ({ page }) => {
+      const photos: string[] = []
+      page.on('requestfinished', (request) => {
+        if (/capitec-atm.*\.(avif|webp|jpg)/.test(request.url())) photos.push(request.url())
+      })
+      await page.goto('/')
+      await expect(page.getByRole('article').first()).toBeVisible()
+
+      // Nobody has opened a place, and the photo has already come.
+      await expect.poll(() => photos.length, { timeout: 10_000 }).toBeGreaterThan(0)
+      const fetchedBeforeOpening = photos.length
+
+      await page.getByRole('article').first().getByRole('button').first().click()
+      const image = page.locator('.detail-hero__image')
+      await expect(image).toBeVisible()
+      // It is already loaded when it appears, and opening the place fetched nothing more.
+      expect(await image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0)).toBe(
+        true,
+      )
+      expect(photos.length).toBe(fetchedBeforeOpening)
+    },
+  )
+
   test('the details have the photo beside the map on a wide screen', { tag: '@desktop' }, async ({ page }) => {
     await page.goto('/')
     await page.getByRole('article').first().getByRole('button').first().click()

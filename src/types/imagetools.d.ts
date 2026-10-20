@@ -7,3 +7,9 @@ declare module '*&as=picture' {
   }
   export default picture
 }
+
+// An import ending in `&inline` is the image itself as a data address, for a very small one.
+declare module '*&inline' {
+  const dataUri: string
+  export default dataUri
+}

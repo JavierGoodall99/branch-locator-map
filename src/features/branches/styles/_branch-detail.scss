@@ -130,7 +130,11 @@
     object-fit: cover;
     // Keeps the machine and the people in frame when the photo is cropped.
     object-position: center 40%;
-    background: $blue-tint; // shown while the photo loads
+    // A blurred copy of the photo is set on the image (see heroImage.ts), and shows until the real one
+    // arrives; the flat tint is only for if that copy is missing.
+    background-color: $blue-tint;
+    background-size: cover;
+    background-position: center 40%;
   }
 
   &__back {

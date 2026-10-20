@@ -2,11 +2,19 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import sample from '../public/branches.json'
 import App from './App'
+import { preloadHeroImage } from '@/features/branches/components/detail/heroImage'
 
 // The real map needs WebGL, which jsdom does not have. BranchMap has its own tests with a fake map.
 vi.mock('@/features/branches/map/BranchMap', () => ({
   // It reports which place it was told to highlight, so the tests can see the list and the map agree.
   BranchMap: ({ hoveredId }: { hoveredId?: string | null }) => <div data-testid="map" data-hovered={hoveredId ?? ''} />,
+}))
+
+// The photo for the details is fetched ahead of time beside the map; these tests only need to know whether
+// that was asked for, and the real one would build an image jsdom cannot load.
+vi.mock('@/features/branches/components/detail/heroImage', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/features/branches/components/detail/heroImage')>()),
+  preloadHeroImage: vi.fn(),
 }))
 
 // There are ~190 cards, and role queries compute an accessible name for each, which is slow
@@ -166,6 +174,41 @@ describe('App', () => {
       await userEvent.click(within(firstCard).getByRole('button', { name }))
 
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(name)
+    })
+  })
+
+  describe('the details photo', () => {
+    const stubWide = (wide: boolean) =>
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn((query: string) => ({
+          matches: wide && query === '(min-width: 768px)',
+          media: query,
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        })),
+      )
+
+    beforeEach(() => vi.mocked(preloadHeroImage).mockClear())
+
+    it('is fetched ahead of time beside the map, before any place is opened', async () => {
+      stubSample()
+      stubWide(true)
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+
+      await waitFor(() => expect(preloadHeroImage).toHaveBeenCalledTimes(1))
+      expect(screen.queryByRole('button', { name: 'Back to results' })).not.toBeInTheDocument()
+    })
+
+    it('is not fetched at all on a phone, which has no photo', async () => {
+      stubSample()
+      stubWide(false)
+      render(<App />)
+      await waitFor(() => expect(cardCount()).toBeGreaterThan(0))
+      await new Promise((resolve) => setTimeout(resolve, 400))
+
+      expect(preloadHeroImage).not.toHaveBeenCalled()
     })
   })
 

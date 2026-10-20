@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react'
+import { preloadHeroImage } from '@/features/branches/components/detail/heroImage'
+import { WIDE_LAYOUT_QUERY } from '@/features/branches/map/view'
+import { useMediaQuery } from '@/shared/hooks/useMediaQuery'
 import { LazyBranchMap } from '@/features/branches/map/LazyBranchMap'
 import { LocatorControls } from '@/features/branches/components/controls/LocatorControls'
 import { LocatorLayout } from '@/features/branches/components/layout/LocatorLayout'
@@ -26,6 +29,21 @@ function App() {
   useEffect(() => {
     requestLocation()
   }, [requestLocation])
+  // Beside the map, the details open with a photo. Fetch it once the page has settled, before anyone
+  // opens a place, so it is already there when they do. A phone has no photo and fetches nothing.
+  const wide = useMediaQuery(WIDE_LAYOUT_QUERY)
+  useEffect(() => {
+    if (!wide) return
+    const idle = window.requestIdleCallback
+    if (idle) {
+      // Idle time, but not later than two seconds, so a busy page cannot put it off for good.
+      const handle = idle(preloadHeroImage, { timeout: 2000 })
+      return () => window.cancelIdleCallback(handle)
+    }
+    const timer = setTimeout(preloadHeroImage, 200)
+    return () => clearTimeout(timer)
+  }, [wide])
+
   const [selectedId, setSelectedId] = useState<string | null>(null)
   // The card the pointer is over, or that has the keyboard, which the map highlights.
   const [hoveredId, setHoveredId] = useState<string | null>(null)

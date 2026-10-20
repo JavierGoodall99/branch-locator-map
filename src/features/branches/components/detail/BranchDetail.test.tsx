@@ -76,6 +76,13 @@ describe('BranchDetail', () => {
       expect(image).toHaveAttribute('width')
       expect(image).toHaveAttribute('height')
       expect(image).toHaveAttribute('decoding', 'async')
+    })
+
+    it('shows a blurred copy of the photo from the first frame, not a plain block of colour', () => {
+      setup()
+      const image = document.querySelector('.detail-hero img') as HTMLImageElement
+
+      expect(image.style.backgroundImage).toMatch(/^url\("?data:image\/webp;base64,/)
       expect(document.querySelectorAll('.detail-hero source').length).toBeGreaterThan(0)
     })
 
