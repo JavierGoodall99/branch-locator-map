@@ -1,15 +1,14 @@
-# Capitec Branch Locator
+# Branch Locator
 
-Find a Capitec branch, ATM or Smart ID service near you, on a map or in a list, with opening hours and
-directions. A React + TypeScript single-page app, built for the Capitec Frontend Engineer technical
-assessment (the **Branch Locator Map** brief).
+Find a bank branch, ATM or Smart ID service near you, on a map or in a list, with opening hours and
+directions. A React + TypeScript single-page app.
 
 > **The data is a demo sample.** `public/branches.json` holds 195 sites (120 branches, 67 ATMs, 8 business
-> centres) chosen from an export of Capitec's public branch-locator data by `scripts/build-sample-data.mjs`.
-> It is not live, and the raw export is not in this repository.
+> centres) chosen from an export of public branch-locator data by `scripts/build-sample-data.mjs`. It is not
+> live, and the raw export is not in this repository.
 
-> **This is a demo built for a technical assessment. It is not a Capitec service**, and nothing here is
-> affiliated with or endorsed by Capitec.
+> **This is an independent demo project.** It is not a bank's service, and is not affiliated with or
+> endorsed by the bank whose branches and brand styling it uses as a worked example.
 
 **Live demo: https://javiergoodall99.github.io/branch-locator-map/**
 (published by CI from `main`; see [Deployment](#deployment)).
@@ -104,7 +103,7 @@ The full record, with the reasons, is in [`design.md`](design.md). The ones to t
   usable first, and still complete if the map cannot load (WebGL missing, tiles offline), which is tested.
   The cost: tiles come from a third party (`tiles.openfreemap.org`), so a visitor's IP address reaches
   them, and the page's Content-Security-Policy names that one host.
-- **A static `branches.json` behind a `branchesApi` layer.** The brief gave no API. `branchesApi.ts`
+- **A static `branches.json` behind a `branchesApi` layer.** There was no API to build against. `branchesApi.ts`
   fetches the data and checks every record, so bad data is an error the page explains, not a crash.
   Swapping in a real service means changing that one file; everything else works with the validated
   `Branch` type.
@@ -115,7 +114,7 @@ The full record, with the reasons, is in [`design.md`](design.md). The ones to t
   whole card opens its details through one real button (a stretched link, so keyboard and screen reader
   users get one stop), focus is managed when details open and close, status and counts are announced, and
   the Playwright suite scans every main screen with axe. The brand blue is 4.48:1 on white, a hair under
-  4.5:1; that is a known trade-off to match Capitec's blue, which `design.md` records, and the scans allow
+  4.5:1; that is a known trade-off to match the brand's blue, which `design.md` records, and the scans allow
   only that exact case.
 - **Asking for the location on arrival.** It saves a tap, but it is a prompt before the user has chosen
   anything. The page never stores or sends the location, falls back to the whole list by name, and treats a
@@ -179,7 +178,7 @@ small commits, each leaving the project working.
 
 ## Notes
 
-- **Capitec's name, logo and symbol are Capitec's trademarks.** They are used here only for this
-  assessment, as the header logo and the tab icon.
+- **The brand name, logo and symbol shown belong to their owner.** They are used here only as an
+  illustration, in the header and as the tab icon, and are not covered by any licence for this repository.
 - The browser console may show warnings from OpenFreeMap's own map style about road shields. They are not
   from this app.

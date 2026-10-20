@@ -49,14 +49,13 @@ Run `npm run lint`, `npm run format:check` and `npm run build` (and the tests) b
 - Use theme tokens, not hard-coded hex values. Format money with `Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' })` and the `tabular-nums` class.
 - Pin dependency changes deliberately; this is a production app, so avoid alpha/beta/`next` packages.
 
-## Assessment context
+## Project context
 
-This repo is a Capitec Frontend Engineer technical assessment. The commit history is part of what reviewers evaluate, so work and history must read like a real-world engineering team's.
+This repo is a portfolio project, a branch locator. The commit history is part of what reviewers read, so work and history must read like a real-world engineering team's.
 
-- Deliver one of the three briefs (Customer Spending Insights Dashboard, Loan Eligibility Simulator, Branch Locator Map) using mocked data.
+- The app uses mocked data (a static sample behind an API layer).
 - Required: production-grade code, a runnable multi-stage Dockerfile, and a README explaining how to build, run and test.
-- The GitHub repo must be public and submitted by 26 October.
-- Be able to explain every decision in an interview. Only document what has been verified; do not claim things about Capitec's internal stack.
+- Be able to explain every decision. Only document what has been verified; do not claim things about a bank's internal stack.
 
 ## Git workflow
 

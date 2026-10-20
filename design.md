@@ -4,7 +4,7 @@ Design tokens and rules for this app. The visual language is based on a brand ex
 
 Notes on provenance:
 - **Extracted** values come straight from the site. **Decided** values are my choices where the extraction was empty or noisy (marked below).
-- This is a candidate project, not a Capitec product. The header uses Capitec's logo (`src/assets/capitec-logo.svg`, copied from capitecbank.co.za) with a divider and "Branch finder", because this assessment is for Capitec. The logo is Capitec's trademark: it is used only to present this assessment, is not covered by any licence for this repository, and should be removed if the project is reused. Their favicon and imagery are not used.
+- This is an independent project, not a Capitec product. The header uses Capitec's logo (`src/assets/capitec-logo.svg`, copied from capitecbank.co.za) with a divider and "Branch finder", and the tab icon is the Capitec symbol from that logo. They are Capitec's trademarks: they are used only as an illustration, are not covered by any licence for this repository, and should be removed if the project is reused. Their photography and other imagery are not used.
 
 ## Color
 
@@ -168,7 +168,6 @@ Components come from `react-bootstrap`; Bootstrap's own JavaScript is not loaded
 ## Open questions
 
 - Dark mode: skipped for now (Bootstrap's `data-bs-theme` can be added later).
-- Which of the three assessment projects this system is applied to.
 ## Deployment
 
 The live demo is on GitHub Pages, published by the `deploy` job in CI (`.github/workflows/ci.yml`), which runs only on `main` and only after the checks and the Docker job pass. Pages serves a project at `/<repository>/`, so the build takes `BASE_PATH` (set from `actions/configure-pages`) and `vite.config.ts` uses it as `base`; the data address follows it through `import.meta.env.BASE_URL`. A build with a base path was checked in a browser: the data, the map worker, vector tiles, the details photo and the icons all load under it. Pages cannot set headers, so the security headers (`docker/security-headers.conf`) apply only to the Docker image, which is the production artifact; the container tests check them.
@@ -204,4 +203,4 @@ Everything cut or deferred can be added later without reworking the data layer.
 
 ## Page title and icons
 
-The page title is "Find a Branch, ATM or Smart ID Service Near You | Capitec". The tab icon is the Capitec symbol (the red and navy shape from the logo in `src/assets/capitec-logo.svg`) on a transparent background, as large as the square allows, so it sits on any tab bar the way a browser's own icons do: `public/favicon.svg` for browsers that use SVG icons and `public/favicon-32.png` (also transparent) for Safari. `public/apple-touch-icon.png` (180 px) is the one exception: it has a white background with some room round the symbol, because iOS paints a transparent home screen icon black. The PNGs are drawn from the SVG by `node scripts/build-icons.mjs`. Like the logo in the header, the symbol is Capitec's trademark and is used here only for this assessment.
+The page title is "Find a Branch, ATM or Smart ID Service Near You | Capitec". The tab icon is the Capitec symbol (the red and navy shape from the logo in `src/assets/capitec-logo.svg`) on a transparent background, as large as the square allows, so it sits on any tab bar the way a browser's own icons do: `public/favicon.svg` for browsers that use SVG icons and `public/favicon-32.png` (also transparent) for Safari. `public/apple-touch-icon.png` (180 px) is the one exception: it has a white background with some room round the symbol, because iOS paints a transparent home screen icon black. The PNGs are drawn from the SVG by `node scripts/build-icons.mjs`. Like the logo in the header, the symbol is Capitec's trademark and is used here only as an illustration.
