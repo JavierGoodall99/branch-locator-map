@@ -13,7 +13,7 @@ import {
   toBranchFilters,
   type LocatorFilters,
 } from '@/features/branches/model/locatorFilters'
-import { useBranches } from '@/features/branches/model/useBranches'
+import { useBranches, type UseBranchesResult } from '@/features/branches/model/useBranches'
 import { useLocation } from '@/features/branches/model/useLocation'
 import { useNow } from '@/shared/hooks/useNow'
 
@@ -68,6 +68,11 @@ function App() {
     setSelectedId(id)
   }
 
+  // The list is held back, as if the branches were still loading, while a position the browser has
+  // already agreed to give is on its way, so it appears once, in its final order, not rearranged.
+  const results: UseBranchesResult =
+    location.awaitingFix && branches.status === 'success' ? { status: 'loading', retry: branches.retry } : branches
+
   // The user's position, once they have shared it.
   const origin = location.status === 'located' ? location.position : null
 
@@ -103,7 +108,7 @@ function App() {
       }
       results={
         <ResultsPanel
-          state={branches}
+          state={results}
           filters={view}
           now={now}
           origin={origin}

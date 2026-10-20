@@ -24,6 +24,10 @@ export type UseLocationResult = LocationState & {
 
 const PERMISSION_DENIED = 1
 
+// How long the page holds the list for a position the browser is already allowed to give, before it
+// shows the list by name instead.
+const GRANTED_WAIT_MS = 2500
+
 /**
  * The browser's own record of what the user has decided for this site, where it keeps one (the
  * Permissions API), or null where it does not or cannot say. Reading it never shows a prompt.
@@ -40,9 +44,17 @@ async function geolocationPermission(): Promise<PermissionStatus | null> {
 // quicker and kinder to batteries than a high-accuracy fix.
 const OPTIONS: PositionOptions = { enableHighAccuracy: false, timeout: 10_000, maximumAge: 5 * 60_000 }
 
-/** The user's location, requested when `request` is called (the page does so on arrival). It is never stored or sent. */
-export function useLocation(): UseLocationResult {
+/**
+ * The user's location, requested when `request` is called (the page does so on arrival). It is never stored or sent.
+ *
+ * `awaitingFix` is true while the position is coming and the browser needs no permission prompt for it
+ * (the user allowed it on an earlier visit), so it is due in a moment. A list shown before then would
+ * be rearranged and cut down to what is near when it arrives, so the page holds it back, but only for a
+ * short while. With a prompt to answer there is no knowing how long that takes, so nothing waits for it.
+ */
+export function useLocation(): UseLocationResult & { awaitingFix: boolean } {
   const [state, setState] = useState<LocationState>({ status: 'idle' })
+  const [fixDue, setFixDue] = useState(false)
 
   // Each request gets a number; an answer only counts if it is still the latest request.
   // This drops answers that arrive after the user cleared, retried or left the page.
@@ -61,6 +73,14 @@ export function useLocation(): UseLocationResult {
 
     const id = ++latestRequest.current
     setState({ status: 'locating' })
+    setFixDue(false)
+    void geolocationPermission().then((permission) => {
+      if (id !== latestRequest.current || permission?.state !== 'granted') return
+      setFixDue(true)
+      setTimeout(() => {
+        if (id === latestRequest.current) setFixDue(false)
+      }, GRANTED_WAIT_MS)
+    })
 
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
@@ -112,5 +132,5 @@ export function useLocation(): UseLocationResult {
     setState({ status: 'idle' })
   }, [])
 
-  return { ...state, request, clear }
+  return { ...state, request, clear, awaitingFix: fixDue && state.status === 'locating' }
 }

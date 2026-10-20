@@ -237,3 +237,57 @@ describe('useLocation after a refusal', () => {
     expect(permission.listeners.size).toBe(0)
   })
 })
+
+describe('useLocation while the position is due', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    getCurrentPosition.mockReset()
+    stubGeolocation({ getCurrentPosition })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    stubGeolocation(undefined)
+    Object.defineProperty(navigator, 'permissions', { value: undefined, configurable: true })
+  })
+
+  async function request() {
+    const hook = renderHook(() => useLocation())
+    await act(async () => hook.result.current.request())
+    return hook
+  }
+
+  it('is awaiting the fix when the browser has already allowed location, until it arrives', async () => {
+    stubPermission('granted')
+    const { result } = await request()
+    expect(result.current.awaitingFix).toBe(true)
+
+    act(() => lastRequest().success(position(-26.2, 28.05)))
+
+    expect(result.current.awaitingFix).toBe(false)
+  })
+
+  it('stops waiting after a short while, so a slow fix cannot hold the list for long', async () => {
+    stubPermission('granted')
+    const { result } = await request()
+
+    act(() => vi.advanceTimersByTime(2500))
+
+    expect(result.current.status).toBe('locating')
+    expect(result.current.awaitingFix).toBe(false)
+  })
+
+  it.each(['prompt', 'denied'] as const)('does not wait when the permission is %s', async (state) => {
+    stubPermission(state)
+    const { result } = await request()
+
+    expect(result.current.status).toBe('locating')
+    expect(result.current.awaitingFix).toBe(false)
+  })
+
+  it('does not wait where the browser cannot say what was decided', async () => {
+    const { result } = await request()
+
+    expect(result.current.awaitingFix).toBe(false)
+  })
+})
