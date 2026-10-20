@@ -82,15 +82,15 @@ export function BranchMap({ branches, selectedId, hoveredId, userLocation, onSel
     mapRef.current = map
 
     let loaded = false
-    let stopWatchingCredit = () => {}
+    // On a phone the credit starts closed, behind its info button, so it does not cover the map. This
+    // starts now, not on load, so the credit is held at its closed size before MapLibre opens it.
+    const stopWatchingCredit = isWideLayout() ? () => {} : collapseAttribution(container)
 
     map.on('load', () => {
       loaded = true
       const colors = readMapColors()
       // Recolour the base map first, so our own layers are never touched by it.
       applyBasemapLook(map)
-      // On a phone the credit starts closed, behind its info button, so it does not cover the map.
-      if (!isWideLayout()) stopWatchingCredit = collapseAttribution(container)
       addPinImages(map, colors)
       addBranchLayers(map, toFeatureCollection(latest.current.branches), colors)
       addHoverLayers(map)

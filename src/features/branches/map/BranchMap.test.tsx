@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   HOVER_SOURCE_ID,
@@ -51,6 +51,10 @@ const mocks = vi.hoisted(() => {
 
     constructor(options: Record<string, unknown>) {
       this.options = options
+      // MapLibre puts its credit in the container as the map is created, empty until the style arrives.
+      const credit = document.createElement('details')
+      credit.className = 'maplibregl-ctrl maplibregl-ctrl-attrib maplibregl-attrib-empty'
+      ;(options.container as HTMLElement).append(credit)
       mocks.maps.push(this)
     }
 
@@ -312,11 +316,11 @@ describe('BranchMap', () => {
   })
 
   describe('the credit', () => {
-    const addCredit = () => {
+    // As MapLibre does a moment after the map loads, when the style has filled the credit in.
+    const openCredit = () => {
       const container = currentMap().options.container as HTMLElement
-      const credit = document.createElement('details')
-      credit.className = 'maplibregl-ctrl-attrib maplibregl-compact maplibregl-compact-show'
-      container.append(credit)
+      const credit = container.querySelector('.maplibregl-ctrl-attrib')!
+      credit.className = 'maplibregl-ctrl maplibregl-ctrl-attrib maplibregl-compact maplibregl-compact-show'
       return credit
     }
 
@@ -324,11 +328,11 @@ describe('BranchMap', () => {
 
     it('starts closed on a phone, behind its info button', async () => {
       setup()
-      const credit = addCredit()
-
       await loadMap()
 
-      expect(credit).not.toHaveClass('maplibregl-compact-show')
+      const credit = openCredit()
+
+      await waitFor(() => expect(credit).not.toHaveClass('maplibregl-compact-show'))
     })
 
     it('is left as MapLibre opens it on a wide screen, where there is room', async () => {
@@ -337,9 +341,10 @@ describe('BranchMap', () => {
         vi.fn((query: string) => ({ matches: query === '(min-width: 768px)', media: query })),
       )
       setup()
-      const credit = addCredit()
-
       await loadMap()
+
+      const credit = openCredit()
+      await new Promise((resolve) => setTimeout(resolve, 20))
 
       expect(credit).toHaveClass('maplibregl-compact-show')
     })

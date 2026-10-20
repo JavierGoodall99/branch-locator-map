@@ -56,6 +56,38 @@ describe('collapseAttribution', () => {
     expect(credit).toHaveClass(SHOW)
   })
 
+  it('holds the credit at its closed size until it has been closed, then lets it size itself', async () => {
+    const { map, credit } = mapWithCredit('maplibregl-attrib-empty')
+    collapseAttribution(map)
+    expect(credit).toHaveAttribute('data-settling')
+
+    credit.classList.add('maplibregl-compact', SHOW)
+
+    await waitFor(() => expect(credit).not.toHaveAttribute('data-settling'))
+  })
+
+  it('does not hold a credit that is already closed once it is told to stop', () => {
+    const { map, credit } = mapWithCredit('maplibregl-attrib-empty')
+
+    collapseAttribution(map)()
+
+    expect(credit).not.toHaveAttribute('data-settling')
+  })
+
+  it('stops holding the credit if MapLibre never opens it', () => {
+    vi.useFakeTimers()
+    try {
+      const { map, credit } = mapWithCredit('maplibregl-attrib-empty')
+      collapseAttribution(map)
+
+      vi.advanceTimersByTime(15_000)
+
+      expect(credit).not.toHaveAttribute('data-settling')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('does nothing when the credit is not there', () => {
     expect(() => collapseAttribution(document.createElement('div'))()).not.toThrow()
   })

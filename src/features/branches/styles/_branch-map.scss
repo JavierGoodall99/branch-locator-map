@@ -69,6 +69,30 @@
   }
 }
 
+// MapLibre hides the credit until the style has loaded and then shows it, 44px tall with its margins, which
+// pushes the zoom buttons above it up by that much. Keep the room while it is empty, so they stay put. (The
+// selector is as specific as MapLibre's own margin for controls in this corner, which would win otherwise.)
+.branch-map .maplibregl-ctrl-bottom-right .maplibregl-attrib-empty {
+  display: block;
+  visibility: hidden;
+  box-sizing: border-box;
+  min-height: 24px;
+  margin: 10px;
+}
+
+// The credit opens wide for a moment before it is closed on a phone (see attribution.ts). Until then it is
+// held at the size of its button, so it does not change size, and the empty one has that size too.
+.branch-map .maplibregl-ctrl-bottom-right .maplibregl-attrib-empty,
+.branch-map .maplibregl-ctrl-attrib[data-settling] {
+  box-sizing: border-box;
+  width: 24px;
+  overflow: hidden;
+}
+
+.branch-map .maplibregl-ctrl-attrib[data-settling] {
+  padding: 0;
+}
+
 // Zoom buttons: a white rounded group with a soft shadow, the way people expect map controls.
 .branch-map .maplibregl-ctrl-group {
   overflow: hidden;
