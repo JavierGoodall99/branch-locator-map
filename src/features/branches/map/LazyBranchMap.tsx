@@ -1,4 +1,5 @@
 import { Suspense, lazy } from 'react'
+import { MapLoading } from '@/features/branches/map/MapLoading'
 import type { Branch, Coordinates } from '@/features/branches/types'
 
 // The map library is large, so it loads on its own after the page is up. The results list works
@@ -15,13 +16,7 @@ interface LazyBranchMapProps {
 
 export function LazyBranchMap(props: LazyBranchMapProps) {
   return (
-    <Suspense
-      fallback={
-        <p className="map-status" role="status">
-          Loading map…
-        </p>
-      }
-    >
+    <Suspense fallback={<MapLoading />}>
       <BranchMap {...props} />
     </Suspense>
   )

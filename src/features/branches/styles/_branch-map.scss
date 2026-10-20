@@ -29,6 +29,17 @@
   text-align: center;
 }
 
+// The loading state: a small round tile with a spinner, in the middle of the visible map.
+.map-status--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
+}
+
 // On a phone the results sheet covers the bottom 42% of the map, so lift the zoom buttons and
 // the attribution above it (the attribution has to stay visible), and keep status messages in
 // the strip of map that is left between the controls and the sheet.

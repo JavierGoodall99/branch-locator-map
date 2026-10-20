@@ -22,6 +22,7 @@ import {
 import { addBranchLayers, addHoverLayers, addUserLocationLayers, readMapColors, selectedFilters } from './layers'
 import { applyBasemapLook } from './basemap'
 import { addPinImages } from './pins'
+import { MapLoading } from '@/features/branches/map/MapLoading'
 import { collapseAttribution } from './attribution'
 import { isWideLayout, mapPadding, motionDuration } from './view'
 import { isWebGLAvailable } from './webgl'
@@ -218,11 +219,7 @@ export function BranchMap({ branches, selectedId, hoveredId, userLocation, onSel
         </p>
       )}
 
-      {webglAvailable && status === 'loading' && (
-        <p className="map-status" role="status">
-          Loading map…
-        </p>
-      )}
+      {webglAvailable && status === 'loading' && <MapLoading />}
 
       {webglAvailable && status === 'failed' && (
         <div className="map-status" role="alert">
