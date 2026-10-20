@@ -169,6 +169,10 @@ Components come from `react-bootstrap`; Bootstrap's own JavaScript is not loaded
 
 - Dark mode: skipped for now (Bootstrap's `data-bs-theme` can be added later).
 - Which of the three assessment projects this system is applied to.
+## Deployment
+
+The live demo is on GitHub Pages, published by the `deploy` job in CI (`.github/workflows/ci.yml`), which runs only on `main` and only after the checks and the Docker job pass. Pages serves a project at `/<repository>/`, so the build takes `BASE_PATH` (set from `actions/configure-pages`) and `vite.config.ts` uses it as `base`; the data address follows it through `import.meta.env.BASE_URL`. A build with a base path was checked in a browser: the data, the map worker, vector tiles, the details photo and the icons all load under it. Pages cannot set headers, so the security headers (`docker/security-headers.conf`) apply only to the Docker image, which is the production artifact; the container tests check them.
+
 ## Code structure
 
 The app is one feature, `src/features/branches/`, split by what each part does: `api/` (fetch and validate the data), `lib/` (pure logic: filtering, sorting, distance, hours, suggestions), `model/` (the page's filter state and the hooks), `components/` (grouped by the part of the page: `controls/`, `list/`, `detail/`, `layout/`, and `common/` for pieces the list and the details share), `map/` and `styles/`. Code used beyond the feature lives in `src/shared/` (`ui/` and `hooks/`). Imports from another folder use the `@/` alias.

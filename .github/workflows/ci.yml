@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
 
-# Least privilege: the checks only read the code.
+# Least privilege: the checks only read the code. The deploy job asks for more, for itself only.
 permissions:
   contents: read
 
@@ -85,3 +85,46 @@ jobs:
       - name: Show the container's log if something failed
         if: failure()
         run: docker logs branch-locator
+
+  # Publishes the app to GitHub Pages, only from main and only after every check above has passed.
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: [check, docker]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # One deploy at a time, and a newer one waits for the one running instead of cutting it off.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/configure-pages@v6
+        id: pages
+
+      # A project site is served at /<repository>/, not at the root, so the build is told where it will live.
+      - run: npm run build
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+      - id: deployment
+        uses: actions/deploy-pages@v5

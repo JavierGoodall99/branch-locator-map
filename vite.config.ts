@@ -5,6 +5,10 @@ import { imagetools } from 'vite-imagetools'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Where the app is served from. It is the root everywhere (the dev server, the Docker image) except on
+  // GitHub Pages, which serves a project at /<repository>/; the deploy job in CI sets BASE_PATH for that.
+  // Every file the build produces, and the data address (see branchesApi.ts), follows it.
+  base: process.env.BASE_PATH ?? '/',
   plugins: [react(), imagetools()],
   resolve: {
     // "@/features/..." means src/features/..., the same as `paths` in tsconfig.app.json.

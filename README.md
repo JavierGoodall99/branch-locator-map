@@ -8,6 +8,12 @@ assessment (the **Branch Locator Map** brief).
 > centres) chosen from an export of Capitec's public branch-locator data by `scripts/build-sample-data.mjs`.
 > It is not live, and the raw export is not in this repository.
 
+> **This is a demo built for a technical assessment. It is not a Capitec service**, and nothing here is
+> affiliated with or endorsed by Capitec.
+
+**Live demo: https://javiergoodall99.github.io/branch-locator-map/**
+(published by CI from `main`; see [Deployment](#deployment)).
+
 ## Quick start
 
 You need **Node 24** (see `.nvmrc`; `engines` allows 22.12 or newer, the oldest Vite 8 supports) and npm.
@@ -63,6 +69,16 @@ caught one: nginx served `.mjs` files as `application/octet-stream`, which brows
 
 CI (`.github/workflows/ci.yml`) runs lint, formatting, types, unit tests, the build and the end-to-end
 tests, and in a second job builds the image and runs the container checks.
+
+## Deployment
+
+Every push to `main` that passes all the checks is published to GitHub Pages by the `deploy` job in
+`.github/workflows/ci.yml`. The job builds the app with `BASE_PATH` set, because Pages serves a project at
+`/<repository>/` and not at the root; everywhere else (the dev server, the Docker image) the base is `/`.
+
+GitHub Pages cannot send HTTP headers, so the live demo does **not** have the Content-Security-Policy and the
+other security headers. The Docker image is the production artifact: it has them, and the container tests
+check them. Behind a real host, run that image.
 
 ## What it does
 
